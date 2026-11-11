@@ -11,18 +11,19 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <style>
-  :root { --bg: #F8F9FA; --surface: #FFFFFF; --text-main: #111827; --text-muted: #6B7280; --primary: #8B5CF6; --border-light: #E5E7EB; --success: #10B981; --warning: #F59E0B; --info: #3B82F6; --radius-card: 16px; --shadow-sm: 0 2px 8px rgba(0,0,0,0.04); --shadow-md: 0 8px 24px rgba(0,0,0,0.08); }
-  [data-theme="dark"] { --bg: #121212; --surface: #1E1E1E; --text-main: #F9FAFB; --text-muted: #9CA3AF; --border-light: #374151; --shadow-sm: 0 2px 8px rgba(0,0,0,0.3); --shadow-md: 0 8px 24px rgba(0,0,0,0.5); }
+  /* COLORES MONOCROMATICOS */
+  :root { --bg: #F3F4F6; --surface: #FFFFFF; --text-main: #111827; --text-muted: #6B7280; --primary: #000000; --border-light: #D1D5DB; --success: #10B981; --warning: #F59E0B; --info: #3B82F6; --radius-card: 16px; --shadow-sm: 0 2px 8px rgba(0,0,0,0.06); --shadow-md: 0 8px 24px rgba(0,0,0,0.1); }
+  [data-theme="dark"] { --bg: #111111; --surface: #1F1F1F; --text-main: #F9FAFB; --text-muted: #9CA3AF; --primary: #FFFFFF; --border-light: #333333; --shadow-sm: 0 2px 8px rgba(0,0,0,0.5); --shadow-md: 0 8px 24px rgba(0,0,0,0.8); }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; transition: background 0.3s; }
   h1, h2, h3, h4 { font-family: 'Outfit', sans-serif; letter-spacing: -0.02em; }
   .sidebar { width: 260px; background: var(--surface); border-right: 1px solid var(--border-light); display: flex; flex-direction: column; padding: 24px 16px; z-index: 100; overflow-y: auto; }
-  .brand { font-family: 'Outfit', sans-serif; font-size: 1.4rem; font-weight: 800; color: var(--primary); margin-bottom: 20px; display: flex; align-items: center; gap: 10px; padding-left: 8px;}
-  .brand img { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); }
+  .brand { font-family: 'Outfit', sans-serif; font-size: 1.4rem; font-weight: 800; color: var(--text-main); margin-bottom: 20px; display: flex; align-items: center; gap: 10px; padding-left: 8px;}
+  .brand img { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid var(--border-light); }
   .nav-group { font-size: 0.7rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin: 15px 0 5px 10px; letter-spacing: 1px; }
   .nav-link { display: flex; align-items: center; gap: 12px; padding: 10px 16px; border-radius: 10px; color: var(--text-muted); font-weight: 500; font-size: 0.9rem; cursor: pointer; transition: 0.2s; margin-bottom: 4px; border: none; background: transparent; width: 100%; text-align: left; }
-  .nav-link:hover, .nav-link.active { background: rgba(139, 92, 246, 0.1); color: var(--primary); }
-  .nav-link.active { background: var(--primary); color: white; font-weight: 600; box-shadow: var(--shadow-sm); }
+  .nav-link:hover, .nav-link.active { background: var(--bg); color: var(--primary); font-weight: 700; }
+  .nav-link.active { border-left: 4px solid var(--primary); }
   .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
   header { padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; background: var(--surface); border-bottom: 1px solid var(--border-light); }
   .header-right { display: flex; align-items: center; gap: 16px; }
@@ -30,11 +31,11 @@
   .page-section { display: none; animation: fadeIn 0.3s; }
   .page-section.active { display: block; }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-  .btn { background: var(--primary); color: white; border: none; padding: 10px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.9rem; }
+  .btn { background: var(--primary); color: var(--surface); border: 1px solid var(--primary); padding: 10px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.9rem; }
   .btn-outline { background: transparent; color: var(--text-main); border: 1px solid var(--border-light); }
-  .btn-success { background: var(--success); }
-  .btn-warning { background: var(--warning); }
-  .btn-danger { background: #EF4444; }
+  .btn-success { background: var(--success); border-color: var(--success); color: white; }
+  .btn-warning { background: var(--warning); border-color: var(--warning); color: white; }
+  .btn-danger { background: #EF4444; border-color: #EF4444; color: white; }
   .card { background: var(--surface); border-radius: var(--radius-card); padding: 20px; border: 1px solid var(--border-light); box-shadow: var(--shadow-sm); margin-bottom: 20px; }
   .form-group { margin-bottom: 15px; }
   .form-group label { display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 6px; }
@@ -47,10 +48,10 @@
   .grid-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
   .filter-bar { display: flex; gap: 8px; margin-bottom: 20px; overflow-x: auto; }
   .filter-btn { background: var(--surface); border: 1px solid var(--border-light); color: var(--text-muted); padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; cursor: pointer; }
-  .filter-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+  .filter-btn.active { background: var(--primary); color: var(--surface); border-color: var(--primary); }
   .sub-tabs { display: flex; gap: 10px; border-bottom: 1px solid var(--border-light); margin-bottom: 20px; }
   .sub-tab { padding: 10px 15px; font-weight: 600; color: var(--text-muted); cursor: pointer; border-bottom: 2px solid transparent; }
-  .sub-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+  .sub-tab.active { color: var(--text-main); border-bottom-color: var(--primary); }
   .sub-content { display: none; }
   .sub-content.active { display: block; }
   .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000; align-items: center; justify-content: center; }
@@ -70,7 +71,6 @@
 </head>
 <body>
 
-<!-- SIN LOGIN, ENTRADA DIRECTA -->
 <div class="sidebar" id="sidebar">
   <div class="brand"><img src="logodivermania.jpg" onerror="this.style.display='none'"> DIVERMANIA</div>
   <div class="nav-group">Operaciones</div>
@@ -87,10 +87,7 @@
 
 <div class="main-content">
   <header>
-    <div style="display: flex; align-items: center; gap: 15px;">
-      <button class="menu-toggle" style="display:none;" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
-      <h2 id="pageTitle" style="font-size: 1.2rem;">Dashboard</h2>
-    </div>
+    <h2 id="pageTitle" style="font-size: 1.2rem;">Dashboard</h2>
     <div class="header-right">
       <button class="btn btn-outline" style="padding: 6px 12px;" onclick="toggleTheme()">Tema</button>
     </div>
@@ -123,7 +120,7 @@
       </div>
     </div>
 
-    <!-- PEDIDO MANUAL (MESAS Y MODIFICADORES) -->
+    <!-- PEDIDO MANUAL -->
     <div id="manual" class="page-section">
       <div class="grid-2">
         <div class="card">
@@ -158,12 +155,16 @@
       </div>
     </div>
 
-    <!-- CATALOGO -->
+    <!-- CATALOGO Y RECETAS -->
     <div id="catalogo" class="page-section">
+      <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+        <h3>Productos</h3>
+        <button class="btn" onclick="openNewProductModal()">+ Nuevo Producto</button>
+      </div>
       <div class="grid-stats" id="catalogEditorGrid"></div>
     </div>
 
-    <!-- INVENTARIO CON GRAMAJES Y AUTOCONSUMO -->
+    <!-- INVENTARIO -->
     <div id="inventario" class="page-section">
       <div class="grid-2">
         <div class="card">
@@ -188,8 +189,13 @@
       </div>
     </div>
 
-    <!-- FINANZAS -->
+    <!-- FINANZAS MEJORADAS -->
     <div id="finanzas" class="page-section">
+      <div class="grid-stats">
+        <div class="card"><h3 style="font-size: 0.8rem; color: var(--text-muted);">Ingresos</h3><p id="finIncome" style="font-size: 1.5rem; font-weight: 800; color: var(--success);">$0.00</p></div>
+        <div class="card"><h3 style="font-size: 0.8rem; color: var(--text-muted);">Gastos</h3><p id="finExpenses" style="font-size: 1.5rem; font-weight: 800; color: var(--primary);">$0.00</p></div>
+        <div class="card"><h3 style="font-size: 0.8rem; color: var(--text-muted);">Ganancia</h3><p id="finProfit" style="font-size: 1.5rem; font-weight: 800; color: var(--info);">$0.00</p></div>
+      </div>
       <div class="grid-2">
         <div class="card">
           <h3>Registrar Gasto</h3>
@@ -208,12 +214,13 @@
 <!-- MODALES -->
 <div class="modal" id="modalCat">
   <div class="modal-content">
-    <h2 style="margin-bottom: 15px; color: var(--primary);">Editar Producto y Receta</h2>
+    <h2 id="modalCatTitle" style="margin-bottom: 15px; color: var(--text-main);">Editar Producto</h2>
     <input type="hidden" id="editId">
     <div class="grid-2">
       <div class="form-group"><label>Nombre</label><input type="text" id="editName" class="form-control"></div>
       <div class="form-group"><label>Precio ($)</label><input type="number" id="editPrice" class="form-control" step="0.01"></div>
     </div>
+    <div class="form-group"><label>Categoría</label><select id="editCat" class="form-control"><option value="perros">Perros</option><option value="hamburguesas">Hamburguesas</option><option value="fiesta">Fiesta</option></select></div>
     <div class="form-group"><label>Imagen</label><input type="file" id="editImageFile" accept="image/*" class="form-control"></div>
     <div style="background: var(--bg); padding: 15px; border-radius: 8px; margin: 15px 0;">
       <h4 style="font-size: 0.9rem; margin-bottom: 10px;">Receta (Gramos por unidad)</h4>
@@ -226,23 +233,20 @@
 
 <div class="modal" id="modalAddIng">
   <div class="modal-content">
-    <h2 style="margin-bottom: 15px; color: var(--primary);">Nuevo Insumo</h2>
+    <h2 style="margin-bottom: 15px;">Nuevo Insumo</h2>
     <div class="form-group"><label>Nombre</label><input type="text" id="ingName" class="form-control"></div>
     <div class="grid-2">
       <div class="form-group"><label>Stock Actual</label><input type="number" id="ingStock" class="form-control" step="0.01"></div>
       <div class="form-group"><label>Stock Mínimo</label><input type="number" id="ingMin" class="form-control" step="0.01"></div>
     </div>
-    <div class="grid-2">
-      <div class="form-group"><label>Unidad</label><select id="ingUnit" class="form-control"><option value="und">Unidad</option><option value="g">Gramos</option><option value="ml">Mililitros</option></select></div>
-    </div>
+    <div class="form-group"><label>Unidad</label><select id="ingUnit" class="form-control"><option value="und">Unidad</option><option value="g">Gramos</option><option value="ml">Mililitros</option></select></div>
     <button class="btn" style="width: 100%;" onclick="saveNewIngredient()">Guardar</button>
   </div>
 </div>
 
-<!-- MODAL MODIFICADOR DE INGREDIENTES -->
 <div class="modal" id="modalMod">
   <div class="modal-content">
-    <h2 style="margin-bottom: 15px; color: var(--primary);">Quitar Ingredientes</h2>
+    <h2 style="margin-bottom: 15px;">Quitar Ingredientes</h2>
     <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px;">Desmarca los que el cliente NO quiere.</p>
     <input type="hidden" id="modProductId">
     <div id="modIngredientsList"></div>
@@ -254,32 +258,22 @@
 
 <script type="module">
   import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getFirestore, collection, onSnapshot, query, orderBy, doc, updateDoc, addDoc, setDoc, increment, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+  import { getFirestore, collection, onSnapshot, query, orderBy, doc, updateDoc, addDoc, setDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
   import { Bucket } from "https://esm.sh/@upstash/blob";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyArZsARX2njLeLNBYCwu1hPyXBUU_Vg09ko",
-    authDomain: "divermania-3f104.firebaseapp.com",
-    projectId: "divermania-3f104",
-    storageBucket: "divermania-3f104.firebasestorage.app",
-    messagingSenderId: "230376484506",
-    appId: "1:230376484506:web:7534dd68d9085f499cb923",
-    measurementId: "G-P2SNN9VDEE"
-  };
+  const firebaseConfig = { apiKey: "AIzaSyArZsARX2njLeLNBYCwu1hPyXBUU_Vg09ko", authDomain: "divermania-3f104.firebaseapp.com", projectId: "divermania-3f104", storageBucket: "divermania-3f104.firebasestorage.app", messagingSenderId: "230376484506", appId: "1:230376484506:web:7534dd68d9085f499cb923", measurementId: "G-P2SNN9VDEE" };
   const bucket = new Bucket({ token: "AgAkADAMZTY1ZGU3MTktZDYwYS00NTkzLWEwZjctZjY3MGZhYmQzZjFlMURjMk1Ea3lNbVl0WTJVME15MDBOV1F4TFdGaU9UWXROemN3T1dKbU1URTVaVFE0YjJkM2RjZTAxZGM0" });
 
   const app = !getApps().length ? initializeApp(firebaseConfig) : getApps()[0];
   const db = getFirestore(app);
 
   let ordersData = [], transactionsData = [], clientsData = [], catalogData = {}, inventoryData = {};
-  let TASA_CAMBIO = 40.00, manualCart = {}, myChart = null;
-  let currentFilter = 'hoy';
+  let manualCart = {}, myChart = null;
 
   const htmlEl = document.documentElement;
   htmlEl.setAttribute('data-theme', localStorage.getItem('adminTheme') || 'light');
   window.toggleTheme = () => { const newTheme = htmlEl.getAttribute('data-theme') === 'light' ? 'dark' : 'light'; htmlEl.setAttribute('data-theme', newTheme); localStorage.setItem('adminTheme', newTheme); if(myChart) updateChart(); };
 
-  // INICIAR SIN LOGIN
   document.body.style.display = 'flex';
   initApp();
 
@@ -292,11 +286,6 @@
   };
 
   function showToast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); }
-  window.setFilter = (filter, btn) => { currentFilter = filter; document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); calculateFinances(); };
-  function getFilteredData(data) {
-    if (currentFilter === 'todo') return data; const now = new Date(); now.setHours(0,0,0,0);
-    return data.filter(item => { const itemDate = new Date(item.fecha); if (currentFilter === 'hoy') return itemDate >= now; if (currentFilter === 'semana') { const d = new Date(now); d.setDate(d.getDate() - 7); return itemDate >= d; } if (currentFilter === 'mes') { const d = new Date(now); d.setMonth(d.getMonth() - 1); return itemDate >= d; } return true; });
-  }
 
   async function initApp() {
     onSnapshot(query(collection(db, "pedidos"), orderBy("fecha", "desc")), (snap) => { ordersData = []; snap.forEach(d => ordersData.push({ id: d.id, ...d.data() })); renderOrders(); calculateFinances(); });
@@ -306,23 +295,39 @@
     onSnapshot(collection(db, "usuarios"), (snap) => { clientsData = []; snap.forEach(d => clientsData.push({ id: d.id, ...d.data() })); renderClients(); });
   }
 
-  function renderOrders() { document.getElementById('ordersTableBody').innerHTML = ordersData.map(o => { let prods = typeof o.productos === 'object' ? Object.entries(o.productos).map(([k,v])=>`${v}x ${k}`).join('<br>') : o.productos; let tipo = o.mesa ? `Mesa ${o.mesa}` : o.tipoEntrega; return `<tr><td>${new Date(o.fecha).toLocaleString('es-VE')}</td><td>${o.cliente}</td><td><b>${tipo}</b></td><td>${prods}</td><td style="font-weight:bold;">${o.total}</td><td><select class="form-control" style="padding: 5px;" onchange="updateOrderStatus('${o.id}', this.value)"><option value="Pendiente" ${o.estado==='Pendiente'?'selected':''}>Pendiente</option><option value="En Preparación" ${o.estado==='En Preparación'?'selected':''}>En Preparación</option><option value="Entregado" ${o.estado==='Entregado'?'selected':''}>Entregado</option></select></td><td><a href="https://wa.me/${o.telefono.replace(/\D/g,'')}" target="_blank" style="color: #25D366; font-weight: bold; text-decoration: none;">WA</a></td></tr>`; }).join(''); }
+  function renderOrders() { document.getElementById('ordersTableBody').innerHTML = ordersData.map(o => { let prods = typeof o.productos === 'object' ? Object.entries(o.productos).map(([k,v])=>`${v}x ${k}`).join('<br>') : o.productos; let tipo = o.mesa ? `Mesa ${o.mesa}` : o.tipoEntrega; return `<tr><td>${new Date(o.fecha).toLocaleString('es-VE')}</td><td>${o.cliente}</td><td><b>${tipo}</b></td><td>${prods}</td><td style="font-weight:bold;">${o.total}</td><td><select class="form-control" style="padding: 5px;" onchange="updateOrderStatus('${o.id}', this.value)"><option value="Pendiente" ${o.estado==='Pendiente'?'selected':''}>Pendiente</option><option value="En Preparación" ${o.estado==='En Preparación'?'selected':''}>En Preparación</option><option value="Entregado" ${o.estado==='Entregado'?'selected':''}>Entregado</option></select></td><td><a href="https://wa.me/${o.telefono.replace(/\D/g,'')}" target="_blank" style="color: var(--success); font-weight: bold; text-decoration: none;">WA</a></td></tr>`; }).join(''); }
   window.updateOrderStatus = async (id, status) => await updateDoc(doc(db, "pedidos", id), { estado: status });
-  
   function renderClients() { document.getElementById('clientsTableBody').innerHTML = clientsData.map(c => `<tr><td>${c.name}</td><td>${c.phone}</td><td>${c.purchases || 0}</td><td style="font-weight:bold; color:var(--success);">$${(c.totalGastado || 0).toFixed(2)}</td></tr>`).join(''); }
-  function renderTransactions() { document.getElementById('financeTableBody').innerHTML = transactionsData.map(t => `<tr><td>${new Date(t.fecha).toLocaleDateString('es-VE')}</td><td>${t.tipo}</td><td style="font-weight:bold; color:${t.tipo.includes('Gasto')?'var(--primary)':'var(--success)'};">$${t.montoUsd.toFixed(2)}</td></tr>`).join(''); }
-  function renderCatalog() { document.getElementById('catalogEditorGrid').innerHTML = Object.values(catalogData).map(p => `<div class="card" style="cursor: pointer; text-align: center;" onclick="openEditModal('${p.id}')"><img src="${p.image}" style="width: 100%; height: 100px; object-fit: cover; border-radius: 8px; margin-bottom: 10px;" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2UyZThmMCIvPjwvc3ZnPg=='"><h4 style="margin-bottom: 5px;">${p.name}</h4><div style="color: var(--primary); font-weight: bold;">$${p.price.toFixed(2)}</div></div>`).join(''); }
-  function renderInventory() { document.getElementById('inventoryList').innerHTML = Object.values(inventoryData).map(i => { const isLow = i.stock <= i.minStock; return `<div style="margin-bottom: 15px;"><div style="display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 600;"><span>${i.name}</span><span style="color: ${isLow ? 'var(--primary)' : 'var(--success)'};">${i.stock.toFixed(2)} ${i.unit}</span></div><div class="progress-track"><div class="progress-fill ${isLow ? 'low' : ''}" style="width: ${Math.min((i.stock/(i.minStock*3))*100,100)}%;"></div></div></div>`; }).join(''); }
+  function renderTransactions() { document.getElementById('financeTableBody').innerHTML = transactionsData.map(t => `<tr><td>${new Date(t.fecha).toLocaleDateString('es-VE')}</td><td>${t.tipo}</td><td style="font-weight:bold; color:${t.tipo.includes('Gasto')?'red':'green'};">$${t.montoUsd.toFixed(2)}</td></tr>`).join(''); }
+  
+  function renderCatalog() { 
+    document.getElementById('catalogEditorGrid').innerHTML = Object.values(catalogData).map(p => `
+      <div class="card" style="cursor: pointer; text-align: center;" onclick="openEditModal('${p.id}')">
+        <img src="${p.image}" style="width: 100%; height: 100px; object-fit: cover; border-radius: 8px; margin-bottom: 10px;" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2UyZThmMCIvPjwvc3ZnPg=='">
+        <h4 style="margin-bottom: 5px;">${p.name}</h4>
+        <div style="color: var(--text-main); font-weight: bold;">$${p.price.toFixed(2)}</div>
+      </div>
+    `).join(''); 
+  }
+  
+  function renderInventory() { document.getElementById('inventoryList').innerHTML = Object.values(inventoryData).map(i => { const isLow = i.stock <= i.minStock; return `<div style="margin-bottom: 15px;"><div style="display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 600;"><span>${i.name}</span><span style="color: ${isLow ? 'red' : 'green'};">${i.stock.toFixed(2)} ${i.unit}</span></div><div class="progress-track"><div class="progress-fill ${isLow ? 'low' : ''}" style="width: ${Math.min((i.stock/(i.minStock*3))*100,100)}%;"></div></div></div>`; }).join(''); }
   function populateIngredientSelect() { document.getElementById('invMoveItem').innerHTML = Object.values(inventoryData).map(i => `<option value="${i.id}">${i.name}</option>`).join(''); }
 
   function calculateFinances() {
-    const fOrders = getFilteredData(ordersData); const fTrans = getFilteredData(transactionsData);
-    let tOrders = fOrders.reduce((sum, o) => sum + (parseFloat(o.total.replace('$', '')) || 0), 0);
-    let tExpenses = fTrans.filter(t=>t.tipo.includes('Gasto') || t.tipo.includes('Compra')).reduce((sum,t)=>sum+t.montoUsd,0);
-    let totalIncome = tOrders; let netProfit = totalIncome - tExpenses;
-    document.getElementById('dashIncome').textContent = `$${totalIncome.toFixed(2)}`; document.getElementById('dashExpenses').textContent = `$${tExpenses.toFixed(2)}`; document.getElementById('dashProfit').textContent = `$${netProfit.toFixed(2)}`;
-    document.getElementById('dashOrdersCount').textContent = fOrders.length;
-    updateChart(fOrders);
+    let tOrders = ordersData.reduce((sum, o) => sum + (parseFloat(o.total.replace('$', '')) || 0), 0);
+    let tExpenses = transactionsData.filter(t=>t.tipo.includes('Gasto') || t.tipo.includes('Compra')).reduce((sum,t)=>sum+t.montoUsd,0);
+    let netProfit = tOrders - tExpenses;
+    
+    document.getElementById('dashIncome').textContent = `$${tOrders.toFixed(2)}`; 
+    document.getElementById('dashExpenses').textContent = `$${tExpenses.toFixed(2)}`; 
+    document.getElementById('dashProfit').textContent = `$${netProfit.toFixed(2)}`;
+    document.getElementById('dashOrdersCount').textContent = ordersData.length;
+
+    document.getElementById('finIncome').textContent = `$${tOrders.toFixed(2)}`;
+    document.getElementById('finExpenses').textContent = `$${tExpenses.toFixed(2)}`;
+    document.getElementById('finProfit').textContent = `$${netProfit.toFixed(2)}`;
+    
+    updateChart(ordersData);
   }
   function updateChart(filteredOrders) {
     const ctx = document.getElementById('salesChart').getContext('2d'); const labels = [], dataValues = [], last7Days = {};
@@ -330,17 +335,15 @@
     filteredOrders.forEach(o => { const dateStr = new Date(o.fecha).toLocaleDateString('es-VE', { month: 'short', day: 'numeric' }); if(last7Days[dateStr] !== undefined) last7Days[dateStr] += (parseFloat(o.total.replace('$', '')) || 0); });
     labels.forEach(l => dataValues.push(last7Days[l]));
     if(myChart) myChart.destroy();
-    myChart = new Chart(ctx, { type: 'line', data: { labels, datasets: [{ label: 'Ventas', data: dataValues, borderColor: '#8B5CF6', backgroundColor: 'rgba(139,92,246,0.1)', fill: true, tension: 0.4 }] }, options: { responsive: true, plugins: { legend: { display: false } } } });
+    myChart = new Chart(ctx, { type: 'line', data: { labels, datasets: [{ label: 'Ventas', data: dataValues, borderColor: '#000000', backgroundColor: 'rgba(0,0,0,0.1)', fill: true, tension: 0.4 }] }, options: { responsive: true, plugins: { legend: { display: false } } } });
   }
 
-  // INVENTARIO Y AUTOCONSUMO
   window.openAddIngredientModal = () => document.getElementById('modalAddIng').classList.add('open');
   window.saveNewIngredient = async () => { const name = document.getElementById('ingName').value; const id = name.toLowerCase().replace(/\s+/g, '_'); await setDoc(doc(db, "inventario", id), { name: name, stock: parseFloat(document.getElementById('ingStock').value) || 0, minStock: parseFloat(document.getElementById('ingMin').value) || 0, unit: document.getElementById('ingUnit').value }); document.getElementById('modalAddIng').classList.remove('open'); showToast('Insumo guardado.'); };
   window.saveInventoryMove = async () => { const id = document.getElementById('invMoveItem').value; const type = document.getElementById('invMoveType').value; const qty = parseFloat(document.getElementById('invMoveQty').value); if(!id || !qty) return showToast('Faltan datos'); const itemRef = doc(db, "inventario", id); if(type === 'entrada') await updateDoc(itemRef, { stock: increment(qty) }); if(type === 'merma' || type === 'autoconsumo') await updateDoc(itemRef, { stock: increment(-qty) }); document.getElementById('invMoveQty').value = ''; showToast('Movimiento guardado.'); };
 
-  // PEDIDO MANUAL
   window.toggleDeliveryType = () => { const type = document.getElementById('manDeliveryType').value; document.getElementById('mesaInputGroup').style.display = type === 'Mesa' ? 'block' : 'none'; document.getElementById('deliveryInputGroup').style.display = type === 'Delivery' ? 'block' : 'none'; };
-  function renderManualProducts() { document.getElementById('manualProductsList').innerHTML = Object.values(catalogData).map(p => `<div style="display:flex; justify-content:space-between; align-items:center; padding: 8px 0; border-bottom: 1px solid var(--border-light);"><div><span style="font-size: 0.9rem;">${p.name}</span><br><small>$${p.price.toFixed(2)}</small></div><div style="display:flex; gap:10px; align-items:center;"><button class="btn btn-outline" style="padding:2px 8px;" onclick="changeManualQty('${p.id}', -1)">-</button><span id="qty_${p.id}" style="font-weight:bold;">${manualCart[p.id] ? manualCart[p.id].qty : 0}</span><button class="btn btn-outline" style="padding:2px 8px;" onclick="changeManualQty('${p.id}', 1)">+</button>${p.receta && p.receta.length > 0 ? `<button class="btn btn-warning" style="padding:2px 8px; font-size:0.7rem;" onclick="openModifiers('${p.id}')">⚙️</button>` : ''}</div></div>`).join(''); }
+  function renderManualProducts() { document.getElementById('manualProductsList').innerHTML = Object.values(catalogData).map(p => `<div style="display:flex; justify-content:space-between; align-items:center; padding: 8px 0; border-bottom: 1px solid var(--border-light);"><div><span style="font-size: 0.9rem;">${p.name}</span><br><small>$${p.price.toFixed(2)}</small></div><div style="display:flex; gap:10px; align-items:center;"><button class="btn btn-outline" style="padding:2px 8px;" onclick="changeManualQty('${p.id}', -1)">-</button><span id="qty_${p.id}" style="font-weight:bold;">${manualCart[p.id] ? manualCart[p.id].qty : 0}</span><button class="btn btn-outline" style="padding:2px 8px;" onclick="changeManualQty('${p.id}', 1)">+</button>${p.receta && p.receta.length > 0 ? `<button class="btn btn-outline" style="padding:2px 8px; font-size:0.7rem;" onclick="openModifiers('${p.id}')">⚙️</button>` : ''}</div></div>`).join(''); }
   window.changeManualQty = (id, delta) => { if(!manualCart[id]) manualCart[id] = { qty: 0, removed: [] }; manualCart[id].qty += delta; if(manualCart[id].qty <= 0) delete manualCart[id]; document.getElementById(`qty_${id}`).textContent = manualCart[id] ? manualCart[id].qty : 0; calcManualTotal(); };
   function calcManualTotal() { let subtotal = 0; Object.entries(manualCart).forEach(([id, data]) => { if(catalogData[id]) subtotal += catalogData[id].price * data.qty; }); document.getElementById('manTotalText').textContent = `$${subtotal.toFixed(2)}`; }
   window.openModifiers = (id) => { document.getElementById('modProductId').value = id; const p = catalogData[id]; const currentRemoved = manualCart[id] ? manualCart[id].removed : []; document.getElementById('modIngredientsList').innerHTML = p.receta.map(ing => { const iData = inventoryData[ing.id]; if(!iData) return ''; const isChecked = currentRemoved.includes(ing.id) ? '' : 'checked'; return `<label style="display:block; margin-bottom:8px; font-size:0.9rem;"><input type="checkbox" value="${ing.id}" ${isChecked} class="mod-checkbox"> ${iData.name} (${ing.qty} ${iData.unit})</label>`; }).join(''); document.getElementById('modalMod').classList.add('open'); };
@@ -357,17 +360,24 @@
     }
     try {
       await addDoc(collection(db, "pedidos"), { cliente: name, telefono: phone, productos: prodsNube, total: `$${subtotal.toFixed(2)}`, tipoEntrega: deliveryType, mesa: deliveryType === 'Mesa' ? mesa : null, direccion: maps, fecha: new Date().toISOString(), estado: "Pendiente" });
-      showToast('Pedido guardado y inventario descontado.');
+      showToast('Pedido guardado.');
       manualCart = {}; document.getElementById('manName').value = ''; document.getElementById('manPhone').value = ''; renderManualProducts(); calcManualTotal();
       switchTab('pedidos', document.querySelectorAll('.nav-link')[1]);
     } catch(e) { showToast("Error"); }
   };
 
-  // CATALOGO Y RECETAS
-  window.openEditModal = (id) => { document.getElementById('editId').value = id; document.getElementById('editName').value = catalogData[id].name; document.getElementById('editPrice').value = catalogData[id].price; const receta = catalogData[id].receta || []; document.getElementById('recipeList').innerHTML = Object.values(inventoryData).map(ing => { const existing = receta.find(r => r.id === ing.id); return `<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px; font-size:0.8rem;"><span>${ing.name} (${ing.unit})</span><input type="number" id="recipe_${ing.id}" value="${existing ? existing.qty : 0}" step="0.01" style="width: 60px; padding: 4px; border-radius: 4px; border: 1px solid #ccc;"></div>`; }).join(''); document.getElementById('modalCat').classList.add('open'); };
-  window.saveProduct = async () => { const id = document.getElementById('editId').value; let imageUrl = catalogData[id].image; const fileInput = document.getElementById('editImageFile'); if(fileInput.files.length > 0) { const { url } = await bucket.put(`prod_${id}_${Date.now()}.jpg`, fileInput.files[0]); imageUrl = url; } let receta = []; Object.values(inventoryData).forEach(ing => { const qty = parseFloat(document.getElementById('recipe_' + ing.id).value) || 0; if(qty > 0) receta.push({ id: ing.id, qty: qty }); }); await updateDoc(doc(db, "catalogo", id), { name: document.getElementById('editName').value, price: parseFloat(document.getElementById('editPrice').value), image: imageUrl, receta: receta }); document.getElementById('modalCat').classList.remove('open'); showToast('Producto actualizado.'); };
+  window.openNewProductModal = () => { document.getElementById('editId').value = ''; document.getElementById('editName').value = ''; document.getElementById('editPrice').value = ''; document.getElementById('modalCatTitle').textContent = 'Nuevo Producto'; document.getElementById('modalCat').classList.add('open'); };
+  window.openEditModal = (id) => { document.getElementById('editId').value = id; document.getElementById('editName').value = catalogData[id].name; document.getElementById('editPrice').value = catalogData[id].price; document.getElementById('modalCatTitle').textContent = 'Editar Producto'; document.getElementById('modalCat').classList.add('open'); };
 
-  window.addTransaction = async () => { const tipo = document.getElementById('finType').value; const amount = parseFloat(document.getElementById('finAmount').value); if(!amount || !tipo) return showToast("Faltan datos"); await addDoc(collection(db, "transacciones"), { tipo, montoUsd: amount, fecha: new Date().toISOString() }); document.getElementById('finAmount').value = ''; showToast('Movimiento guardado.'); };
+  window.saveProduct = async () => {
+    const id = document.getElementById('editId').value || 'prod_' + Date.now();
+    const name = document.getElementById('editName').value;
+    const price = parseFloat(document.getElementById('editPrice').value) || 0;
+    await setDoc(doc(db, "catalogo", id), { name: name, price: price }, { merge: true });
+    document.getElementById('modalCat').classList.remove('open'); showToast('Producto guardado.');
+  };
+
+  window.addTransaction = async () => { const tipo = document.getElementById('finType').value; const amount = parseFloat(document.getElementById('finAmount').value); if(!amount || !tipo) return showToast("Faltan datos"); await addDoc(collection(db, "transacciones"), { tipo, montoUsd: amount, fecha: new Date().toISOString() }); document.getElementById('finAmount').value = ''; showToast('Gasto guardado.'); };
 </script>
 </body>
 </html>
