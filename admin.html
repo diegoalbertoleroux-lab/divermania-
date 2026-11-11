@@ -32,7 +32,8 @@
   .btn-outline { background: transparent; color: var(--text-main); border: 1px solid var(--border-light); }
   .btn-success { background: var(--success); border-color: var(--success); color: white; }
   .btn-warning { background: #F59E0B; border-color: #F59E0B; color: white; }
-  .card { background: var(--surface); border-radius: var(--radius-card); padding: 20px; border: 1px solid var(--border-light); margin-bottom: 20px; }
+  .btn-danger { background: var(--danger); border-color: var(--danger); color: white; padding: 6px 10px; font-size: 0.8rem;}
+  .card { background: var(--surface); border-radius: var(--radius-card); padding: 20px; border: 1px solid var(--border-light); margin-bottom: 20px; position: relative;}
   .form-group { margin-bottom: 15px; }
   .form-group label { display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 6px; }
   .form-control { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-light); background: var(--bg); color: var(--text-main); outline: none; }
@@ -50,6 +51,14 @@
   .sub-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
   .sub-content { display: none; }
   .sub-content.active { display: block; }
+  
+  /* ESTILOS PARA EL BOTON DE ELIMINAR */
+  .btn-delete-product { position: absolute; top: 10px; right: 10px; background: rgba(239, 68, 68, 0.9); color: white; border: none; width: 30px; height: 30px; border-radius: 50%; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10;}
+
+  /* ESTILOS PARA LAS MESAS Y QR */
+  .mesa-card { background: var(--surface); border: 1px solid var(--border-light); border-radius: var(--radius-card); padding: 15px; text-align: center; }
+  .mesa-card h4 { font-size: 1.2rem; margin-bottom: 10px; }
+  .qr-img { width: 150px; height: 150px; margin: 0 auto 10px; display: block; border: 4px solid white; border-radius: 8px; }
   
   @media (max-width: 768px) {
     .sidebar { position: fixed; top: 0; bottom: 0; left: 0; transform: translateX(-100%); box-shadow: 2px 0 10px rgba(0,0,0,0.5); }
@@ -70,8 +79,9 @@
   <button class="nav-link active" onclick="switchTab('dashboard', this)">Dashboard</button>
   <button class="nav-link" onclick="switchTab('pedidos', this)">Pedidos</button>
   <button class="nav-link" onclick="switchTab('manual', this)">Nuevo Pedido (Mesas)</button>
+  <button class="nav-link" onclick="switchTab('mesas', this)">Mesas y QR</button>
   <button class="nav-link" onclick="switchTab('catalogo', this)">Catálogo y Recetas</button>
-  <button class="nav-link" onclick="switchTab('inventario', this)">Inventario y Gramajes</button>
+  <button class="nav-link" onclick="switchTab('inventario', this)">Inventario</button>
   <button class="nav-link" onclick="switchTab('finanzas', this)">Finanzas</button>
 </div>
 
@@ -88,6 +98,8 @@
   </header>
 
   <div class="page-container">
+    
+    <!-- DASHBOARD -->
     <div id="dashboard" class="page-section active">
       <div class="grid-stats">
         <div class="card"><h3 style="font-size: 0.8rem; color: var(--text-muted);">Ingresos</h3><p id="dashIncome" style="font-size: 1.5rem; font-weight: 800;">$0.00</p><p id="dashIncomeBs" style="font-size: 0.8rem; color: var(--text-muted);">Bs. 0.00</p></div>
@@ -97,12 +109,14 @@
       <div class="card"><canvas id="salesChart" height="70"></canvas></div>
     </div>
 
+    <!-- PEDIDOS -->
     <div id="pedidos" class="page-section">
       <div class="card" style="padding: 0; overflow-x: auto;">
         <table><thead><tr><th>Fecha</th><th>Cliente</th><th>Mesa</th><th>Productos</th><th>Total</th><th>Estado</th><th>Acción</th></tr></thead><tbody id="ordersTableBody"></tbody></table>
       </div>
     </div>
 
+    <!-- NUEVO PEDIDO -->
     <div id="manual" class="page-section">
       <div class="grid-2">
         <div class="card">
@@ -122,6 +136,14 @@
       </div>
     </div>
 
+    <!-- MESAS Y QR -->
+    <div id="mesas" class="page-section">
+      <h3 style="margin-bottom: 20px;">Generador de Códigos QR para Mesas</h3>
+      <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 20px;">Haz clic derecho en el código QR y selecciona "Guardar imagen como..." para imprimirlo y pegarlo en la mesa.</p>
+      <div class="grid-3" id="mesasGrid"></div>
+    </div>
+
+    <!-- CATALOGO -->
     <div id="catalogo" class="page-section">
       <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
         <h3>Productos</h3>
@@ -130,6 +152,7 @@
       <div class="grid-stats" id="catalogEditorGrid"></div>
     </div>
 
+    <!-- INVENTARIO -->
     <div id="inventario" class="page-section">
       <div class="grid-2">
         <div class="card">
@@ -147,20 +170,46 @@
       </div>
     </div>
 
+    <!-- FINANZAS -->
     <div id="finanzas" class="page-section">
       <div class="sub-tabs">
-        <div class="sub-tab active" onclick="switchSubTab('sub-trans', this)">Movimientos</div>
-        <div class="sub-tab" onclick="switchSubTab('sub-cxc', this)">Cuentas por Cobrar</div>
-        <div class="sub-tab" onclick="switchSubTab('sub-cxp', this)">Cuentas por Pagar</div>
+        <div class="sub-tab active" onclick="switchSubTab('sub-compras', this)">Registrar Compra</div>
+        <div class="sub-tab" onclick="switchSubTab('sub-trans', this)">Movimientos</div>
+        <div class="sub-tab" onclick="switchSubTab('sub-cxc', this)">Cobrar (Fiados)</div>
+        <div class="sub-tab" onclick="switchSubTab('sub-cxp', this)">Pagar (Proveedores)</div>
       </div>
 
-      <div id="sub-trans" class="sub-content active">
+      <!-- NUEVA SUBTAB: REGISTRAR COMPRA DE INSUMOS -->
+      <div id="sub-compras" class="sub-content active">
         <div class="grid-2">
           <div class="card">
-            <h3>Registrar Movimiento</h3>
-            <div class="form-group"><label>Tipo</label><select id="finType" class="form-control"><option value="Gasto (Compra)">Gasto (Compra)</option><option value="Ingreso Extra">Ingreso Extra</option></select></div>
+            <h3>Registrar Compra de Mercancía</h3>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 15px;">Esto sumará automáticamente el stock y restará el dinero de tu caja.</p>
+            <div class="form-group">
+              <label>Insumo Comprado</label>
+              <select id="compraItem" class="form-control"></select>
+            </div>
+            <div class="form-group"><label>Cantidad Comprada</label><input type="number" id="compraQty" class="form-control" step="0.01"></div>
+            <div class="form-group"><label>Costo Total de la Compra ($)</label><input type="number" id="compraCost" class="form-control" step="0.01" placeholder="Ej: 15.50"></div>
+            <button class="btn btn-warning" style="width: 100%;" onclick="registrarCompra()">Registrar Compra y Sumar Stock</button>
+          </div>
+          <div class="card">
+            <h3>Últimas Compras</h3>
+            <div style="max-height: 300px; overflow-y: auto;">
+              <table><thead><tr><th>Fecha</th><th>Descripción</th><th>Monto</th></tr></thead><tbody id="comprasTableBody"></tbody></table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SUBTAB MOVIMIENTOS -->
+      <div id="sub-trans" class="sub-content">
+        <div class="grid-2">
+          <div class="card">
+            <h3>Movimiento Manual</h3>
+            <div class="form-group"><label>Tipo</label><select id="finType" class="form-control"><option value="Gasto (Otro)">Gasto (Otro)</option><option value="Ingreso Extra">Ingreso Extra</option></select></div>
             <div class="form-group"><label>Monto ($)</label><input type="number" id="finAmount" class="form-control" step="0.01"></div>
-            <div class="form-group"><label>Descripción</label><input type="text" id="finDesc" class="form-control" placeholder="Ej: Compra de carne"></div>
+            <div class="form-group"><label>Descripción</label><input type="text" id="finDesc" class="form-control" placeholder="Ej: Pago de luz"></div>
             <button class="btn" style="width: 100%;" onclick="addTransaction()">Guardar</button>
           </div>
           <div class="card" style="padding: 0; overflow-x: auto; max-height: 400px;">
@@ -169,6 +218,7 @@
         </div>
       </div>
 
+      <!-- SUBTAB CXC -->
       <div id="sub-cxc" class="sub-content">
         <div class="card">
           <h3>Anotar Fiado</h3>
@@ -183,6 +233,7 @@
         </div>
       </div>
 
+      <!-- SUBTAB CXP -->
       <div id="sub-cxp" class="sub-content">
         <div class="card">
           <h3>Anotar Deuda a Proveedor</h3>
@@ -200,7 +251,7 @@
   </div>
 </div>
 
-<!-- MODAL CATALOGO CON CATEGORIA Y URL -->
+<!-- MODAL CATALOGO -->
 <div class="modal" id="modalCat">
   <div class="modal-content">
     <h2 id="modalCatTitle" style="margin-bottom: 15px;">Editar Producto</h2>
@@ -220,9 +271,7 @@
     <div class="form-group">
       <label>URL de la Imagen (Opcional)</label>
       <input type="text" id="editImageUrl" class="form-control" placeholder="https://ejemplo.com/foto.jpg">
-      <small style="font-size: 0.7rem; color: var(--text-muted);">Si lo dejas vacío, se pondrá una imagen por defecto.</small>
     </div>
-    
     <div style="background: var(--bg); padding: 15px; border-radius: 8px; margin: 15px 0;">
       <h4 style="font-size: 0.9rem; margin-bottom: 10px;">Receta (Gramos por unidad)</h4>
       <div id="recipeList" style="max-height: 150px; overflow-y: auto;"></div>
@@ -267,7 +316,7 @@
 
 <script type="module">
   import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getFirestore, collection, onSnapshot, query, orderBy, doc, updateDoc, addDoc, setDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+  import { getFirestore, collection, onSnapshot, query, orderBy, doc, updateDoc, addDoc, setDoc, increment, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
   const firebaseConfig = { apiKey: "AIzaSyArZsARX2njLeLNBYCwu1hPyXBUU_Vg09ko", authDomain: "divermania-3f104.firebaseapp.com", projectId: "divermania-3f104", storageBucket: "divermania-3f104.firebasestorage.app", messagingSenderId: "230376484506", appId: "1:230376484506:web:7534dd68d9085f499cb923", measurementId: "G-P2SNN9VDEE" };
   const app = !getApps().length ? initializeApp(firebaseConfig) : getApps()[0];
@@ -284,6 +333,7 @@
 
   document.body.style.display = 'flex';
   initApp();
+  generarQRs(); // Genera las mesas al cargar
 
   window.switchTab = (tabId, btn) => {
     document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
@@ -303,6 +353,24 @@
   function showToast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); }
   window.toggleTheme = () => { const el = document.documentElement; const newTheme = el.getAttribute('data-theme') === 'light' ? 'dark' : 'light'; el.setAttribute('data-theme', newTheme); };
 
+  // GENERADOR DE QR PARA MESAS
+  function generarQRs() {
+    const grid = document.getElementById('mesasGrid');
+    let html = '';
+    for(let i=1; i<=10; i++) {
+      const url = `https://divermania.pages.dev/?mesa=${i}`;
+      const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(url)}`;
+      html += `
+        <div class="mesa-card">
+          <h4>Mesa ${i}</h4>
+          <img src="${qrUrl}" class="qr-img" alt="QR Mesa ${i}">
+          <p style="font-size:0.7rem; color:var(--text-muted); word-break: break-all;">${url}</p>
+        </div>
+      `;
+    }
+    grid.innerHTML = html;
+  }
+
   async function initApp() {
     onSnapshot(query(collection(db, "pedidos"), orderBy("fecha", "desc")), (snap) => { ordersData = []; snap.forEach(d => ordersData.push({ id: d.id, ...d.data() })); renderOrders(); calculateFinances(); });
     onSnapshot(query(collection(db, "transacciones"), orderBy("fecha", "desc")), (snap) => { transactionsData = []; snap.forEach(d => transactionsData.push({ id: d.id, ...d.data() })); renderTransactions(); calculateFinances(); });
@@ -314,12 +382,42 @@
 
   function renderOrders() { document.getElementById('ordersTableBody').innerHTML = ordersData.map(o => { let prods = typeof o.productos === 'object' ? Object.entries(o.productos).map(([k,v])=>`${v}x ${k}`).join('<br>') : o.productos; return `<tr><td>${new Date(o.fecha).toLocaleString('es-VE')}</td><td>${o.cliente}</td><td><b>${o.mesa ? 'Mesa '+o.mesa : o.tipoEntrega}</b></td><td>${prods}</td><td style="font-weight:bold;">${o.total}</td><td>${o.estado}</td><td><a href="https://wa.me/${o.telefono.replace(/\D/g,'')}" target="_blank" style="color: var(--success); font-weight: bold; text-decoration: none;">WA</a></td></tr>`; }).join(''); }
   
-  function renderCatalog() { document.getElementById('catalogEditorGrid').innerHTML = Object.values(catalogData).map(p => `<div class="card" style="cursor: pointer; text-align: center;" onclick="openEditModal('${p.id}')"><img src="${p.image || 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2UyZThmMCIvPjwvc3ZnPg=='}" style="width: 100%; height: 100px; object-fit: cover; border-radius: 8px; margin-bottom: 10px;"><h4 style="margin-bottom: 5px;">${p.name}</h4><div style="color: var(--text-main); font-weight: bold;">$${p.price.toFixed(2)}</div><div style="font-size:0.7rem; color:var(--text-muted);">${p.cat || 'Sin Cat'}</div></div>`).join(''); }
-  
+  function renderCatalog() { 
+    document.getElementById('catalogEditorGrid').innerHTML = Object.values(catalogData).map(p => `
+      <div class="card" style="cursor: pointer; text-align: center;">
+        <button class="btn-delete-product" onclick="deleteProduct('${p.id}', event)" title="Eliminar Producto">X</button>
+        <div onclick="openEditModal('${p.id}')">
+          <img src="${p.image || 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2UyZThmMCIvPjwvc3ZnPg=='}" style="width: 100%; height: 100px; object-fit: cover; border-radius: 8px; margin-bottom: 10px;">
+          <h4 style="margin-bottom: 5px;">${p.name}</h4>
+          <div style="color: var(--text-main); font-weight: bold;">$${p.price.toFixed(2)}</div>
+          <div style="font-size:0.7rem; color:var(--text-muted);">${p.cat || 'Sin Cat'}</div>
+        </div>
+      </div>
+    `).join(''); 
+  }
+
+  // FUNCION PARA ELIMINAR PRODUCTO
+  window.deleteProduct = async (id, event) => {
+    event.stopPropagation(); // Evita que se abra el modal al hacer clic
+    if(confirm('¿Estás seguro de que quieres eliminar este producto del catálogo?')) {
+      await deleteDoc(doc(db, "catalogo", id));
+      showToast('Producto eliminado.');
+    }
+  };
+
   function renderInventory() { document.getElementById('inventoryList').innerHTML = Object.values(inventoryData).map(i => `<div style="margin-bottom: 10px;"><div style="display: flex; justify-content: space-between; font-size: 0.85rem;"><span>${i.name}</span><span>${i.stock.toFixed(2)} ${i.unit}</span></div></div>`).join(''); }
-  function populateIngredientSelect() { document.getElementById('invMoveItem').innerHTML = Object.values(inventoryData).map(i => `<option value="${i.id}">${i.name}</option>`).join(''); }
+  function populateIngredientSelect() { 
+    const options = Object.values(inventoryData).map(i => `<option value="${i.id}">${i.name}</option>`).join('');
+    document.getElementById('invMoveItem').innerHTML = options; 
+    document.getElementById('compraItem').innerHTML = options; 
+  }
   
-  function renderTransactions() { document.getElementById('financeTableBody').innerHTML = transactionsData.map(t => `<tr><td>${new Date(t.fecha).toLocaleDateString('es-VE')}</td><td>${t.tipo}</td><td>${t.desc || '-'}</td><td style="font-weight:bold; color:${t.tipo.includes('Gasto')?'var(--danger)':'var(--success)'};">$${t.montoUsd.toFixed(2)}</td><td>Bs. ${(t.montoUsd * TASA_CAMBIO).toFixed(2)}</td></tr>`).join(''); }
+  function renderTransactions() { 
+    document.getElementById('financeTableBody').innerHTML = transactionsData.map(t => `<tr><td>${new Date(t.fecha).toLocaleDateString('es-VE')}</td><td>${t.tipo}</td><td>${t.desc || '-'}</td><td style="font-weight:bold; color:${t.tipo.includes('Gasto')||t.tipo.includes('Compra')?'var(--danger)':'var(--success)'};">$${t.montoUsd.toFixed(2)}</td><td>Bs. ${(t.montoUsd * TASA_CAMBIO).toFixed(2)}</td></tr>`).join(''); 
+    // Llenar la tabla de compras especificamente
+    const compras = transactionsData.filter(t => t.tipo.includes('Compra'));
+    document.getElementById('comprasTableBody').innerHTML = compras.map(t => `<tr><td>${new Date(t.fecha).toLocaleDateString('es-VE')}</td><td>${t.desc}</td><td style="color:var(--danger); font-weight:bold;">$${t.montoUsd.toFixed(2)}</td></tr>`).join('');
+  }
   
   function renderCxC() { document.getElementById('cxcTableBody').innerHTML = cxcData.map(c => `<tr><td>${new Date(c.fecha).toLocaleDateString('es-VE')}</td><td>${c.cliente}</td><td style="color:var(--danger); font-weight:bold;">$${c.monto.toFixed(2)}</td><td>Bs. ${(c.monto * TASA_CAMBIO).toFixed(2)}</td><td>${c.estado}</td><td>${c.estado==='Pendiente' ? `<button class="btn btn-success" style="padding:4px 8px; font-size:0.7rem;" onclick="payCxC('${c.id}')">Cobrar</button>` : 'Pagado'}</td></tr>`).join(''); }
   function renderCxP() { document.getElementById('cxpTableBody').innerHTML = cxpData.map(c => `<tr><td>${new Date(c.fecha).toLocaleDateString('es-VE')}</td><td>${c.proveedor}</td><td style="color:var(--danger); font-weight:bold;">$${c.monto.toFixed(2)}</td><td>Bs. ${(c.monto * TASA_CAMBIO).toFixed(2)}</td><td>${c.estado}</td><td>${c.estado==='Pendiente' ? `<button class="btn btn-success" style="padding:4px 8px; font-size:0.7rem;" onclick="payCxP('${c.id}')">Pagar</button>` : 'Pagado'}</td></tr>`).join(''); }
@@ -338,6 +436,38 @@
     if(myChart) myChart.destroy();
     myChart = new Chart(document.getElementById('salesChart').getContext('2d'), { type: 'line', data: { labels: ['Ingresos', 'Gastos'], datasets: [{ label: 'Balance', data: [totalIncome, tExpenses], borderColor: '#000000', backgroundColor: 'rgba(0,0,0,0.1)', fill: true }] }, options: { responsive: true, plugins: { legend: { display: false } } } });
   }
+
+  // FUNCION NUEVA PARA REGISTRAR COMPRAS
+  window.registrarCompra = async () => {
+    const itemId = document.getElementById('compraItem').value;
+    const qty = parseFloat(document.getElementById('compraQty').value);
+    const cost = parseFloat(document.getElementById('compraCost').value);
+    
+    if(!itemId || !qty || !cost) return showToast('Faltan datos de la compra');
+    
+    const itemName = inventoryData[itemId].name;
+    const desc = `Compra de ${qty} ${inventoryData[itemId].unit} de ${itemName}`;
+
+    try {
+      // 1. Sumar al Inventario
+      await updateDoc(doc(db, "inventario", itemId), { stock: increment(qty) });
+      
+      // 2. Registrar Gasto en Finanzas
+      await addDoc(collection(db, "transacciones"), { 
+        tipo: "Compra de Insumo", 
+        montoUsd: cost, 
+        desc: desc, 
+        fecha: new Date().toISOString() 
+      });
+      
+      showToast('Compra registrada y stock actualizado.');
+      document.getElementById('compraQty').value = '';
+      document.getElementById('compraCost').value = '';
+    } catch(e) {
+      console.error(e);
+      showToast('Error al registrar la compra.');
+    }
+  };
 
   window.openAddIngredientModal = () => document.getElementById('modalAddIng').classList.add('open');
   window.saveNewIngredient = async () => { const name = document.getElementById('ingName').value; const id = name.toLowerCase().replace(/\s+/g, '_'); await setDoc(doc(db, "inventario", id), { name: name, stock: parseFloat(document.getElementById('ingStock').value) || 0, minStock: parseFloat(document.getElementById('ingMin').value) || 0, unit: document.getElementById('ingUnit').value }); document.getElementById('modalAddIng').classList.remove('open'); showToast('Insumo guardado.'); };
@@ -391,7 +521,6 @@
       let imageUrl = document.getElementById('editImageUrl').value.trim();
       const cat = document.getElementById('editCat').value;
       
-      // SI NO HAY IMAGEN, PONEMOS UNA POR DEFECTO PARA QUE NO SE VEA EN BLANCO
       if(!imageUrl) {
         imageUrl = "https://images.unsplash.com/photo-1541214113241-2151668aa4cb?q=80&w=400&auto=format&fit=crop"; 
       }
