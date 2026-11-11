@@ -120,14 +120,10 @@ const cartCount = () => Object.values(cart).reduce((a,b)=>a+b,0);
 const cartSubtotal = () => Object.entries(cart).reduce((sum,[id,qty])=>{ const p = window.PRODUCTS.find(x=>x.id===id); return sum + (p ? p.price * qty : 0); },0);
 
 function renderMenu(){
-  // Limpiar grids
   document.querySelectorAll('[data-grid]').forEach(g => g.innerHTML = '');
-
   ['perros','hamburguesas','fiesta'].forEach(cat=>{
     const grid = document.querySelector(`[data-grid="${cat}"]`); if(!grid) return;
-    // FILTRO ESTRICTO POR CATEGORIA
     const items = window.PRODUCTS.filter(p=>p.cat === cat);
-    
     if(items.length > 0) {
       grid.innerHTML = items.map((p)=>{
         let imgSrc = p.image ? p.image : 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2UyZThmMCIvPjwvc3ZnPg==';
@@ -174,14 +170,41 @@ function processAndSend() {
   let tipoEntrega = urlMesa ? 'Mesa' : 'Delivery';
   let infoEntrega = urlMesa ? `Mesa: ${urlMesa}` : `Dirección: ${address}`;
 
+  // 1. GUARDAR EN FIREBASE
+  let prodsNube = {};
+  Object.entries(cart).forEach(([id,qty])=>{ 
+      const p = window.PRODUCTS.find(x=>x.id===id); 
+      if(p) prodsNube[p.name] = qty;
+  });
+
+  const total = cartSubtotal();
+
+  if (window.guardarPedidoEnNube) {
+      window.guardarPedidoEnNube({
+          cliente: name, 
+          telefono: phone, 
+          productos: prodsNube, 
+          total: money(total),
+          metodoPago: "Web", 
+          tipoEntrega: tipoEntrega, 
+          mesa: urlMesa ? urlMesa : null,
+          direccion: address || ''
+      });
+  }
+
+  // 2. ABRIR WHATSAPP
   let msg = `*NUEVO PEDIDO - DIVERMANIA*\n\nCliente: ${name}\nTel: ${phone}\n${infoEntrega}\n\n*PRODUCTOS:*\n`;
   Object.entries(cart).forEach(([id,qty])=>{ const p = window.PRODUCTS.find(x=>x.id===id); msg += `- ${qty}x ${p.name} = ${money(p.price * qty)}\n`; });
-  const total = cartSubtotal();
   msg += `\n*TOTAL: ${money(total)}*`;
+  
   window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank');
   
   document.getElementById('successOverlay').classList.add('show');
-  setTimeout(() => { document.getElementById('successOverlay').classList.remove('show'); cart = {}; saveCart(); updateFab(); document.getElementById('cartOverlay').classList.remove('open'); }, 3000);
+  setTimeout(() => { 
+      document.getElementById('successOverlay').classList.remove('show'); 
+      cart = {}; saveCart(); updateFab(); 
+      document.getElementById('cartOverlay').classList.remove('open'); 
+  }, 3000);
 }
 
 function toggleTheme() { const el = document.documentElement; const newTheme = el.getAttribute('data-theme') === 'light' ? 'dark' : 'light'; el.setAttribute('data-theme', newTheme); }
@@ -189,25 +212,33 @@ document.querySelectorAll('.cat-btn').forEach(btn => { btn.addEventListener('cli
 renderMenu();
 </script>
 
+<!-- AQUI ESTA LA MAGIA QUE FALTABA PARA GUARDAR EN FIREBASE -->
 <script type="module">
   import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+  import { getFirestore, collection, onSnapshot, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
   const firebaseConfig = { apiKey: "AIzaSyArZsARX2njLeLNBYCwu1hPyXBUU_Vg09ko", authDomain: "divermania-3f104.firebaseapp.com", projectId: "divermania-3f104", storageBucket: "divermania-3f104.firebasestorage.app", messagingSenderId: "230376484506", appId: "1:230376484506:web:7534dd68d9085f499cb923", measurementId: "G-P2SNN9VDEE" };
   const app = !getApps().length ? initializeApp(firebaseConfig) : getApps()[0];
   const db = getFirestore(app);
 
-  // AQUI ESTABA EL ERROR. AHORA ESCUCHA BIEN Y ACTUALIZA
+  // 1. FUNCION PARA GUARDAR EL PEDIDO
+  window.guardarPedidoEnNube = async (datosPedido) => {
+    try {
+      await addDoc(collection(db, "pedidos"), { ...datosPedido, fecha: new Date().toISOString(), estado: "Pendiente" });
+      console.log("Pedido guardado en Firebase correctamente");
+    } catch (e) { 
+      console.error("Error al guardar pedido: ", e); 
+    }
+  };
+
+  // 2. LEER EL CATALOGO EN TIEMPO REAL
   onSnapshot(collection(db, "catalogo"), (snapshot) => {
     if(!snapshot.empty) {
       let nuevosProductos = [];
       snapshot.forEach((doc) => nuevosProductos.push({ id: doc.id, ...doc.data() }));
       window.PRODUCTS = nuevosProductos;
-      console.log("Productos cargados desde Firebase:", window.PRODUCTS); // Para que lo veas en la consola F12
       if (window.renderMenu) window.renderMenu(); 
       if (window.updateFab) window.updateFab();  
-    } else {
-      console.log("No hay productos en Firebase, usando los por defecto.");
     }
   });
 
