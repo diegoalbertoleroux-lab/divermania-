@@ -3,15 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#8B5CF6">
-<title>DIVERMANIA · Fiesta y Comida</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='%238B5CF6'/><text x='50' y='55' fill='white' font-size='60' font-family='Arial,sans-serif' font-weight='bold' text-anchor='middle' dominant-baseline='central'>D</text></svg>">
+<title>DIVERMANIA · Delivery y Mesas</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='%23000000'/><text x='50' y='55' fill='white' font-size='60' font-family='Arial,sans-serif' font-weight='bold' text-anchor='middle' dominant-baseline='central'>D</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root { --bg: #F8F9FA; --surface: #FFFFFF; --text-main: #111827; --text-muted: #6B7280; --primary: #8B5CF6; --border-light: #E5E7EB; --success: #10B981; --radius-card: 20px; --shadow-sm: 0 2px 8px rgba(0,0,0,0.04); --shadow-md: 0 8px 24px rgba(0,0,0,0.08); }
-[data-theme="dark"] { --bg: #121212; --surface: #1E1E1E; --text-main: #F9FAFB; --text-muted: #9CA3AF; --border-light: #374151; --shadow-sm: 0 2px 8px rgba(0,0,0,0.3); --shadow-md: 0 8px 24px rgba(0,0,0,0.5); }
+:root { --bg: #F8F9FA; --surface: #FFFFFF; --text-main: #111827; --text-muted: #6B7280; --primary: #000000; --border-light: #E5E7EB; --success: #10B981; --radius-card: 20px; --shadow-sm: 0 2px 8px rgba(0,0,0,0.04); }
+[data-theme="dark"] { --bg: #121212; --surface: #1E1E1E; --text-main: #F9FAFB; --text-muted: #9CA3AF; --border-light: #374151; }
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Inter', sans-serif; background:var(--bg); color:var(--text-main); padding-bottom:110px; overflow-x:hidden;}
 h1,h2,h3{font-family:'Outfit', sans-serif;}
@@ -44,7 +43,7 @@ main section.active{display:block}
 .form-group{margin:16px 0;}
 .form-group input, .form-group textarea{width:100%; padding:14px; border:none; border-radius:12px; background:var(--bg); color:var(--text-main); box-shadow: inset 0 0 0 1px var(--border-light);}
 .btn{width:100%; padding:16px; border:none; border-radius:14px; font-weight:700; cursor:pointer; margin-top:16px; }
-.btn-primary{background:var(--primary); color:#fff;}
+.btn-primary{background:var(--primary); color:var(--surface);}
 #successOverlay{position:fixed; inset:0; background:var(--bg); z-index:9999; display:none; flex-direction:column; align-items:center; justify-content:center;}
 #successOverlay.show{display:flex;}
 </style>
@@ -58,20 +57,20 @@ main section.active{display:block}
   </div>
 </div>
 
-<div id="bannerMesa" style="background:var(--primary); color:white; text-align:center; padding:10px; font-weight:bold; display:none;">
+<div id="bannerMesa" style="background:var(--primary); color:var(--surface); text-align:center; padding:10px; font-weight:bold; display:none;">
   Estás ordenando desde la <span id="mesaText"></span>
 </div>
 
 <nav class="categories">
-  <button class="cat-btn active" data-cat="fiesta">Artículos de Fiesta</button>
-  <button class="cat-btn" data-cat="perros">Perros Calientes</button>
-  <button class="cat-btn" data-cat="combos">Combos</button>
+  <button class="cat-btn active" data-cat="perros">Perros</button>
+  <button class="cat-btn" data-cat="hamburguesas">Hamburguesas</button>
+  <button class="cat-btn" data-cat="fiesta">Fiesta</button>
 </nav>
 
 <main>
-  <section id="fiesta" class="active"><div class="catalog-grid" data-grid="fiesta"></div></section>
-  <section id="perros"><div class="catalog-grid" data-grid="perros"></div></section>
-  <section id="combos"><div class="catalog-grid" data-grid="combos"></div></section>
+  <section id="perros" class="active"><div class="catalog-grid" data-grid="perros"></div></section>
+  <section id="hamburguesas"><div class="catalog-grid" data-grid="hamburguesas"></div></section>
+  <section id="fiesta"><div class="catalog-grid" data-grid="fiesta"></div></section>
 </main>
 
 <button class="cart-fab" id="cartFab" onclick="openCart()"><span>Ver mi pedido</span><span class="badge" id="cartCount">0</span></button>
@@ -85,7 +84,7 @@ main section.active{display:block}
     </div>
     <div id="checkoutForm" style="display:none; margin-top:20px;">
       <div class="form-group"><label>Tus datos</label><input id="custName" placeholder="Nombre" style="margin-bottom:10px;"><input id="custPhone" type="tel" placeholder="Teléfono"></div>
-      <div class="form-group"><label>Dirección de entrega</label><textarea id="custAddress" rows="2" placeholder="Calle, casa..."></textarea></div>
+      <div class="form-group" id="addressGroup"><label>Dirección de entrega</label><textarea id="custAddress" rows="2" placeholder="Calle, casa..."></textarea></div>
       <button class="btn btn-primary" onclick="processAndSend()">Enviar Pedido por WhatsApp</button>
     </div>
   </div>
@@ -100,11 +99,11 @@ main section.active{display:block}
 const WHATSAPP_NUMBER = "584120000000"; // <--- CAMBIA ESTO POR TU NÚMERO
 window.PRODUCTS = [];
 const DEFAULT_PRODUCTS = [
-  { id:'f1', cat:'fiesta', name:'Globos Payaso x10', desc:'Colores surtidos', price:2.50, image:'globos1.jpg' },
-  { id:'p1', cat:'perros', name:'Perro Sencillo', desc:'Salchicha, papas y salsas', price:1.50, image:'perrosencillo.jpeg' },
-  { id:'p2', cat:'perros', name:'Perro Clásico', desc:'Salchicha premium, papas trituradas', price:2.50, image:'perroclasico.jpeg' },
-  { id:'c1', cat:'combos', name:'COMBO FIESTA', desc:'20 Globos + 1 Piñata Pequeña', price:10.00, image:'combo1.jpg' }
+  { id:'p1', cat:'perros', name:'Perro Clásico', desc:'Salchicha, papas', price:2.50, image:'perroclasico.jpeg' },
+  { id:'h1', cat:'hamburguesas', name:'Hamburguesa Clásica', desc:'Carne, queso, lechuga', price:3.50, image:'hamburguesa.jpg' },
+  { id:'f1', cat:'fiesta', name:'Globos Payaso', desc:'Colores surtidos', price:2.50, image:'globos1.jpg' }
 ];
+window.PRODUCTS = DEFAULT_PRODUCTS;
 
 let cart = JSON.parse(localStorage.getItem('cart') || '{}');
 let urlMesa = null;
@@ -113,6 +112,7 @@ if(urlParams.has('mesa')) {
   urlMesa = urlParams.get('mesa');
   document.getElementById('bannerMesa').style.display = 'block';
   document.getElementById('mesaText').textContent = `Mesa ${urlMesa}`;
+  document.getElementById('addressGroup').style.display = 'none';
 }
 
 const saveCart = () => localStorage.setItem('cart', JSON.stringify(cart));
@@ -121,7 +121,7 @@ const cartCount = () => Object.values(cart).reduce((a,b)=>a+b,0);
 const cartSubtotal = () => Object.entries(cart).reduce((sum,[id,qty])=>{ const p = window.PRODUCTS.find(x=>x.id===id); return sum + (p ? p.price * qty : 0); },0);
 
 function renderMenu(){
-  ['fiesta','perros','combos'].forEach(cat=>{
+  ['perros','hamburguesas','fiesta'].forEach(cat=>{
     const grid = document.querySelector(`[data-grid="${cat}"]`); if(!grid) return;
     const items = window.PRODUCTS.filter(p=>p.cat===cat);
     grid.innerHTML = items.map((p)=>{
@@ -142,7 +142,7 @@ function renderMenu(){
 window.renderMenu = renderMenu; 
 
 function handleAddToCart(e, id) {
-  cart[id] = (cart[id] || 0) + 1; saveCart(); updateFab(); toast('Añadido al pedido');
+  cart[id] = (cart[id] || 0) + 1; saveCart(); updateFab(); alert('Añadido al pedido');
 }
 function updateFab(){ const count = cartCount(); document.getElementById('cartFab').style.display = count > 0 ? 'flex' : 'none'; document.getElementById('cartCount').textContent = count; }
 window.updateFab = updateFab;
@@ -177,7 +177,6 @@ function processAndSend() {
 
 function toggleTheme() { const el = document.documentElement; const newTheme = el.getAttribute('data-theme') === 'light' ? 'dark' : 'light'; el.setAttribute('data-theme', newTheme); }
 document.querySelectorAll('.cat-btn').forEach(btn => { btn.addEventListener('click', () => { document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active')); document.querySelectorAll('main section').forEach(s=>s.classList.remove('active')); btn.classList.add('active'); document.getElementById(btn.dataset.cat).classList.add('active'); }); });
-function toast(msg){ alert(msg); }
 renderMenu();
 </script>
 
@@ -185,16 +184,7 @@ renderMenu();
   import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
   import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyArZsARX2njLeLNBYCwu1hPyXBUU_Vg09ko",
-    authDomain: "divermania-3f104.firebaseapp.com",
-    projectId: "divermania-3f104",
-    storageBucket: "divermania-3f104.firebasestorage.app",
-    messagingSenderId: "230376484506",
-    appId: "1:230376484506:web:7534dd68d9085f499cb923",
-    measurementId: "G-P2SNN9VDEE"
-  };
-  
+  const firebaseConfig = { apiKey: "AIzaSyArZsARX2njLeLNBYCwu1hPyXBUU_Vg09ko", authDomain: "divermania-3f104.firebaseapp.com", projectId: "divermania-3f104", storageBucket: "divermania-3f104.firebasestorage.app", messagingSenderId: "230376484506", appId: "1:230376484506:web:7534dd68d9085f499cb923", measurementId: "G-P2SNN9VDEE" };
   const app = !getApps().length ? initializeApp(firebaseConfig) : getApps()[0];
   const db = getFirestore(app);
 
