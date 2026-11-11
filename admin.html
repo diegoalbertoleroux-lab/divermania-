@@ -52,7 +52,6 @@
   .sub-content { display: none; }
   .sub-content.active { display: block; }
   
-  /* RESPONSIVE PARA TELEFONOS */
   @media (max-width: 768px) {
     .sidebar { position: fixed; top: 0; bottom: 0; left: 0; transform: translateX(-100%); box-shadow: 2px 0 10px rgba(0,0,0,0.5); }
     .sidebar.open { transform: translateX(0); }
@@ -220,7 +219,22 @@
       <div class="form-group"><label>Nombre</label><input type="text" id="editName" class="form-control"></div>
       <div class="form-group"><label>Precio ($)</label><input type="number" id="editPrice" class="form-control" step="0.01"></div>
     </div>
-    <div class="form-group"><label>Imagen (Opcional)</label><input type="file" id="editImageFile" accept="image/*" class="form-control"></div>
+    <!-- SELECTOR DE CATEGORIA AGREGADO AQUI -->
+    <div class="form-group">
+      <label>Categoría</label>
+      <select id="editCat" class="form-control">
+        <option value="perros">Perros</option>
+        <option value="hamburguesas">Hamburguesas</option>
+        <option value="fiesta">Fiesta</option>
+      </select>
+    </div>
+    <!-- CAMPO DE IMAGEN POR URL -->
+    <div class="form-group">
+      <label>URL de la Imagen</label>
+      <input type="text" id="editImageUrl" class="form-control" placeholder="https://ejemplo.com/foto.jpg">
+      <small style="font-size: 0.7rem; color: var(--text-muted);">Sube tu foto a Imgur o GitHub y pega el enlace aquí.</small>
+    </div>
+    
     <div style="background: var(--bg); padding: 15px; border-radius: 8px; margin: 15px 0;">
       <h4 style="font-size: 0.9rem; margin-bottom: 10px;">Receta (Gramos por unidad)</h4>
       <div id="recipeList" style="max-height: 150px; overflow-y: auto;"></div>
@@ -266,11 +280,12 @@
 <script type="module">
   import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
   import { getFirestore, collection, onSnapshot, query, orderBy, doc, updateDoc, addDoc, setDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-  import { Bucket } from "https://esm.sh/@upstash/blob";
+  
+  // QUITAMOS UPSTASH PORQUE ESTABA DANDO ERROR
+  // import { Bucket } from "https://esm.sh/@upstash/blob"; 
 
   const firebaseConfig = { apiKey: "AIzaSyArZsARX2njLeLNBYCwu1hPyXBUU_Vg09ko", authDomain: "divermania-3f104.firebaseapp.com", projectId: "divermania-3f104", storageBucket: "divermania-3f104.firebasestorage.app", messagingSenderId: "230376484506", appId: "1:230376484506:web:7534dd68d9085f499cb923", measurementId: "G-P2SNN9VDEE" };
-  const bucket = new Bucket({ token: "AgAkADAMZTY1ZGU3MTktZDYwYS00NTkzLWEwZjctZjY3MGZhYmQzZjFlMURjMk1Ea3lNbVl0WTJVME15MDBOV1F4TFdGaU9UWXROemN3T1dKbU1URTVaVFE0YjJkM2RjZTAxZGM0" });
-
+  
   const app = !getApps().length ? initializeApp(firebaseConfig) : getApps()[0];
   const db = getFirestore(app);
 
@@ -292,7 +307,7 @@
     document.getElementById(tabId).classList.add('active'); btn.classList.add('active');
     document.getElementById('pageTitle').textContent = btn.textContent;
     if(tabId === 'manual') renderManualProducts();
-    document.getElementById('sidebar').classList.remove('open'); // Cierra menú en móvil
+    document.getElementById('sidebar').classList.remove('open');
   };
 
   window.switchSubTab = (subId, btn) => {
@@ -315,7 +330,7 @@
 
   function renderOrders() { document.getElementById('ordersTableBody').innerHTML = ordersData.map(o => { let prods = typeof o.productos === 'object' ? Object.entries(o.productos).map(([k,v])=>`${v}x ${k}`).join('<br>') : o.productos; return `<tr><td>${new Date(o.fecha).toLocaleString('es-VE')}</td><td>${o.cliente}</td><td><b>${o.mesa ? 'Mesa '+o.mesa : o.tipoEntrega}</b></td><td>${prods}</td><td style="font-weight:bold;">${o.total}</td><td>${o.estado}</td><td><a href="https://wa.me/${o.telefono.replace(/\D/g,'')}" target="_blank" style="color: var(--success); font-weight: bold; text-decoration: none;">WA</a></td></tr>`; }).join(''); }
   
-  function renderCatalog() { document.getElementById('catalogEditorGrid').innerHTML = Object.values(catalogData).map(p => `<div class="card" style="cursor: pointer; text-align: center;" onclick="openEditModal('${p.id}')"><img src="${p.image || 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2UyZThmMCIvPjwvc3ZnPg=='}" style="width: 100%; height: 100px; object-fit: cover; border-radius: 8px; margin-bottom: 10px;"><h4 style="margin-bottom: 5px;">${p.name}</h4><div style="color: var(--text-main); font-weight: bold;">$${p.price.toFixed(2)}</div></div>`).join(''); }
+  function renderCatalog() { document.getElementById('catalogEditorGrid').innerHTML = Object.values(catalogData).map(p => `<div class="card" style="cursor: pointer; text-align: center;" onclick="openEditModal('${p.id}')"><img src="${p.image || 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2UyZThmMCIvPjwvc3ZnPg=='}" style="width: 100%; height: 100px; object-fit: cover; border-radius: 8px; margin-bottom: 10px;"><h4 style="margin-bottom: 5px;">${p.name}</h4><div style="color: var(--text-main); font-weight: bold;">$${p.price.toFixed(2)}</div><div style="font-size:0.7rem; color:var(--text-muted);">${p.cat || 'Sin Cat'}</div></div>`).join(''); }
   
   function renderInventory() { document.getElementById('inventoryList').innerHTML = Object.values(inventoryData).map(i => `<div style="margin-bottom: 10px;"><div style="display: flex; justify-content: space-between; font-size: 0.85rem;"><span>${i.name}</span><span>${i.stock.toFixed(2)} ${i.unit}</span></div></div>`).join(''); }
   function populateIngredientSelect() { document.getElementById('invMoveItem').innerHTML = Object.values(inventoryData).map(i => `<option value="${i.id}">${i.name}</option>`).join(''); }
@@ -371,29 +386,26 @@
     } catch(e) { showToast("Error"); }
   };
 
-  window.openNewProductModal = () => { document.getElementById('editId').value = ''; document.getElementById('editName').value = ''; document.getElementById('editPrice').value = ''; document.getElementById('recipeList').innerHTML = ''; document.getElementById('modalCat').classList.add('open'); };
-  window.openEditModal = (id) => { document.getElementById('editId').value = id; document.getElementById('editName').value = catalogData[id].name; document.getElementById('editPrice').value = catalogData[id].price; const receta = catalogData[id].receta || []; document.getElementById('recipeList').innerHTML = Object.values(inventoryData).map(ing => { const existing = receta.find(r => r.id === ing.id); return `<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px; font-size:0.8rem;"><span>${ing.name} (${ing.unit})</span><input type="number" id="recipe_${ing.id}" value="${existing ? existing.qty : 0}" step="0.01" style="width: 60px; padding: 4px; border-radius: 4px; border: 1px solid #ccc;"></div>`; }).join(''); document.getElementById('modalCat').classList.add('open'); };
+  window.openNewProductModal = () => { document.getElementById('editId').value = ''; document.getElementById('editName').value = ''; document.getElementById('editPrice').value = ''; document.getElementById('editImageUrl').value = ''; document.getElementById('editCat').value = 'perros'; document.getElementById('recipeList').innerHTML = ''; document.getElementById('modalCat').classList.add('open'); };
   
-  // GUARDADO BLINDADO (Evita el error de undefined)
+  window.openEditModal = (id) => { 
+    document.getElementById('editId').value = id; 
+    document.getElementById('editName').value = catalogData[id].name; 
+    document.getElementById('editPrice').value = catalogData[id].price; 
+    document.getElementById('editCat').value = catalogData[id].cat || 'perros'; // <-- AGREGADO
+    document.getElementById('editImageUrl').value = catalogData[id].image || ''; 
+    const receta = catalogData[id].receta || []; 
+    document.getElementById('recipeList').innerHTML = Object.values(inventoryData).map(ing => { const existing = receta.find(r => r.id === ing.id); return `<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px; font-size:0.8rem;"><span>${ing.name} (${ing.unit})</span><input type="number" id="recipe_${ing.id}" value="${existing ? existing.qty : 0}" step="0.01" style="width: 60px; padding: 4px; border-radius: 4px; border: 1px solid #ccc;"></div>`; }).join(''); 
+    document.getElementById('modalCat').classList.add('open'); 
+  };
+  
   window.saveProduct = async () => {
     try {
       const id = document.getElementById('editId').value || 'prod_' + Date.now();
       const name = document.getElementById('editName').value;
       const price = parseFloat(document.getElementById('editPrice').value) || 0;
-      
-      // Asegurarnos de que la imagen NUNCA sea undefined
-      let imageUrl = (catalogData[id] && catalogData[id].image) ? catalogData[id].image : '';
-      
-      const fileInput = document.getElementById('editImageFile'); 
-      if(fileInput && fileInput.files.length > 0) { 
-        try {
-          const { url } = await bucket.put(`prod_${id}_${Date.now()}.jpg`, fileInput.files[0]); 
-          imageUrl = url; 
-        } catch (uploadError) {
-          console.error("Error subiendo a Upstash:", uploadError);
-          alert("La imagen no se pudo subir, pero el producto se guardará.");
-        }
-      }
+      const imageUrl = document.getElementById('editImageUrl').value.trim();
+      const cat = document.getElementById('editCat').value; // <-- GUARDAMOS LA CATEGORIA
       
       let receta = []; 
       Object.values(inventoryData).forEach(ing => { 
@@ -404,8 +416,13 @@
         }
       });
       
-      // GUARDAMOS (Si imageUrl es '', guardará un string vacío, no undefined)
-      await setDoc(doc(db, "catalogo", id), { name: name, price: price, image: imageUrl, receta: receta }, { merge: true });
+      await setDoc(doc(db, "catalogo", id), { 
+        name: name, 
+        price: price, 
+        image: imageUrl,
+        cat: cat, // <-- SE GUARDA
+        receta: receta 
+      }, { merge: true });
       
       document.getElementById('modalCat').classList.remove('open'); 
       showToast('Producto guardado exitosamente.');
