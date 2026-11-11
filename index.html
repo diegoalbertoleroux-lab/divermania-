@@ -100,9 +100,7 @@ main section.active{display:block}
 const WHATSAPP_NUMBER = "584120000000"; // <--- CAMBIA ESTO POR TU NÚMERO
 window.PRODUCTS = [];
 const DEFAULT_PRODUCTS = [
-  { id:'p1', cat:'perros', name:'Perro Clásico', desc:'Salchicha, papas', price:2.50, image:'perroclasico.jpeg' },
-  { id:'h1', cat:'hamburguesas', name:'Hamburguesa Clásica', desc:'Carne, queso, lechuga', price:3.50, image:'hamburguesa.jpg' },
-  { id:'f1', cat:'fiesta', name:'Globos Payaso', desc:'Colores surtidos', price:2.50, image:'globos1.jpg' }
+  { id:'p1', cat:'perros', name:'Perro Clásico', desc:'Salchicha, papas', price:2.50, image:'perroclasico.jpeg' }
 ];
 window.PRODUCTS = DEFAULT_PRODUCTS;
 
@@ -122,24 +120,32 @@ const cartCount = () => Object.values(cart).reduce((a,b)=>a+b,0);
 const cartSubtotal = () => Object.entries(cart).reduce((sum,[id,qty])=>{ const p = window.PRODUCTS.find(x=>x.id===id); return sum + (p ? p.price * qty : 0); },0);
 
 function renderMenu(){
+  // Limpiar grids
+  document.querySelectorAll('[data-grid]').forEach(g => g.innerHTML = '');
+
   ['perros','hamburguesas','fiesta'].forEach(cat=>{
     const grid = document.querySelector(`[data-grid="${cat}"]`); if(!grid) return;
-    const items = window.PRODUCTS.filter(p=>p.cat===cat);
-    grid.innerHTML = items.map((p)=>{
-      // AQUI ESTA LA PROTECCION PARA QUE NO DESAPAREZCA SI NO HAY IMAGEN
-      let imgSrc = p.image ? p.image : 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2UyZThmMCIvPjwvc3ZnPg==';
-      return `
-        <article class="product-card" onclick="handleAddToCart(event, '${p.id}')">
-          <div class="card-image"><img src="${imgSrc}"></div>
-          <div class="card-content">
-            <h3>${p.name}</h3><p style="font-size:0.8rem; color:var(--text-muted);">${p.desc || ''}</p>
-            <div class="card-footer">
-              <span class="card-price">${money(p.price)}</span>
-              <button class="add-btn"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></button>
+    // FILTRO ESTRICTO POR CATEGORIA
+    const items = window.PRODUCTS.filter(p=>p.cat === cat);
+    
+    if(items.length > 0) {
+      grid.innerHTML = items.map((p)=>{
+        let imgSrc = p.image ? p.image : 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2UyZThmMCIvPjwvc3ZnPg==';
+        return `
+          <article class="product-card" onclick="handleAddToCart(event, '${p.id}')">
+            <div class="card-image"><img src="${imgSrc}" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2UyZThmMCIvPjwvc3ZnPg=='"></div>
+            <div class="card-content">
+              <h3>${p.name}</h3><p style="font-size:0.8rem; color:var(--text-muted);">${p.desc || ''}</p>
+              <div class="card-footer">
+                <span class="card-price">${money(p.price)}</span>
+                <button class="add-btn"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></button>
+              </div>
             </div>
-          </div>
-        </article>`;
-    }).join('');
+          </article>`;
+      }).join('');
+    } else {
+      grid.innerHTML = `<p style="text-align: center; color: var(--text-muted); font-size: 0.9rem; grid-column: 1 / -1; padding: 20px;">No hay productos en esta categoría.</p>`;
+    }
   });
 }
 window.renderMenu = renderMenu; 
@@ -191,13 +197,17 @@ renderMenu();
   const app = !getApps().length ? initializeApp(firebaseConfig) : getApps()[0];
   const db = getFirestore(app);
 
+  // AQUI ESTABA EL ERROR. AHORA ESCUCHA BIEN Y ACTUALIZA
   onSnapshot(collection(db, "catalogo"), (snapshot) => {
     if(!snapshot.empty) {
       let nuevosProductos = [];
       snapshot.forEach((doc) => nuevosProductos.push({ id: doc.id, ...doc.data() }));
       window.PRODUCTS = nuevosProductos;
+      console.log("Productos cargados desde Firebase:", window.PRODUCTS); // Para que lo veas en la consola F12
       if (window.renderMenu) window.renderMenu(); 
       if (window.updateFab) window.updateFab();  
+    } else {
+      console.log("No hay productos en Firebase, usando los por defecto.");
     }
   });
 
