@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>DIVERMANIA · Panel de Gestión</title>
-<link rel="icon" href="logodivermania.jpg">
-<link rel="manifest" href="manifest.json">
+<link rel="icon" href="logodivermania.png">
+<link rel="manifest" href="manifest-admin.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
@@ -14,25 +14,25 @@
   :root { --bg: #F3F4F6; --surface: #FFFFFF; --text-main: #111827; --text-muted: #6B7280; --primary: #000000; --border-light: #D1D5DB; --success: #10B981; --danger: #EF4444; --radius-card: 12px; }
   [data-theme="dark"] { --bg: #111111; --surface: #1F1F1F; --text-main: #F9FAFB; --text-muted: #9CA3AF; --primary: #FFFFFF; --border-light: #333333; }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; }
+  body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; transition: 0.3s; }
   h1, h2, h3, h4 { font-family: 'Outfit', sans-serif; }
-  .sidebar { width: 260px; background: var(--surface); border-right: 1px solid var(--border-light); display: flex; flex-direction: column; padding: 24px 16px; overflow-y: auto; }
+  .sidebar { width: 260px; background: var(--surface); border-right: 1px solid var(--border-light); display: flex; flex-direction: column; padding: 24px 16px; overflow-y: auto; transition: transform 0.3s ease; z-index: 200; }
   .brand { font-family: 'Outfit', sans-serif; font-size: 1.4rem; font-weight: 800; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; padding-left: 8px;}
   .brand img { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid var(--border-light); }
-  .nav-link { display: flex; align-items: center; padding: 10px 16px; border-radius: 8px; color: var(--text-muted); font-weight: 600; font-size: 0.9rem; cursor: pointer; margin-bottom: 4px; border: none; background: transparent; width: 100%; text-align: left; transition: 0.2s;}
+  .nav-link { display: flex; align-items: center; padding: 10px 16px; border-radius: 8px; color: var(--text-muted); font-weight: 600; font-size: 0.9rem; cursor: pointer; margin-bottom: 4px; border: none; background: transparent; width: 100%; text-align: left; }
   .nav-link:hover { background: var(--bg); }
   .nav-link.active { background: var(--bg); color: var(--primary); border-left: 4px solid var(--primary); }
   .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
   header { padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; background: var(--surface); border-bottom: 1px solid var(--border-light); }
+  .menu-toggle { display: none; background: none; border: none; color: var(--text-main); font-size: 1.5rem; cursor: pointer; }
   .page-container { flex: 1; overflow-y: auto; padding: 30px; }
   .page-section { display: none; animation: fadeIn 0.3s; }
   .page-section.active { display: block; }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-  .btn { background: var(--primary); color: var(--surface); border: 1px solid var(--primary); padding: 10px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; }
-  .btn:hover { opacity: 0.8; }
+  .btn { background: var(--primary); color: var(--surface); border: 1px solid var(--primary); padding: 10px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; }
   .btn-outline { background: transparent; color: var(--text-main); border: 1px solid var(--border-light); }
   .btn-success { background: var(--success); border-color: var(--success); color: white; }
-  .btn-danger { background: var(--danger); border-color: var(--danger); color: white; }
+  .btn-warning { background: #F59E0B; border-color: #F59E0B; color: white; }
   .card { background: var(--surface); border-radius: var(--radius-card); padding: 20px; border: 1px solid var(--border-light); margin-bottom: 20px; }
   .form-group { margin-bottom: 15px; }
   .form-group label { display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 6px; }
@@ -41,23 +41,34 @@
   th, td { padding: 12px; text-align: left; border-bottom: 1px solid var(--border-light); font-size: 0.85rem; }
   th { background: var(--bg); color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; }
   .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
   .grid-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
   .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000; align-items: center; justify-content: center; }
   .modal.open { display: flex; }
   .modal-content { background: var(--surface); padding: 25px; border-radius: 16px; width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto; }
-  .sub-tabs { display: flex; gap: 10px; border-bottom: 1px solid var(--border-light); margin-bottom: 20px; }
-  .sub-tab { padding: 10px 15px; font-weight: 600; color: var(--text-muted); cursor: pointer; border-bottom: 2px solid transparent; }
+  .sub-tabs { display: flex; gap: 10px; border-bottom: 1px solid var(--border-light); margin-bottom: 20px; overflow-x: auto; }
+  .sub-tab { padding: 10px 15px; font-weight: 600; color: var(--text-muted); cursor: pointer; border-bottom: 2px solid transparent; white-space: nowrap; }
   .sub-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
   .sub-content { display: none; }
   .sub-content.active { display: block; }
+  
+  /* RESPONSIVE PARA TELEFONOS */
+  @media (max-width: 768px) {
+    .sidebar { position: fixed; top: 0; bottom: 0; left: 0; transform: translateX(-100%); box-shadow: 2px 0 10px rgba(0,0,0,0.5); }
+    .sidebar.open { transform: translateX(0); }
+    .menu-toggle { display: block; }
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    .page-container { padding: 15px; }
+    header { padding: 15px; }
+  }
   #toast { position: fixed; bottom: 20px; right: 20px; background: var(--text-main); color: var(--bg); padding: 12px 24px; border-radius: 10px; font-weight: 600; opacity: 0; transition: 0.3s; z-index: 2000; pointer-events: none; }
   #toast.show { opacity: 1; transform: translateY(0); }
 </style>
 </head>
 <body>
 
-<div class="sidebar">
-  <div class="brand"><img src="logodivermania.jpg" onerror="this.style.display='none'"> DIVERMANIA</div>
+<div class="sidebar" id="sidebar">
+  <div class="brand"><img src="logodivermania.png" onerror="this.style.display='none'"> DIVERMANIA</div>
   <button class="nav-link active" onclick="switchTab('dashboard', this)">Dashboard</button>
   <button class="nav-link" onclick="switchTab('pedidos', this)">Pedidos</button>
   <button class="nav-link" onclick="switchTab('manual', this)">Nuevo Pedido (Mesas)</button>
@@ -68,7 +79,10 @@
 
 <div class="main-content">
   <header>
-    <h2 id="pageTitle">Dashboard</h2>
+    <div style="display: flex; align-items: center; gap: 15px;">
+      <button class="menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+      <h2 id="pageTitle">Dashboard</h2>
+    </div>
     <div style="display: flex; gap: 15px; align-items: center;">
       <span id="bcvRate" style="font-size: 0.85rem; font-weight: 600;">Cargando Tasa...</span>
       <button class="btn btn-outline" onclick="toggleTheme()">Tema</button>
@@ -146,17 +160,16 @@
     <!-- FINANZAS -->
     <div id="finanzas" class="page-section">
       <div class="sub-tabs">
-        <div class="sub-tab active" onclick="switchSubTab('sub-trans', this)">Movimientos (Compras/Ventas)</div>
-        <div class="sub-tab" onclick="switchSubTab('sub-cxc', this)">Cuentas por Cobrar (Fiados)</div>
-        <div class="sub-tab" onclick="switchSubTab('sub-cxp', this)">Cuentas por Pagar (Proveedores)</div>
+        <div class="sub-tab active" onclick="switchSubTab('sub-trans', this)">Movimientos</div>
+        <div class="sub-tab" onclick="switchSubTab('sub-cxc', this)">Cuentas por Cobrar</div>
+        <div class="sub-tab" onclick="switchSubTab('sub-cxp', this)">Cuentas por Pagar</div>
       </div>
 
-      <!-- SUBTAB MOVIMIENTOS -->
       <div id="sub-trans" class="sub-content active">
         <div class="grid-2">
           <div class="card">
             <h3>Registrar Movimiento</h3>
-            <div class="form-group"><label>Tipo</label><select id="finType" class="form-control"><option value="Gasto (Compra)">Gasto (Compra de Mercancía)</option><option value="Ingreso Extra">Ingreso Extra</option></select></div>
+            <div class="form-group"><label>Tipo</label><select id="finType" class="form-control"><option value="Gasto (Compra)">Gasto (Compra)</option><option value="Ingreso Extra">Ingreso Extra</option></select></div>
             <div class="form-group"><label>Monto ($)</label><input type="number" id="finAmount" class="form-control" step="0.01"></div>
             <div class="form-group"><label>Descripción</label><input type="text" id="finDesc" class="form-control" placeholder="Ej: Compra de carne"></div>
             <button class="btn" style="width: 100%;" onclick="addTransaction()">Guardar</button>
@@ -167,7 +180,6 @@
         </div>
       </div>
 
-      <!-- SUBTAB CXC -->
       <div id="sub-cxc" class="sub-content">
         <div class="card">
           <h3>Anotar Fiado</h3>
@@ -182,7 +194,6 @@
         </div>
       </div>
 
-      <!-- SUBTAB CXP -->
       <div id="sub-cxp" class="sub-content">
         <div class="card">
           <h3>Anotar Deuda a Proveedor</h3>
@@ -209,7 +220,7 @@
       <div class="form-group"><label>Nombre</label><input type="text" id="editName" class="form-control"></div>
       <div class="form-group"><label>Precio ($)</label><input type="number" id="editPrice" class="form-control" step="0.01"></div>
     </div>
-    <div class="form-group"><label>Imagen</label><input type="file" id="editImageFile" accept="image/*" class="form-control"></div>
+    <div class="form-group"><label>Imagen (Opcional)</label><input type="file" id="editImageFile" accept="image/*" class="form-control"></div>
     <div style="background: var(--bg); padding: 15px; border-radius: 8px; margin: 15px 0;">
       <h4 style="font-size: 0.9rem; margin-bottom: 10px;">Receta (Gramos por unidad)</h4>
       <div id="recipeList" style="max-height: 150px; overflow-y: auto;"></div>
@@ -268,8 +279,6 @@
   let manualCart = {}, myChart = null;
 
   const bcvRateEl = document.getElementById('bcvRate');
-  
-  // FETCH BCV RATE
   fetch('https://ve.dolarapi.com/v1/dolares/oficial').then(res=>res.json()).then(data => {
     if(data && data.promedio) { TASA_CAMBIO = parseFloat(data.promedio); bcvRateEl.textContent = `Tasa BCV: Bs. ${TASA_CAMBIO.toFixed(2)}`; }
   }).catch(()=>{});
@@ -283,6 +292,7 @@
     document.getElementById(tabId).classList.add('active'); btn.classList.add('active');
     document.getElementById('pageTitle').textContent = btn.textContent;
     if(tabId === 'manual') renderManualProducts();
+    document.getElementById('sidebar').classList.remove('open'); // Cierra menú en móvil
   };
 
   window.switchSubTab = (subId, btn) => {
@@ -305,7 +315,7 @@
 
   function renderOrders() { document.getElementById('ordersTableBody').innerHTML = ordersData.map(o => { let prods = typeof o.productos === 'object' ? Object.entries(o.productos).map(([k,v])=>`${v}x ${k}`).join('<br>') : o.productos; return `<tr><td>${new Date(o.fecha).toLocaleString('es-VE')}</td><td>${o.cliente}</td><td><b>${o.mesa ? 'Mesa '+o.mesa : o.tipoEntrega}</b></td><td>${prods}</td><td style="font-weight:bold;">${o.total}</td><td>${o.estado}</td><td><a href="https://wa.me/${o.telefono.replace(/\D/g,'')}" target="_blank" style="color: var(--success); font-weight: bold; text-decoration: none;">WA</a></td></tr>`; }).join(''); }
   
-  function renderCatalog() { document.getElementById('catalogEditorGrid').innerHTML = Object.values(catalogData).map(p => `<div class="card" style="cursor: pointer; text-align: center;" onclick="openEditModal('${p.id}')"><img src="${p.image}" style="width: 100%; height: 100px; object-fit: cover; border-radius: 8px; margin-bottom: 10px;" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2UyZThmMCIvPjwvc3ZnPg=='"><h4 style="margin-bottom: 5px;">${p.name}</h4><div style="color: var(--text-main); font-weight: bold;">$${p.price.toFixed(2)}</div></div>`).join(''); }
+  function renderCatalog() { document.getElementById('catalogEditorGrid').innerHTML = Object.values(catalogData).map(p => `<div class="card" style="cursor: pointer; text-align: center;" onclick="openEditModal('${p.id}')"><img src="${p.image || 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2UyZThmMCIvPjwvc3ZnPg=='}" style="width: 100%; height: 100px; object-fit: cover; border-radius: 8px; margin-bottom: 10px;"><h4 style="margin-bottom: 5px;">${p.name}</h4><div style="color: var(--text-main); font-weight: bold;">$${p.price.toFixed(2)}</div></div>`).join(''); }
   
   function renderInventory() { document.getElementById('inventoryList').innerHTML = Object.values(inventoryData).map(i => `<div style="margin-bottom: 10px;"><div style="display: flex; justify-content: space-between; font-size: 0.85rem;"><span>${i.name}</span><span>${i.stock.toFixed(2)} ${i.unit}</span></div></div>`).join(''); }
   function populateIngredientSelect() { document.getElementById('invMoveItem').innerHTML = Object.values(inventoryData).map(i => `<option value="${i.id}">${i.name}</option>`).join(''); }
@@ -322,12 +332,9 @@
     let totalIncome = tOrders + tIncome;
     let netProfit = totalIncome - tExpenses;
     
-    document.getElementById('dashIncome').textContent = `$${totalIncome.toFixed(2)}`; 
-    document.getElementById('dashIncomeBs').textContent = `Bs. ${(totalIncome * TASA_CAMBIO).toFixed(2)}`;
-    document.getElementById('dashExpenses').textContent = `$${tExpenses.toFixed(2)}`; 
-    document.getElementById('dashExpensesBs').textContent = `Bs. ${(tExpenses * TASA_CAMBIO).toFixed(2)}`;
-    document.getElementById('dashProfit').textContent = `$${netProfit.toFixed(2)}`;
-    document.getElementById('dashProfitBs').textContent = `Bs. ${(netProfit * TASA_CAMBIO).toFixed(2)}`;
+    document.getElementById('dashIncome').textContent = `$${totalIncome.toFixed(2)}`; document.getElementById('dashIncomeBs').textContent = `Bs. ${(totalIncome * TASA_CAMBIO).toFixed(2)}`;
+    document.getElementById('dashExpenses').textContent = `$${tExpenses.toFixed(2)}`; document.getElementById('dashExpensesBs').textContent = `Bs. ${(tExpenses * TASA_CAMBIO).toFixed(2)}`;
+    document.getElementById('dashProfit').textContent = `$${netProfit.toFixed(2)}`; document.getElementById('dashProfitBs').textContent = `Bs. ${(netProfit * TASA_CAMBIO).toFixed(2)}`;
     
     if(myChart) myChart.destroy();
     myChart = new Chart(document.getElementById('salesChart').getContext('2d'), { type: 'line', data: { labels: ['Ingresos', 'Gastos'], datasets: [{ label: 'Balance', data: [totalIncome, tExpenses], borderColor: '#000000', backgroundColor: 'rgba(0,0,0,0.1)', fill: true }] }, options: { responsive: true, plugins: { legend: { display: false } } } });
@@ -367,13 +374,15 @@
   window.openNewProductModal = () => { document.getElementById('editId').value = ''; document.getElementById('editName').value = ''; document.getElementById('editPrice').value = ''; document.getElementById('recipeList').innerHTML = ''; document.getElementById('modalCat').classList.add('open'); };
   window.openEditModal = (id) => { document.getElementById('editId').value = id; document.getElementById('editName').value = catalogData[id].name; document.getElementById('editPrice').value = catalogData[id].price; const receta = catalogData[id].receta || []; document.getElementById('recipeList').innerHTML = Object.values(inventoryData).map(ing => { const existing = receta.find(r => r.id === ing.id); return `<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px; font-size:0.8rem;"><span>${ing.name} (${ing.unit})</span><input type="number" id="recipe_${ing.id}" value="${existing ? existing.qty : 0}" step="0.01" style="width: 60px; padding: 4px; border-radius: 4px; border: 1px solid #ccc;"></div>`; }).join(''); document.getElementById('modalCat').classList.add('open'); };
   
-  // GUARDADO BLINDADO: SI LA IMAGEN FALLA, EL PRODUCTO SE GUARDA IGUAL
+  // GUARDADO BLINDADO (Evita el error de undefined)
   window.saveProduct = async () => {
     try {
       const id = document.getElementById('editId').value || 'prod_' + Date.now();
       const name = document.getElementById('editName').value;
       const price = parseFloat(document.getElementById('editPrice').value) || 0;
-      let imageUrl = catalogData[id] ? catalogData[id].image : '';
+      
+      // Asegurarnos de que la imagen NUNCA sea undefined
+      let imageUrl = (catalogData[id] && catalogData[id].image) ? catalogData[id].image : '';
       
       const fileInput = document.getElementById('editImageFile'); 
       if(fileInput && fileInput.files.length > 0) { 
@@ -395,7 +404,9 @@
         }
       });
       
+      // GUARDAMOS (Si imageUrl es '', guardará un string vacío, no undefined)
       await setDoc(doc(db, "catalogo", id), { name: name, price: price, image: imageUrl, receta: receta }, { merge: true });
+      
       document.getElementById('modalCat').classList.remove('open'); 
       showToast('Producto guardado exitosamente.');
     } catch (error) {
