@@ -11,7 +11,6 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <style>
-  /* COLORES ACTUALIZADOS A MORADO DIVERMANIA */
   :root { --bg: #F8F9FA; --surface: #FFFFFF; --text-main: #111827; --text-muted: #6B7280; --primary: #8B5CF6; --border-light: #E5E7EB; --success: #10B981; --warning: #F59E0B; --info: #3B82F6; --radius-card: 16px; --shadow-sm: 0 2px 8px rgba(0,0,0,0.04); --shadow-md: 0 8px 24px rgba(0,0,0,0.08); }
   [data-theme="dark"] { --bg: #121212; --surface: #1E1E1E; --text-main: #F9FAFB; --text-muted: #9CA3AF; --border-light: #374151; --shadow-sm: 0 2px 8px rgba(0,0,0,0.3); --shadow-md: 0 8px 24px rgba(0,0,0,0.5); }
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -122,7 +121,6 @@
   </header>
 
   <div class="page-container">
-    <!-- DASHBOARD -->
     <div id="dashboard" class="page-section active">
       <div class="filter-bar">
         <button class="filter-btn active" onclick="setFilter('hoy', this)">Hoy</button>
@@ -148,7 +146,6 @@
       </div>
     </div>
 
-    <!-- PEDIDOS WEB -->
     <div id="pedidos" class="page-section">
       <div class="card" style="padding: 0; overflow-x: auto;">
         <table>
@@ -158,7 +155,6 @@
       </div>
     </div>
 
-    <!-- PEDIDO MANUAL -->
     <div id="manual" class="page-section">
       <div class="grid-2">
         <div class="card">
@@ -188,12 +184,10 @@
       </div>
     </div>
 
-    <!-- CATALOGO -->
     <div id="catalogo" class="page-section">
       <div class="grid-stats" id="catalogEditorGrid"></div>
     </div>
 
-    <!-- INVENTARIO -->
     <div id="inventario" class="page-section">
       <div class="grid-2">
         <div class="card">
@@ -211,7 +205,6 @@
       </div>
     </div>
 
-    <!-- CLIENTES -->
     <div id="clientes" class="page-section">
       <div class="card" style="padding: 0; overflow-x: auto;">
         <table>
@@ -221,7 +214,6 @@
       </div>
     </div>
 
-    <!-- FINANZAS -->
     <div id="finanzas" class="page-section">
       <div class="sub-tabs">
         <div class="sub-tab active" onclick="switchSubTab('sub-trans', this)">Movimientos</div>
@@ -302,7 +294,6 @@
       </div>
     </div>
 
-    <!-- ANALITICAS -->
     <div id="analiticas" class="page-section">
       <div class="grid-2">
         <div class="card"><h3 style="margin-bottom: 15px; font-size: 1rem;">Top 5 Productos Más Vendidos</h3><canvas id="topProductsChart" height="150"></canvas></div>
@@ -312,7 +303,6 @@
   </div>
 </div>
 
-<!-- MODALES -->
 <div class="modal" id="modalCat">
   <div class="modal-content">
     <h2 style="margin-bottom: 15px; color: var(--primary); font-size: 1.2rem;">Editar Producto</h2>
@@ -366,12 +356,12 @@
 <div id="toast"></div>
 
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  // CORRECCION GETAPPS EN EL ADMIN
+  import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
   import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
   import { getFirestore, collection, onSnapshot, query, orderBy, doc, updateDoc, addDoc, setDoc, increment, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
   import { Bucket } from "https://esm.sh/@upstash/blob";
 
-  // ⚠️ TUS LLAVES DE DIVERMANIA
   const firebaseConfig = {
     apiKey: "AIzaSyArZsARX2njLeLNBYCwu1hPyXBUU_Vg09ko",
     authDomain: "divermania-3f104.firebaseapp.com",
@@ -382,10 +372,9 @@
     measurementId: "G-P2SNN9VDEE"
   };
   
-  // ⚠️ SI CREASTE UN UPSTASH NUEVO, CAMBIA ESTE TOKEN
   const bucket = new Bucket({ token: "AgAkADAMZTY1ZGU3MTktZDYwYS00NTkzLWEwZjctZjY3MGZhYmQzZjFlMURjMk1Ea3lNbVl0WTJVME15MDBOV1F4TFdGaU9UWXROemN3T1dKbU1URTVaVFE0YjJkM2RjZTAxZGM0" });
 
-  const app = initializeApp(firebaseConfig);
+  const app = !getApps().length ? initializeApp(firebaseConfig) : getApps()[0];
   const auth = getAuth(app);
   const db = getFirestore(app);
 
@@ -400,7 +389,7 @@
   const htmlEl = document.documentElement;
   htmlEl.setAttribute('data-theme', localStorage.getItem('adminTheme') || 'light');
   window.toggleTheme = () => { const newTheme = htmlEl.getAttribute('data-theme') === 'light' ? 'dark' : 'light'; htmlEl.setAttribute('data-theme', newTheme); localStorage.setItem('adminTheme', newTheme); if(myChart) updateChart(); if(topChart) updateAnalytics(); };
-  window.login = async () => { try { await signInWithEmailAndPassword(auth, document.getElementById('adminEmail').value, document.getElementById('adminPassword').value); } catch (error) { showToast("Credenciales incorrectas"); } };
+  window.login = async () => { try { await signInWithEmailAndPassword(auth, document.getElementById('adminEmail').value, document.getElementById('adminPassword').value); } catch (error) { showToast("Error: Revisa tu correo, contraseña o si activaste el inicio de sesión en Firebase."); } };
   window.logout = () => signOut(auth);
 
   onAuthStateChanged(auth, (user) => {
