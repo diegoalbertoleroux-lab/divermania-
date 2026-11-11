@@ -52,7 +52,7 @@ main section.active{display:block}
 <body>
 
 <div class="top-banner">
-  <div class="brand-anim"><img src="logodivermania.jpg" alt="DIVERMANIA" class="brand-logo" onerror="this.style.display='none'">DIVERMANIA</div>
+  <div class="brand-anim"><img src="logodivermania.png" alt="DIVERMANIA" class="brand-logo" onerror="this.style.display='none'">DIVERMANIA</div>
   <div class="top-actions">
     <button class="btn-icon" onclick="toggleTheme()"><svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" fill="none" stroke-width="2" stroke-linecap="round"></path></svg></button>
   </div>
@@ -126,11 +126,13 @@ function renderMenu(){
     const grid = document.querySelector(`[data-grid="${cat}"]`); if(!grid) return;
     const items = window.PRODUCTS.filter(p=>p.cat===cat);
     grid.innerHTML = items.map((p)=>{
+      // AQUI ESTA LA PROTECCION PARA QUE NO DESAPAREZCA SI NO HAY IMAGEN
+      let imgSrc = p.image ? p.image : 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2UyZThmMCIvPjwvc3ZnPg==';
       return `
         <article class="product-card" onclick="handleAddToCart(event, '${p.id}')">
-          <div class="card-image">${p.image ? `<img src="${p.image}">` : ''}</div>
+          <div class="card-image"><img src="${imgSrc}"></div>
           <div class="card-content">
-            <h3>${p.name}</h3><p style="font-size:0.8rem; color:var(--text-muted);">${p.desc}</p>
+            <h3>${p.name}</h3><p style="font-size:0.8rem; color:var(--text-muted);">${p.desc || ''}</p>
             <div class="card-footer">
               <span class="card-price">${money(p.price)}</span>
               <button class="add-btn"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></button>
