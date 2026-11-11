@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>DIVERMANIA · Panel de Gestión</title>
 <link rel="icon" href="logodivermania.png">
-<link rel="manifest" href="manifest-admin.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
@@ -89,7 +88,6 @@
   </header>
 
   <div class="page-container">
-    <!-- DASHBOARD -->
     <div id="dashboard" class="page-section active">
       <div class="grid-stats">
         <div class="card"><h3 style="font-size: 0.8rem; color: var(--text-muted);">Ingresos</h3><p id="dashIncome" style="font-size: 1.5rem; font-weight: 800;">$0.00</p><p id="dashIncomeBs" style="font-size: 0.8rem; color: var(--text-muted);">Bs. 0.00</p></div>
@@ -99,17 +97,12 @@
       <div class="card"><canvas id="salesChart" height="70"></canvas></div>
     </div>
 
-    <!-- PEDIDOS -->
     <div id="pedidos" class="page-section">
       <div class="card" style="padding: 0; overflow-x: auto;">
-        <table>
-          <thead><tr><th>Fecha</th><th>Cliente</th><th>Mesa</th><th>Productos</th><th>Total</th><th>Estado</th><th>Acción</th></tr></thead>
-          <tbody id="ordersTableBody"></tbody>
-        </table>
+        <table><thead><tr><th>Fecha</th><th>Cliente</th><th>Mesa</th><th>Productos</th><th>Total</th><th>Estado</th><th>Acción</th></tr></thead><tbody id="ordersTableBody"></tbody></table>
       </div>
     </div>
 
-    <!-- PEDIDO MANUAL -->
     <div id="manual" class="page-section">
       <div class="grid-2">
         <div class="card">
@@ -129,7 +122,6 @@
       </div>
     </div>
 
-    <!-- CATALOGO -->
     <div id="catalogo" class="page-section">
       <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
         <h3>Productos</h3>
@@ -138,7 +130,6 @@
       <div class="grid-stats" id="catalogEditorGrid"></div>
     </div>
 
-    <!-- INVENTARIO -->
     <div id="inventario" class="page-section">
       <div class="grid-2">
         <div class="card">
@@ -156,7 +147,6 @@
       </div>
     </div>
 
-    <!-- FINANZAS -->
     <div id="finanzas" class="page-section">
       <div class="sub-tabs">
         <div class="sub-tab active" onclick="switchSubTab('sub-trans', this)">Movimientos</div>
@@ -210,7 +200,7 @@
   </div>
 </div>
 
-<!-- MODALES -->
+<!-- MODAL CATALOGO CON CATEGORIA Y URL -->
 <div class="modal" id="modalCat">
   <div class="modal-content">
     <h2 id="modalCatTitle" style="margin-bottom: 15px;">Editar Producto</h2>
@@ -219,7 +209,6 @@
       <div class="form-group"><label>Nombre</label><input type="text" id="editName" class="form-control"></div>
       <div class="form-group"><label>Precio ($)</label><input type="number" id="editPrice" class="form-control" step="0.01"></div>
     </div>
-    <!-- SELECTOR DE CATEGORIA AGREGADO AQUI -->
     <div class="form-group">
       <label>Categoría</label>
       <select id="editCat" class="form-control">
@@ -228,11 +217,10 @@
         <option value="fiesta">Fiesta</option>
       </select>
     </div>
-    <!-- CAMPO DE IMAGEN POR URL -->
     <div class="form-group">
-      <label>URL de la Imagen</label>
+      <label>URL de la Imagen (Opcional)</label>
       <input type="text" id="editImageUrl" class="form-control" placeholder="https://ejemplo.com/foto.jpg">
-      <small style="font-size: 0.7rem; color: var(--text-muted);">Sube tu foto a Imgur o GitHub y pega el enlace aquí.</small>
+      <small style="font-size: 0.7rem; color: var(--text-muted);">Si lo dejas vacío, se pondrá una imagen por defecto.</small>
     </div>
     
     <div style="background: var(--bg); padding: 15px; border-radius: 8px; margin: 15px 0;">
@@ -280,12 +268,8 @@
 <script type="module">
   import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
   import { getFirestore, collection, onSnapshot, query, orderBy, doc, updateDoc, addDoc, setDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-  
-  // QUITAMOS UPSTASH PORQUE ESTABA DANDO ERROR
-  // import { Bucket } from "https://esm.sh/@upstash/blob"; 
 
   const firebaseConfig = { apiKey: "AIzaSyArZsARX2njLeLNBYCwu1hPyXBUU_Vg09ko", authDomain: "divermania-3f104.firebaseapp.com", projectId: "divermania-3f104", storageBucket: "divermania-3f104.firebasestorage.app", messagingSenderId: "230376484506", appId: "1:230376484506:web:7534dd68d9085f499cb923", measurementId: "G-P2SNN9VDEE" };
-  
   const app = !getApps().length ? initializeApp(firebaseConfig) : getApps()[0];
   const db = getFirestore(app);
 
@@ -392,7 +376,7 @@
     document.getElementById('editId').value = id; 
     document.getElementById('editName').value = catalogData[id].name; 
     document.getElementById('editPrice').value = catalogData[id].price; 
-    document.getElementById('editCat').value = catalogData[id].cat || 'perros'; // <-- AGREGADO
+    document.getElementById('editCat').value = catalogData[id].cat || 'perros';
     document.getElementById('editImageUrl').value = catalogData[id].image || ''; 
     const receta = catalogData[id].receta || []; 
     document.getElementById('recipeList').innerHTML = Object.values(inventoryData).map(ing => { const existing = receta.find(r => r.id === ing.id); return `<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px; font-size:0.8rem;"><span>${ing.name} (${ing.unit})</span><input type="number" id="recipe_${ing.id}" value="${existing ? existing.qty : 0}" step="0.01" style="width: 60px; padding: 4px; border-radius: 4px; border: 1px solid #ccc;"></div>`; }).join(''); 
@@ -404,8 +388,13 @@
       const id = document.getElementById('editId').value || 'prod_' + Date.now();
       const name = document.getElementById('editName').value;
       const price = parseFloat(document.getElementById('editPrice').value) || 0;
-      const imageUrl = document.getElementById('editImageUrl').value.trim();
-      const cat = document.getElementById('editCat').value; // <-- GUARDAMOS LA CATEGORIA
+      let imageUrl = document.getElementById('editImageUrl').value.trim();
+      const cat = document.getElementById('editCat').value;
+      
+      // SI NO HAY IMAGEN, PONEMOS UNA POR DEFECTO PARA QUE NO SE VEA EN BLANCO
+      if(!imageUrl) {
+        imageUrl = "https://images.unsplash.com/photo-1541214113241-2151668aa4cb?q=80&w=400&auto=format&fit=crop"; 
+      }
       
       let receta = []; 
       Object.values(inventoryData).forEach(ing => { 
@@ -420,7 +409,7 @@
         name: name, 
         price: price, 
         image: imageUrl,
-        cat: cat, // <-- SE GUARDA
+        cat: cat, 
         receta: receta 
       }, { merge: true });
       
