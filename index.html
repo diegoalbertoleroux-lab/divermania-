@@ -96,123 +96,7 @@ main section.active{display:block}
   <p>En breve te contactaremos por WhatsApp.</p>
 </div>
 
-<script>
-const WHATSAPP_NUMBER = "584120000000"; // <--- CAMBIA ESTO POR TU NÚMERO
-window.PRODUCTS = [];
-const DEFAULT_PRODUCTS = [
-  { id:'p1', cat:'perros', name:'Perro Clásico', desc:'Salchicha, papas', price:2.50, image:'perroclasico.jpeg' }
-];
-window.PRODUCTS = DEFAULT_PRODUCTS;
-
-let cart = JSON.parse(localStorage.getItem('cart') || '{}');
-let urlMesa = null;
-const urlParams = new URLSearchParams(window.location.search);
-if(urlParams.has('mesa')) {
-  urlMesa = urlParams.get('mesa');
-  document.getElementById('bannerMesa').style.display = 'block';
-  document.getElementById('mesaText').textContent = `Mesa ${urlMesa}`;
-  document.getElementById('addressGroup').style.display = 'none';
-}
-
-const saveCart = () => localStorage.setItem('cart', JSON.stringify(cart));
-const money = n => '$' + n.toFixed(2);
-const cartCount = () => Object.values(cart).reduce((a,b)=>a+b,0);
-const cartSubtotal = () => Object.entries(cart).reduce((sum,[id,qty])=>{ const p = window.PRODUCTS.find(x=>x.id===id); return sum + (p ? p.price * qty : 0); },0);
-
-function renderMenu(){
-  document.querySelectorAll('[data-grid]').forEach(g => g.innerHTML = '');
-  ['perros','hamburguesas','fiesta'].forEach(cat=>{
-    const grid = document.querySelector(`[data-grid="${cat}"]`); if(!grid) return;
-    const items = window.PRODUCTS.filter(p=>p.cat === cat);
-    if(items.length > 0) {
-      grid.innerHTML = items.map((p)=>{
-        let imgSrc = p.image ? p.image : 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2UyZThmMCIvPjwvc3ZnPg==';
-        return `
-          <article class="product-card" onclick="handleAddToCart(event, '${p.id}')">
-            <div class="card-image"><img src="${imgSrc}" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2UyZThmMCIvPjwvc3ZnPg=='"></div>
-            <div class="card-content">
-              <h3>${p.name}</h3><p style="font-size:0.8rem; color:var(--text-muted);">${p.desc || ''}</p>
-              <div class="card-footer">
-                <span class="card-price">${money(p.price)}</span>
-                <button class="add-btn"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></button>
-              </div>
-            </div>
-          </article>`;
-      }).join('');
-    } else {
-      grid.innerHTML = `<p style="text-align: center; color: var(--text-muted); font-size: 0.9rem; grid-column: 1 / -1; padding: 20px;">No hay productos en esta categoría.</p>`;
-    }
-  });
-}
-window.renderMenu = renderMenu; 
-
-function handleAddToCart(e, id) {
-  cart[id] = (cart[id] || 0) + 1; saveCart(); updateFab(); alert('Añadido al pedido');
-}
-function updateFab(){ const count = cartCount(); document.getElementById('cartFab').style.display = count > 0 ? 'flex' : 'none'; document.getElementById('cartCount').textContent = count; }
-window.updateFab = updateFab;
-
-function openCart() {
-  const box = document.getElementById('cartItems'); const entries = Object.entries(cart);
-  if(!entries.length){ box.innerHTML = '<p style="text-align:center;">Carrito vacío</p>'; document.getElementById('checkoutForm').style.display = 'none'; }
-  else {
-    box.innerHTML = entries.map(([id,qty])=>{ const p = window.PRODUCTS.find(x=>x.id===id); return `<div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #ccc;"><span>${qty}x ${p.name}</span><span>${money(p.price * qty)}</span></div>`; }).join('');
-    document.getElementById('checkoutForm').style.display = 'block';
-    document.getElementById('cartTotal').textContent = money(cartSubtotal());
-  }
-  document.getElementById('cartOverlay').classList.add('open');
-}
-
-function processAndSend() {
-  const name = document.getElementById('custName').value, phone = document.getElementById('custPhone').value, address = document.getElementById('custAddress').value;
-  if(!name || !phone) return alert('Faltan datos');
-  
-  let tipoEntrega = urlMesa ? 'Mesa' : 'Delivery';
-  let infoEntrega = urlMesa ? `Mesa: ${urlMesa}` : `Dirección: ${address}`;
-
-  // 1. GUARDAR EN FIREBASE
-  let prodsNube = {};
-  Object.entries(cart).forEach(([id,qty])=>{ 
-      const p = window.PRODUCTS.find(x=>x.id===id); 
-      if(p) prodsNube[p.name] = qty;
-  });
-
-  const total = cartSubtotal();
-
-  if (window.guardarPedidoEnNube) {
-      window.guardarPedidoEnNube({
-          cliente: name, 
-          telefono: phone, 
-          productos: prodsNube, 
-          total: money(total),
-          metodoPago: "Web", 
-          tipoEntrega: tipoEntrega, 
-          mesa: urlMesa ? urlMesa : null,
-          direccion: address || ''
-      });
-  }
-
-  // 2. ABRIR WHATSAPP
-  let msg = `*NUEVO PEDIDO - DIVERMANIA*\n\nCliente: ${name}\nTel: ${phone}\n${infoEntrega}\n\n*PRODUCTOS:*\n`;
-  Object.entries(cart).forEach(([id,qty])=>{ const p = window.PRODUCTS.find(x=>x.id===id); msg += `- ${qty}x ${p.name} = ${money(p.price * qty)}\n`; });
-  msg += `\n*TOTAL: ${money(total)}*`;
-  
-  window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank');
-  
-  document.getElementById('successOverlay').classList.add('show');
-  setTimeout(() => { 
-      document.getElementById('successOverlay').classList.remove('show'); 
-      cart = {}; saveCart(); updateFab(); 
-      document.getElementById('cartOverlay').classList.remove('open'); 
-  }, 3000);
-}
-
-function toggleTheme() { const el = document.documentElement; const newTheme = el.getAttribute('data-theme') === 'light' ? 'dark' : 'light'; el.setAttribute('data-theme', newTheme); }
-document.querySelectorAll('.cat-btn').forEach(btn => { btn.addEventListener('click', () => { document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active')); document.querySelectorAll('main section').forEach(s=>s.classList.remove('active')); btn.classList.add('active'); document.getElementById(btn.dataset.cat).classList.add('active'); }); });
-renderMenu();
-</script>
-
-<!-- AQUI ESTA LA MAGIA QUE FALTABA PARA GUARDAR EN FIREBASE -->
+<!-- TODO EL SCRIPT UNIFICADO EN UN MODULO PARA EVITAR ERRORES DE CARGA -->
 <script type="module">
   import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
   import { getFirestore, collection, onSnapshot, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -221,24 +105,131 @@ renderMenu();
   const app = !getApps().length ? initializeApp(firebaseConfig) : getApps()[0];
   const db = getFirestore(app);
 
-  // 1. FUNCION PARA GUARDAR EL PEDIDO
-  window.guardarPedidoEnNube = async (datosPedido) => {
-    try {
-      await addDoc(collection(db, "pedidos"), { ...datosPedido, fecha: new Date().toISOString(), estado: "Pendiente" });
-      console.log("Pedido guardado en Firebase correctamente");
-    } catch (e) { 
-      console.error("Error al guardar pedido: ", e); 
-    }
+  const WHATSAPP_NUMBER = "584120000000"; // <--- CAMBIA ESTO POR TU NÚMERO
+  window.PRODUCTS = [];
+
+  let cart = JSON.parse(localStorage.getItem('cart') || '{}');
+  let urlMesa = null;
+  const urlParams = new URLSearchParams(window.location.search);
+  if(urlParams.has('mesa')) {
+    urlMesa = urlParams.get('mesa');
+    document.getElementById('bannerMesa').style.display = 'block';
+    document.getElementById('mesaText').textContent = `Mesa ${urlMesa}`;
+    document.getElementById('addressGroup').style.display = 'none';
+  }
+
+  const saveCart = () => localStorage.setItem('cart', JSON.stringify(cart));
+  const money = n => '$' + n.toFixed(2);
+  const cartCount = () => Object.values(cart).reduce((a,b)=>a+b,0);
+  const cartSubtotal = () => Object.entries(cart).reduce((sum,[id,qty])=>{ const p = window.PRODUCTS.find(x=>x.id===id); return sum + (p ? p.price * qty : 0); },0);
+
+  window.renderMenu = () => {
+    document.querySelectorAll('[data-grid]').forEach(g => g.innerHTML = '');
+    ['perros','hamburguesas','fiesta'].forEach(cat=>{
+      const grid = document.querySelector(`[data-grid="${cat}"]`); if(!grid) return;
+      const items = window.PRODUCTS.filter(p=>p.cat === cat);
+      if(items.length > 0) {
+        grid.innerHTML = items.map((p)=>{
+          let imgSrc = p.image ? p.image : 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2UyZThmMCIvPjwvc3ZnPg==';
+          return `
+            <article class="product-card" onclick="window.handleAddToCart(event, '${p.id}')">
+              <div class="card-image"><img src="${imgSrc}" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2UyZThmMCIvPjwvc3ZnPg=='"></div>
+              <div class="card-content">
+                <h3>${p.name}</h3><p style="font-size:0.8rem; color:var(--text-muted);">${p.desc || ''}</p>
+                <div class="card-footer">
+                  <span class="card-price">${money(p.price)}</span>
+                  <button class="add-btn"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></button>
+                </div>
+              </div>
+            </article>`;
+        }).join('');
+      } else {
+        grid.innerHTML = `<p style="text-align: center; color: var(--text-muted); font-size: 0.9rem; grid-column: 1 / -1; padding: 20px;">No hay productos en esta categoría.</p>`;
+      }
+    });
   };
 
-  // 2. LEER EL CATALOGO EN TIEMPO REAL
+  window.handleAddToCart = (e, id) => {
+    cart[id] = (cart[id] || 0) + 1; saveCart(); window.updateFab(); alert('Añadido al pedido');
+  };
+
+  window.updateFab = () => { 
+    const count = cartCount(); 
+    document.getElementById('cartFab').style.display = count > 0 ? 'flex' : 'none'; 
+    document.getElementById('cartCount').textContent = count; 
+  };
+
+  window.openCart = () => {
+    const box = document.getElementById('cartItems'); const entries = Object.entries(cart);
+    if(!entries.length){ box.innerHTML = '<p style="text-align:center;">Carrito vacío</p>'; document.getElementById('checkoutForm').style.display = 'none'; }
+    else {
+      box.innerHTML = entries.map(([id,qty])=>{ const p = window.PRODUCTS.find(x=>x.id===id); return `<div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #ccc;"><span>${qty}x ${p.name}</span><span>${money(p.price * qty)}</span></div>`; }).join('');
+      document.getElementById('checkoutForm').style.display = 'block';
+      document.getElementById('cartTotal').textContent = money(cartSubtotal());
+    }
+    document.getElementById('cartOverlay').classList.add('open');
+  };
+
+  window.processAndSend = async () => {
+    const name = document.getElementById('custName').value, phone = document.getElementById('custPhone').value, address = document.getElementById('custAddress').value;
+    if(!name || !phone) return alert('Faltan datos');
+    
+    let tipoEntrega = urlMesa ? 'Mesa' : 'Delivery';
+    let infoEntrega = urlMesa ? `Mesa: ${urlMesa}` : `Dirección: ${address}`;
+    let prodsNube = {};
+    Object.entries(cart).forEach(([id,qty])=>{ 
+        const p = window.PRODUCTS.find(x=>x.id===id); 
+        if(p) prodsNube[p.name] = qty;
+    });
+    const total = cartSubtotal();
+
+    // GUARDAR EN FIREBASE CON AVISO DE ERROR
+    try {
+      await addDoc(collection(db, "pedidos"), {
+          cliente: name, 
+          telefono: phone, 
+          productos: prodsNube, 
+          total: money(total),
+          metodoPago: "Web", 
+          tipoEntrega: tipoEntrega, 
+          mesa: urlMesa ? urlMesa : "",
+          direccion: address || "",
+          fecha: new Date().toISOString(),
+          estado: "Pendiente"
+      });
+      console.log("Pedido guardado en Firebase correctamente.");
+    } catch (error) {
+      console.error("Error Firebase:", error);
+      alert("⚠️ ERROR AL GUARDAR EN EL SISTEMA: " + error.message + "\n\nPor favor, revisa las Reglas de Firestore en Firebase.");
+      return; // Detenemos el proceso si falla el guardado
+    }
+
+    // ABRIR WHATSAPP
+    let msg = `*NUEVO PEDIDO - DIVERMANIA*\n\nCliente: ${name}\nTel: ${phone}\n${infoEntrega}\n\n*PRODUCTOS:*\n`;
+    Object.entries(cart).forEach(([id,qty])=>{ const p = window.PRODUCTS.find(x=>x.id===id); msg += `- ${qty}x ${p.name} = ${money(p.price * qty)}\n`; });
+    msg += `\n*TOTAL: ${money(total)}*`;
+    
+    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank');
+    
+    document.getElementById('successOverlay').classList.add('show');
+    setTimeout(() => { 
+        document.getElementById('successOverlay').classList.remove('show'); 
+        cart = {}; saveCart(); window.updateFab(); 
+        document.getElementById('cartOverlay').classList.remove('open'); 
+    }, 3000);
+  };
+
+  window.toggleTheme = () => { const el = document.documentElement; const newTheme = el.getAttribute('data-theme') === 'light' ? 'dark' : 'light'; el.setAttribute('data-theme', newTheme); };
+  document.querySelectorAll('.cat-btn').forEach(btn => { btn.addEventListener('click', () => { document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active')); document.querySelectorAll('main section').forEach(s=>s.classList.remove('active')); btn.classList.add('active'); document.getElementById(btn.dataset.cat).classList.add('active'); }); });
+
+  // ESCUCHAR CATALOGO
   onSnapshot(collection(db, "catalogo"), (snapshot) => {
     if(!snapshot.empty) {
       let nuevosProductos = [];
       snapshot.forEach((doc) => nuevosProductos.push({ id: doc.id, ...doc.data() }));
       window.PRODUCTS = nuevosProductos;
-      if (window.renderMenu) window.renderMenu(); 
-      if (window.updateFab) window.updateFab();  
+      window.renderMenu(); 
+      window.updateFab();  
     }
   });
 
