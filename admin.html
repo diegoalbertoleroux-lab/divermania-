@@ -5,12 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>DIVERMANIA · Panel de Gestión</title>
 <link rel="icon" href="logodivermania.jpg">
+<link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
-  :root { --bg: #F3F4F6; --surface: #FFFFFF; --text-main: #111827; --text-muted: #6B7280; --primary: #000000; --border-light: #D1D5DB; --success: #10B981; --radius-card: 12px; --shadow-sm: 0 2px 8px rgba(0,0,0,0.06); }
+  :root { --bg: #F3F4F6; --surface: #FFFFFF; --text-main: #111827; --text-muted: #6B7280; --primary: #000000; --border-light: #D1D5DB; --success: #10B981; --danger: #EF4444; --radius-card: 12px; }
   [data-theme="dark"] { --bg: #111111; --surface: #1F1F1F; --text-main: #F9FAFB; --text-muted: #9CA3AF; --primary: #FFFFFF; --border-light: #333333; }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; }
@@ -31,7 +32,7 @@
   .btn:hover { opacity: 0.8; }
   .btn-outline { background: transparent; color: var(--text-main); border: 1px solid var(--border-light); }
   .btn-success { background: var(--success); border-color: var(--success); color: white; }
-  .btn-danger { background: #EF4444; border-color: #EF4444; color: white; }
+  .btn-danger { background: var(--danger); border-color: var(--danger); color: white; }
   .card { background: var(--surface); border-radius: var(--radius-card); padding: 20px; border: 1px solid var(--border-light); margin-bottom: 20px; }
   .form-group { margin-bottom: 15px; }
   .form-group label { display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 6px; }
@@ -44,6 +45,11 @@
   .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000; align-items: center; justify-content: center; }
   .modal.open { display: flex; }
   .modal-content { background: var(--surface); padding: 25px; border-radius: 16px; width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto; }
+  .sub-tabs { display: flex; gap: 10px; border-bottom: 1px solid var(--border-light); margin-bottom: 20px; }
+  .sub-tab { padding: 10px 15px; font-weight: 600; color: var(--text-muted); cursor: pointer; border-bottom: 2px solid transparent; }
+  .sub-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+  .sub-content { display: none; }
+  .sub-content.active { display: block; }
   #toast { position: fixed; bottom: 20px; right: 20px; background: var(--text-main); color: var(--bg); padding: 12px 24px; border-radius: 10px; font-weight: 600; opacity: 0; transition: 0.3s; z-index: 2000; pointer-events: none; }
   #toast.show { opacity: 1; transform: translateY(0); }
 </style>
@@ -63,16 +69,19 @@
 <div class="main-content">
   <header>
     <h2 id="pageTitle">Dashboard</h2>
-    <button class="btn btn-outline" onclick="toggleTheme()">Cambiar Tema</button>
+    <div style="display: flex; gap: 15px; align-items: center;">
+      <span id="bcvRate" style="font-size: 0.85rem; font-weight: 600;">Cargando Tasa...</span>
+      <button class="btn btn-outline" onclick="toggleTheme()">Tema</button>
+    </div>
   </header>
 
   <div class="page-container">
     <!-- DASHBOARD -->
     <div id="dashboard" class="page-section active">
       <div class="grid-stats">
-        <div class="card"><h3 style="font-size: 0.8rem; color: var(--text-muted);">Ingresos</h3><p id="dashIncome" style="font-size: 1.5rem; font-weight: 800;">$0.00</p></div>
-        <div class="card"><h3 style="font-size: 0.8rem; color: var(--text-muted);">Gastos</h3><p id="dashExpenses" style="font-size: 1.5rem; font-weight: 800;">$0.00</p></div>
-        <div class="card"><h3 style="font-size: 0.8rem; color: var(--text-muted);">Ganancia</h3><p id="dashProfit" style="font-size: 1.5rem; font-weight: 800; color: var(--success);">$0.00</p></div>
+        <div class="card"><h3 style="font-size: 0.8rem; color: var(--text-muted);">Ingresos</h3><p id="dashIncome" style="font-size: 1.5rem; font-weight: 800;">$0.00</p><p id="dashIncomeBs" style="font-size: 0.8rem; color: var(--text-muted);">Bs. 0.00</p></div>
+        <div class="card"><h3 style="font-size: 0.8rem; color: var(--text-muted);">Gastos</h3><p id="dashExpenses" style="font-size: 1.5rem; font-weight: 800;">$0.00</p><p id="dashExpensesBs" style="font-size: 0.8rem; color: var(--text-muted);">Bs. 0.00</p></div>
+        <div class="card"><h3 style="font-size: 0.8rem; color: var(--text-muted);">Ganancia</h3><p id="dashProfit" style="font-size: 1.5rem; font-weight: 800; color: var(--success);">$0.00</p><p id="dashProfitBs" style="font-size: 0.8rem; color: var(--text-muted);">Bs. 0.00</p></div>
       </div>
       <div class="card"><canvas id="salesChart" height="70"></canvas></div>
     </div>
@@ -136,14 +145,56 @@
 
     <!-- FINANZAS -->
     <div id="finanzas" class="page-section">
-      <div class="grid-2">
-        <div class="card">
-          <h3>Registrar Gasto</h3>
-          <div class="form-group"><label>Tipo</label><input type="text" id="finType" class="form-control" placeholder="Ej: Compra de carne"></div>
-          <div class="form-group"><label>Monto ($)</label><input type="number" id="finAmount" class="form-control" step="0.01"></div>
-          <button class="btn" style="width: 100%;" onclick="addTransaction()">Guardar</button>
+      <div class="sub-tabs">
+        <div class="sub-tab active" onclick="switchSubTab('sub-trans', this)">Movimientos (Compras/Ventas)</div>
+        <div class="sub-tab" onclick="switchSubTab('sub-cxc', this)">Cuentas por Cobrar (Fiados)</div>
+        <div class="sub-tab" onclick="switchSubTab('sub-cxp', this)">Cuentas por Pagar (Proveedores)</div>
+      </div>
+
+      <!-- SUBTAB MOVIMIENTOS -->
+      <div id="sub-trans" class="sub-content active">
+        <div class="grid-2">
+          <div class="card">
+            <h3>Registrar Movimiento</h3>
+            <div class="form-group"><label>Tipo</label><select id="finType" class="form-control"><option value="Gasto (Compra)">Gasto (Compra de Mercancía)</option><option value="Ingreso Extra">Ingreso Extra</option></select></div>
+            <div class="form-group"><label>Monto ($)</label><input type="number" id="finAmount" class="form-control" step="0.01"></div>
+            <div class="form-group"><label>Descripción</label><input type="text" id="finDesc" class="form-control" placeholder="Ej: Compra de carne"></div>
+            <button class="btn" style="width: 100%;" onclick="addTransaction()">Guardar</button>
+          </div>
+          <div class="card" style="padding: 0; overflow-x: auto; max-height: 400px;">
+            <table><thead><tr><th>Fecha</th><th>Tipo</th><th>Descripción</th><th>Monto ($)</th><th>Monto (Bs)</th></tr></thead><tbody id="financeTableBody"></tbody></table>
+          </div>
         </div>
-        <div class="card"><canvas id="financeChart"></canvas></div>
+      </div>
+
+      <!-- SUBTAB CXC -->
+      <div id="sub-cxc" class="sub-content">
+        <div class="card">
+          <h3>Anotar Fiado</h3>
+          <div class="grid-3">
+            <div class="form-group"><label>Cliente</label><input type="text" id="cxcName" class="form-control"></div>
+            <div class="form-group"><label>Monto ($)</label><input type="number" id="cxcAmount" class="form-control" step="0.01"></div>
+            <div class="form-group" style="display: flex; align-items: flex-end;"><button class="btn" style="width: 100%;" onclick="addCxC()">Anotar</button></div>
+          </div>
+        </div>
+        <div class="card" style="padding: 0; overflow-x: auto;">
+          <table><thead><tr><th>Fecha</th><th>Cliente</th><th>Monto ($)</th><th>Monto (Bs)</th><th>Estado</th><th>Acción</th></tr></thead><tbody id="cxcTableBody"></tbody></table>
+        </div>
+      </div>
+
+      <!-- SUBTAB CXP -->
+      <div id="sub-cxp" class="sub-content">
+        <div class="card">
+          <h3>Anotar Deuda a Proveedor</h3>
+          <div class="grid-3">
+            <div class="form-group"><label>Proveedor</label><input type="text" id="cxpName" class="form-control"></div>
+            <div class="form-group"><label>Monto ($)</label><input type="number" id="cxpAmount" class="form-control" step="0.01"></div>
+            <div class="form-group" style="display: flex; align-items: flex-end;"><button class="btn btn-warning" style="width: 100%;" onclick="addCxP()">Anotar</button></div>
+          </div>
+        </div>
+        <div class="card" style="padding: 0; overflow-x: auto;">
+          <table><thead><tr><th>Fecha</th><th>Proveedor</th><th>Monto ($)</th><th>Monto (Bs)</th><th>Estado</th><th>Acción</th></tr></thead><tbody id="cxpTableBody"></tbody></table>
+        </div>
       </div>
     </div>
   </div>
@@ -184,7 +235,6 @@
 <div class="modal" id="modalMod">
   <div class="modal-content">
     <h2 style="margin-bottom: 15px;">Quitar Ingredientes</h2>
-    <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px;">Desmarca los ingredientes que el cliente NO quiere.</p>
     <input type="hidden" id="modProductId">
     <div id="modIngredientsList"></div>
     <button class="btn" style="width: 100%; margin-top: 15px;" onclick="confirmModifiers()">Aplicar</button>
@@ -194,7 +244,6 @@
 <div class="modal" id="modalWa">
   <div class="modal-content">
     <h2 style="margin-bottom: 10px; text-align: center;">Pedido Guardado</h2>
-    <p style="margin-bottom: 15px; text-align: center; color: var(--text-muted);">Copia el texto o abre WhatsApp.</p>
     <textarea id="waTextArea" class="form-control" style="height: 150px; font-size: 0.8rem; margin-bottom: 15px; font-family: monospace;" readonly></textarea>
     <a id="waLink" href="#" target="_blank" class="btn btn-success" style="display: block; text-decoration: none; text-align: center; margin-bottom: 10px;">Abrir WhatsApp</a>
     <button class="btn btn-outline" style="width: 100%;" onclick="document.getElementById('modalWa').classList.remove('open')">Cerrar</button>
@@ -214,8 +263,16 @@
   const app = !getApps().length ? initializeApp(firebaseConfig) : getApps()[0];
   const db = getFirestore(app);
 
-  let ordersData = [], transactionsData = [], catalogData = {}, inventoryData = {};
-  let manualCart = {}, myChart = null, finChart = null;
+  let ordersData = [], transactionsData = [], catalogData = {}, inventoryData = {}, cxcData = [], cxpData = [];
+  let TASA_CAMBIO = 40.00;
+  let manualCart = {}, myChart = null;
+
+  const bcvRateEl = document.getElementById('bcvRate');
+  
+  // FETCH BCV RATE
+  fetch('https://ve.dolarapi.com/v1/dolares/oficial').then(res=>res.json()).then(data => {
+    if(data && data.promedio) { TASA_CAMBIO = parseFloat(data.promedio); bcvRateEl.textContent = `Tasa BCV: Bs. ${TASA_CAMBIO.toFixed(2)}`; }
+  }).catch(()=>{});
 
   document.body.style.display = 'flex';
   initApp();
@@ -228,33 +285,52 @@
     if(tabId === 'manual') renderManualProducts();
   };
 
+  window.switchSubTab = (subId, btn) => {
+    document.querySelectorAll('.sub-content').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.sub-tab').forEach(a => a.classList.remove('active'));
+    document.getElementById(subId).classList.add('active'); btn.classList.add('active');
+  };
+
   function showToast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); }
   window.toggleTheme = () => { const el = document.documentElement; const newTheme = el.getAttribute('data-theme') === 'light' ? 'dark' : 'light'; el.setAttribute('data-theme', newTheme); };
 
   async function initApp() {
     onSnapshot(query(collection(db, "pedidos"), orderBy("fecha", "desc")), (snap) => { ordersData = []; snap.forEach(d => ordersData.push({ id: d.id, ...d.data() })); renderOrders(); calculateFinances(); });
-    onSnapshot(query(collection(db, "transacciones"), orderBy("fecha", "desc")), (snap) => { transactionsData = []; snap.forEach(d => transactionsData.push({ id: d.id, ...d.data() })); calculateFinances(); });
+    onSnapshot(query(collection(db, "transacciones"), orderBy("fecha", "desc")), (snap) => { transactionsData = []; snap.forEach(d => transactionsData.push({ id: d.id, ...d.data() })); renderTransactions(); calculateFinances(); });
     onSnapshot(collection(db, "catalogo"), (snap) => { catalogData = {}; snap.forEach(d => catalogData[d.id] = { id: d.id, ...d.data() }); renderCatalog(); });
     onSnapshot(collection(db, "inventario"), (snap) => { inventoryData = {}; snap.forEach(d => inventoryData[d.id] = { id: d.id, ...d.data() }); renderInventory(); populateIngredientSelect(); });
+    onSnapshot(query(collection(db, "cxc"), orderBy("fecha", "desc")), (snap) => { cxcData = []; snap.forEach(d => cxcData.push({ id: d.id, ...d.data() })); renderCxC(); });
+    onSnapshot(query(collection(db, "cxp"), orderBy("fecha", "desc")), (snap) => { cxpData = []; snap.forEach(d => cxpData.push({ id: d.id, ...d.data() })); renderCxP(); });
   }
 
   function renderOrders() { document.getElementById('ordersTableBody').innerHTML = ordersData.map(o => { let prods = typeof o.productos === 'object' ? Object.entries(o.productos).map(([k,v])=>`${v}x ${k}`).join('<br>') : o.productos; return `<tr><td>${new Date(o.fecha).toLocaleString('es-VE')}</td><td>${o.cliente}</td><td><b>${o.mesa ? 'Mesa '+o.mesa : o.tipoEntrega}</b></td><td>${prods}</td><td style="font-weight:bold;">${o.total}</td><td>${o.estado}</td><td><a href="https://wa.me/${o.telefono.replace(/\D/g,'')}" target="_blank" style="color: var(--success); font-weight: bold; text-decoration: none;">WA</a></td></tr>`; }).join(''); }
+  
   function renderCatalog() { document.getElementById('catalogEditorGrid').innerHTML = Object.values(catalogData).map(p => `<div class="card" style="cursor: pointer; text-align: center;" onclick="openEditModal('${p.id}')"><img src="${p.image}" style="width: 100%; height: 100px; object-fit: cover; border-radius: 8px; margin-bottom: 10px;" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2UyZThmMCIvPjwvc3ZnPg=='"><h4 style="margin-bottom: 5px;">${p.name}</h4><div style="color: var(--text-main); font-weight: bold;">$${p.price.toFixed(2)}</div></div>`).join(''); }
+  
   function renderInventory() { document.getElementById('inventoryList').innerHTML = Object.values(inventoryData).map(i => `<div style="margin-bottom: 10px;"><div style="display: flex; justify-content: space-between; font-size: 0.85rem;"><span>${i.name}</span><span>${i.stock.toFixed(2)} ${i.unit}</span></div></div>`).join(''); }
   function populateIngredientSelect() { document.getElementById('invMoveItem').innerHTML = Object.values(inventoryData).map(i => `<option value="${i.id}">${i.name}</option>`).join(''); }
+  
+  function renderTransactions() { document.getElementById('financeTableBody').innerHTML = transactionsData.map(t => `<tr><td>${new Date(t.fecha).toLocaleDateString('es-VE')}</td><td>${t.tipo}</td><td>${t.desc || '-'}</td><td style="font-weight:bold; color:${t.tipo.includes('Gasto')?'var(--danger)':'var(--success)'};">$${t.montoUsd.toFixed(2)}</td><td>Bs. ${(t.montoUsd * TASA_CAMBIO).toFixed(2)}</td></tr>`).join(''); }
+  
+  function renderCxC() { document.getElementById('cxcTableBody').innerHTML = cxcData.map(c => `<tr><td>${new Date(c.fecha).toLocaleDateString('es-VE')}</td><td>${c.cliente}</td><td style="color:var(--danger); font-weight:bold;">$${c.monto.toFixed(2)}</td><td>Bs. ${(c.monto * TASA_CAMBIO).toFixed(2)}</td><td>${c.estado}</td><td>${c.estado==='Pendiente' ? `<button class="btn btn-success" style="padding:4px 8px; font-size:0.7rem;" onclick="payCxC('${c.id}')">Cobrar</button>` : 'Pagado'}</td></tr>`).join(''); }
+  function renderCxP() { document.getElementById('cxpTableBody').innerHTML = cxpData.map(c => `<tr><td>${new Date(c.fecha).toLocaleDateString('es-VE')}</td><td>${c.proveedor}</td><td style="color:var(--danger); font-weight:bold;">$${c.monto.toFixed(2)}</td><td>Bs. ${(c.monto * TASA_CAMBIO).toFixed(2)}</td><td>${c.estado}</td><td>${c.estado==='Pendiente' ? `<button class="btn btn-success" style="padding:4px 8px; font-size:0.7rem;" onclick="payCxP('${c.id}')">Pagar</button>` : 'Pagado'}</td></tr>`).join(''); }
 
   function calculateFinances() {
     let tOrders = ordersData.reduce((sum, o) => sum + (parseFloat(o.total.replace('$', '')) || 0), 0);
-    let tExpenses = transactionsData.reduce((sum,t)=>sum+t.montoUsd,0);
-    let netProfit = tOrders - tExpenses;
-    document.getElementById('dashIncome').textContent = `$${tOrders.toFixed(2)}`; document.getElementById('dashExpenses').textContent = `$${tExpenses.toFixed(2)}`; document.getElementById('dashProfit').textContent = `$${netProfit.toFixed(2)}`;
-    updateCharts(tOrders, tExpenses);
-  }
-  function updateCharts(income, expenses) {
+    let tIncome = transactionsData.filter(t=>t.tipo.includes('Ingreso')).reduce((sum,t)=>sum+t.montoUsd,0);
+    let tExpenses = transactionsData.filter(t=>!t.tipo.includes('Ingreso')).reduce((sum,t)=>sum+t.montoUsd,0);
+    let totalIncome = tOrders + tIncome;
+    let netProfit = totalIncome - tExpenses;
+    
+    document.getElementById('dashIncome').textContent = `$${totalIncome.toFixed(2)}`; 
+    document.getElementById('dashIncomeBs').textContent = `Bs. ${(totalIncome * TASA_CAMBIO).toFixed(2)}`;
+    document.getElementById('dashExpenses').textContent = `$${tExpenses.toFixed(2)}`; 
+    document.getElementById('dashExpensesBs').textContent = `Bs. ${(tExpenses * TASA_CAMBIO).toFixed(2)}`;
+    document.getElementById('dashProfit').textContent = `$${netProfit.toFixed(2)}`;
+    document.getElementById('dashProfitBs').textContent = `Bs. ${(netProfit * TASA_CAMBIO).toFixed(2)}`;
+    
     if(myChart) myChart.destroy();
-    myChart = new Chart(document.getElementById('salesChart').getContext('2d'), { type: 'line', data: { labels: ['Ingresos', 'Gastos'], datasets: [{ label: 'Balance', data: [income, expenses], borderColor: '#000000', backgroundColor: 'rgba(0,0,0,0.1)', fill: true }] }, options: { responsive: true, plugins: { legend: { display: false } } } });
-    if(finChart) finChart.destroy();
-    finChart = new Chart(document.getElementById('financeChart').getContext('2d'), { type: 'bar', data: { labels: ['Ingresos', 'Gastos'], datasets: [{ label: 'Monto ($)', data: [income, expenses], backgroundColor: ['#10B981', '#EF4444'] }] }, options: { responsive: true } });
+    myChart = new Chart(document.getElementById('salesChart').getContext('2d'), { type: 'line', data: { labels: ['Ingresos', 'Gastos'], datasets: [{ label: 'Balance', data: [totalIncome, tExpenses], borderColor: '#000000', backgroundColor: 'rgba(0,0,0,0.1)', fill: true }] }, options: { responsive: true, plugins: { legend: { display: false } } } });
   }
 
   window.openAddIngredientModal = () => document.getElementById('modalAddIng').classList.add('open');
@@ -264,7 +340,7 @@
   window.toggleDeliveryType = () => { const type = document.getElementById('manDeliveryType').value; document.getElementById('mesaInputGroup').style.display = type === 'Mesa' ? 'block' : 'none'; document.getElementById('deliveryInputGroup').style.display = type === 'Delivery' ? 'block' : 'none'; };
   function renderManualProducts() { document.getElementById('manualProductsList').innerHTML = Object.values(catalogData).map(p => `<div style="display:flex; justify-content:space-between; align-items:center; padding: 8px 0; border-bottom: 1px solid var(--border-light);"><div><span style="font-size: 0.9rem;">${p.name}</span><br><small>$${p.price.toFixed(2)}</small></div><div style="display:flex; gap:10px; align-items:center;"><button class="btn btn-outline" style="padding:2px 8px;" onclick="changeManualQty('${p.id}', -1)">-</button><span id="qty_${p.id}" style="font-weight:bold;">${manualCart[p.id] ? manualCart[p.id].qty : 0}</span><button class="btn btn-outline" style="padding:2px 8px;" onclick="changeManualQty('${p.id}', 1)">+</button>${p.receta && p.receta.length > 0 ? `<button class="btn btn-outline" style="padding:2px 8px; font-size:0.7rem;" onclick="openModifiers('${p.id}')">⚙️</button>` : ''}</div></div>`).join(''); }
   window.changeManualQty = (id, delta) => { if(!manualCart[id]) manualCart[id] = { qty: 0, removed: [] }; manualCart[id].qty += delta; if(manualCart[id].qty <= 0) delete manualCart[id]; document.getElementById(`qty_${id}`).textContent = manualCart[id] ? manualCart[id].qty : 0; calcManualTotal(); };
-  function calcManualTotal() { let subtotal = 0; Object.entries(manualCart).forEach(([id, data]) => { if(catalogData[id]) subtotal += catalogData[id].price * data.qty; }); document.getElementById('manTotalText').textContent = `$${subtotal.toFixed(2)}`; }
+  function calcManualTotal() { let subtotal = 0; Object.entries(manualCart).forEach(([id, data]) => { if(catalogData[id]) subtotal += catalogData[id].price * data.qty; }); document.getElementById('manTotalText').textContent = `$${subtotal.toFixed(2)} / Bs. ${(subtotal * TASA_CAMBIO).toFixed(2)}`; }
   window.openModifiers = (id) => { document.getElementById('modProductId').value = id; const p = catalogData[id]; const currentRemoved = manualCart[id] ? manualCart[id].removed : []; document.getElementById('modIngredientsList').innerHTML = p.receta.map(ing => { const iData = inventoryData[ing.id]; if(!iData) return ''; const isChecked = currentRemoved.includes(ing.id) ? '' : 'checked'; return `<label style="display:block; margin-bottom:8px; font-size:0.9rem;"><input type="checkbox" value="${ing.id}" ${isChecked} class="mod-checkbox"> ${iData.name} (${ing.qty} ${iData.unit})</label>`; }).join(''); document.getElementById('modalMod').classList.add('open'); };
   window.confirmModifiers = () => { const id = document.getElementById('modProductId').value; const checkboxes = document.querySelectorAll('.mod-checkbox'); const removed = []; checkboxes.forEach(cb => { if(!cb.checked) removed.push(cb.value); }); if(!manualCart[id]) manualCart[id] = { qty: 0, removed: [] }; manualCart[id].removed = removed; document.getElementById('modalMod').classList.remove('open'); showToast('Ingredientes actualizados'); };
 
@@ -275,12 +351,12 @@
     let subtotal = 0, prodsNube = {}, msgProductos = "";
     for (let [id, data] of Object.entries(manualCart)) {
       const p = catalogData[id]; subtotal += p.price * data.qty; prodsNube[p.name] = data.qty;
-      msgProductos += `- ${data.qty}x ${p.name} ($${p.price.toFixed(2)}) = $${(p.price*data.qty).toFixed(2)}\n`;
+      msgProductos += `- ${data.qty}x ${p.name} ($${p.price.toFixed(2)}) = $${(p.price*data.qty).toFixed(2)} / Bs. ${((p.price*data.qty)*TASA_CAMBIO).toFixed(2)}\n`;
       if(p.receta) { for(let ing of p.receta) { if(!data.removed.includes(ing.id)) { await updateDoc(doc(db, "inventario", ing.id), { stock: increment(-(ing.qty * data.qty)) }); } } }
     }
     try {
       await addDoc(collection(db, "pedidos"), { cliente: name, telefono: phone, productos: prodsNube, total: `$${subtotal.toFixed(2)}`, tipoEntrega: deliveryType, mesa: deliveryType === 'Mesa' ? mesa : null, direccion: maps, fecha: new Date().toISOString(), estado: "Pendiente" });
-      let msg = `*NUEVO PEDIDO - DIVERMANIA*\n\n*CLIENTE:* ${name}\n*TEL:* ${phone}\n*ENTREGA:* ${deliveryType} ${mesa ? '(Mesa '+mesa+')' : ''}\n\n*PRODUCTOS:*\n${msgProductos}\n*TOTAL:* $${subtotal.toFixed(2)}`;
+      let msg = `*NUEVO PEDIDO - DIVERMANIA*\n\n*CLIENTE:* ${name}\n*TEL:* ${phone}\n*ENTREGA:* ${deliveryType} ${mesa ? '(Mesa '+mesa+')' : ''}\n\n*PRODUCTOS:*\n${msgProductos}\n*TOTAL:* $${subtotal.toFixed(2)} / Bs. ${(subtotal*TASA_CAMBIO).toFixed(2)}`;
       document.getElementById('waLink').href = `https://wa.me/?text=${encodeURIComponent(msg)}`;
       document.getElementById('waTextArea').value = msg;
       document.getElementById('modalWa').classList.add('open');
@@ -290,15 +366,49 @@
 
   window.openNewProductModal = () => { document.getElementById('editId').value = ''; document.getElementById('editName').value = ''; document.getElementById('editPrice').value = ''; document.getElementById('recipeList').innerHTML = ''; document.getElementById('modalCat').classList.add('open'); };
   window.openEditModal = (id) => { document.getElementById('editId').value = id; document.getElementById('editName').value = catalogData[id].name; document.getElementById('editPrice').value = catalogData[id].price; const receta = catalogData[id].receta || []; document.getElementById('recipeList').innerHTML = Object.values(inventoryData).map(ing => { const existing = receta.find(r => r.id === ing.id); return `<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px; font-size:0.8rem;"><span>${ing.name} (${ing.unit})</span><input type="number" id="recipe_${ing.id}" value="${existing ? existing.qty : 0}" step="0.01" style="width: 60px; padding: 4px; border-radius: 4px; border: 1px solid #ccc;"></div>`; }).join(''); document.getElementById('modalCat').classList.add('open'); };
+  
+  // GUARDADO BLINDADO: SI LA IMAGEN FALLA, EL PRODUCTO SE GUARDA IGUAL
   window.saveProduct = async () => {
-    const id = document.getElementById('editId').value || 'prod_' + Date.now();
-    let imageUrl = catalogData[id] ? catalogData[id].image : '';
-    const fileInput = document.getElementById('editImageFile'); if(fileInput.files.length > 0) { const { url } = await bucket.put(`prod_${id}_${Date.now()}.jpg`, fileInput.files[0]); imageUrl = url; }
-    let receta = []; Object.values(inventoryData).forEach(ing => { const qty = parseFloat(document.getElementById('recipe_' + ing.id).value) || 0; if(qty > 0) receta.push({ id: ing.id, qty: qty }); });
-    await setDoc(doc(db, "catalogo", id), { name: document.getElementById('editName').value, price: parseFloat(document.getElementById('editPrice').value), image: imageUrl, receta: receta }, { merge: true });
-    document.getElementById('modalCat').classList.remove('open'); showToast('Producto guardado.');
+    try {
+      const id = document.getElementById('editId').value || 'prod_' + Date.now();
+      const name = document.getElementById('editName').value;
+      const price = parseFloat(document.getElementById('editPrice').value) || 0;
+      let imageUrl = catalogData[id] ? catalogData[id].image : '';
+      
+      const fileInput = document.getElementById('editImageFile'); 
+      if(fileInput && fileInput.files.length > 0) { 
+        try {
+          const { url } = await bucket.put(`prod_${id}_${Date.now()}.jpg`, fileInput.files[0]); 
+          imageUrl = url; 
+        } catch (uploadError) {
+          console.error("Error subiendo a Upstash:", uploadError);
+          alert("La imagen no se pudo subir, pero el producto se guardará.");
+        }
+      }
+      
+      let receta = []; 
+      Object.values(inventoryData).forEach(ing => { 
+        const input = document.getElementById('recipe_' + ing.id);
+        if (input) {
+          const qty = parseFloat(input.value) || 0; 
+          if(qty > 0) receta.push({ id: ing.id, qty: qty }); 
+        }
+      });
+      
+      await setDoc(doc(db, "catalogo", id), { name: name, price: price, image: imageUrl, receta: receta }, { merge: true });
+      document.getElementById('modalCat').classList.remove('open'); 
+      showToast('Producto guardado exitosamente.');
+    } catch (error) {
+      console.error(error);
+      alert("Error al guardar: " + error.message);
+    }
   };
-  window.addTransaction = async () => { const tipo = document.getElementById('finType').value; const amount = parseFloat(document.getElementById('finAmount').value); if(!amount || !tipo) return showToast("Faltan datos"); await addDoc(collection(db, "transacciones"), { tipo, montoUsd: amount, fecha: new Date().toISOString() }); document.getElementById('finAmount').value = ''; showToast('Gasto guardado.'); };
+
+  window.addTransaction = async () => { const tipo = document.getElementById('finType').value; const amount = parseFloat(document.getElementById('finAmount').value); const desc = document.getElementById('finDesc').value; if(!amount || !tipo) return showToast("Faltan datos"); await addDoc(collection(db, "transacciones"), { tipo, montoUsd: amount, desc, fecha: new Date().toISOString() }); document.getElementById('finAmount').value = ''; document.getElementById('finDesc').value = ''; showToast('Movimiento guardado.'); };
+  window.addCxC = async () => { const cliente = document.getElementById('cxcName').value; const monto = parseFloat(document.getElementById('cxcAmount').value); if(!cliente || !monto) return showToast('Faltan datos'); await addDoc(collection(db, "cxc"), { cliente, monto, estado: 'Pendiente', fecha: new Date().toISOString() }); document.getElementById('cxcName').value = ''; document.getElementById('cxcAmount').value = ''; showToast('Fiado registrado.'); };
+  window.payCxC = async (id) => { await updateDoc(doc(db, "cxc", id), { estado: 'Pagado' }); showToast('Deuda saldada.'); };
+  window.addCxP = async () => { const proveedor = document.getElementById('cxpName').value; const monto = parseFloat(document.getElementById('cxpAmount').value); if(!proveedor || !monto) return showToast('Faltan datos'); await addDoc(collection(db, "cxp"), { proveedor, monto, estado: 'Pendiente', fecha: new Date().toISOString() }); document.getElementById('cxpName').value = ''; document.getElementById('cxpAmount').value = ''; showToast('Deuda registrada.'); };
+  window.payCxP = async (id) => { await updateDoc(doc(db, "cxp", id), { estado: 'Pagado' }); showToast('Deuda pagada.'); };
 </script>
 </body>
 </html>
