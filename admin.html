@@ -9,103 +9,70 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <style>
-  /* COLORES MONOCROMATICOS */
-  :root { --bg: #F3F4F6; --surface: #FFFFFF; --text-main: #111827; --text-muted: #6B7280; --primary: #000000; --border-light: #D1D5DB; --success: #10B981; --warning: #F59E0B; --info: #3B82F6; --radius-card: 16px; --shadow-sm: 0 2px 8px rgba(0,0,0,0.06); --shadow-md: 0 8px 24px rgba(0,0,0,0.1); }
-  [data-theme="dark"] { --bg: #111111; --surface: #1F1F1F; --text-main: #F9FAFB; --text-muted: #9CA3AF; --primary: #FFFFFF; --border-light: #333333; --shadow-sm: 0 2px 8px rgba(0,0,0,0.5); --shadow-md: 0 8px 24px rgba(0,0,0,0.8); }
+  :root { --bg: #F3F4F6; --surface: #FFFFFF; --text-main: #111827; --text-muted: #6B7280; --primary: #000000; --border-light: #D1D5DB; --success: #10B981; --radius-card: 12px; --shadow-sm: 0 2px 8px rgba(0,0,0,0.06); }
+  [data-theme="dark"] { --bg: #111111; --surface: #1F1F1F; --text-main: #F9FAFB; --text-muted: #9CA3AF; --primary: #FFFFFF; --border-light: #333333; }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; transition: background 0.3s; }
-  h1, h2, h3, h4 { font-family: 'Outfit', sans-serif; letter-spacing: -0.02em; }
-  .sidebar { width: 260px; background: var(--surface); border-right: 1px solid var(--border-light); display: flex; flex-direction: column; padding: 24px 16px; z-index: 100; overflow-y: auto; }
-  .brand { font-family: 'Outfit', sans-serif; font-size: 1.4rem; font-weight: 800; color: var(--text-main); margin-bottom: 20px; display: flex; align-items: center; gap: 10px; padding-left: 8px;}
+  body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; }
+  h1, h2, h3, h4 { font-family: 'Outfit', sans-serif; }
+  .sidebar { width: 260px; background: var(--surface); border-right: 1px solid var(--border-light); display: flex; flex-direction: column; padding: 24px 16px; overflow-y: auto; }
+  .brand { font-family: 'Outfit', sans-serif; font-size: 1.4rem; font-weight: 800; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; padding-left: 8px;}
   .brand img { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid var(--border-light); }
-  .nav-group { font-size: 0.7rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin: 15px 0 5px 10px; letter-spacing: 1px; }
-  .nav-link { display: flex; align-items: center; gap: 12px; padding: 10px 16px; border-radius: 10px; color: var(--text-muted); font-weight: 500; font-size: 0.9rem; cursor: pointer; transition: 0.2s; margin-bottom: 4px; border: none; background: transparent; width: 100%; text-align: left; }
-  .nav-link:hover, .nav-link.active { background: var(--bg); color: var(--primary); font-weight: 700; }
-  .nav-link.active { border-left: 4px solid var(--primary); }
+  .nav-link { display: flex; align-items: center; padding: 10px 16px; border-radius: 8px; color: var(--text-muted); font-weight: 600; font-size: 0.9rem; cursor: pointer; margin-bottom: 4px; border: none; background: transparent; width: 100%; text-align: left; transition: 0.2s;}
+  .nav-link:hover { background: var(--bg); }
+  .nav-link.active { background: var(--bg); color: var(--primary); border-left: 4px solid var(--primary); }
   .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
   header { padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; background: var(--surface); border-bottom: 1px solid var(--border-light); }
-  .header-right { display: flex; align-items: center; gap: 16px; }
   .page-container { flex: 1; overflow-y: auto; padding: 30px; }
   .page-section { display: none; animation: fadeIn 0.3s; }
   .page-section.active { display: block; }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-  .btn { background: var(--primary); color: var(--surface); border: 1px solid var(--primary); padding: 10px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.9rem; }
+  .btn { background: var(--primary); color: var(--surface); border: 1px solid var(--primary); padding: 10px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+  .btn:hover { opacity: 0.8; }
   .btn-outline { background: transparent; color: var(--text-main); border: 1px solid var(--border-light); }
   .btn-success { background: var(--success); border-color: var(--success); color: white; }
-  .btn-warning { background: var(--warning); border-color: var(--warning); color: white; }
   .btn-danger { background: #EF4444; border-color: #EF4444; color: white; }
-  .card { background: var(--surface); border-radius: var(--radius-card); padding: 20px; border: 1px solid var(--border-light); box-shadow: var(--shadow-sm); margin-bottom: 20px; }
+  .card { background: var(--surface); border-radius: var(--radius-card); padding: 20px; border: 1px solid var(--border-light); margin-bottom: 20px; }
   .form-group { margin-bottom: 15px; }
   .form-group label { display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 6px; }
   .form-control { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-light); background: var(--bg); color: var(--text-main); outline: none; }
   table { width: 100%; border-collapse: collapse; }
   th, td { padding: 12px; text-align: left; border-bottom: 1px solid var(--border-light); font-size: 0.85rem; }
-  th { background: var(--bg); color: var(--text-muted); font-weight: 600; font-size: 0.75rem; text-transform: uppercase; }
+  th { background: var(--bg); color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; }
   .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
   .grid-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
-  .filter-bar { display: flex; gap: 8px; margin-bottom: 20px; overflow-x: auto; }
-  .filter-btn { background: var(--surface); border: 1px solid var(--border-light); color: var(--text-muted); padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; cursor: pointer; }
-  .filter-btn.active { background: var(--primary); color: var(--surface); border-color: var(--primary); }
-  .sub-tabs { display: flex; gap: 10px; border-bottom: 1px solid var(--border-light); margin-bottom: 20px; }
-  .sub-tab { padding: 10px 15px; font-weight: 600; color: var(--text-muted); cursor: pointer; border-bottom: 2px solid transparent; }
-  .sub-tab.active { color: var(--text-main); border-bottom-color: var(--primary); }
-  .sub-content { display: none; }
-  .sub-content.active { display: block; }
   .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000; align-items: center; justify-content: center; }
   .modal.open { display: flex; }
   .modal-content { background: var(--surface); padding: 25px; border-radius: 16px; width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto; }
-  .progress-track { width: 100%; height: 8px; background: var(--border-light); border-radius: 4px; overflow: hidden; margin-top: 5px; }
-  .progress-fill { height: 100%; background: var(--success); width: 0%; }
-  .progress-fill.low { background: var(--primary); }
-  @media (max-width: 768px) {
-    .sidebar { position: fixed; top: 0; bottom: 0; left: 0; transform: translateX(-100%); }
-    .sidebar.open { transform: translateX(0); }
-    .grid-2, .grid-3 { grid-template-columns: 1fr; }
-  }
   #toast { position: fixed; bottom: 20px; right: 20px; background: var(--text-main); color: var(--bg); padding: 12px 24px; border-radius: 10px; font-weight: 600; opacity: 0; transition: 0.3s; z-index: 2000; pointer-events: none; }
   #toast.show { opacity: 1; transform: translateY(0); }
 </style>
 </head>
 <body>
 
-<div class="sidebar" id="sidebar">
+<div class="sidebar">
   <div class="brand"><img src="logodivermania.jpg" onerror="this.style.display='none'"> DIVERMANIA</div>
-  <div class="nav-group">Operaciones</div>
   <button class="nav-link active" onclick="switchTab('dashboard', this)">Dashboard</button>
   <button class="nav-link" onclick="switchTab('pedidos', this)">Pedidos</button>
-  <button class="nav-link" onclick="switchTab('manual', this)">Nuevo Pedido (Mesas/Manual)</button>
-  <div class="nav-group">Gestión</div>
+  <button class="nav-link" onclick="switchTab('manual', this)">Nuevo Pedido (Mesas)</button>
   <button class="nav-link" onclick="switchTab('catalogo', this)">Catálogo y Recetas</button>
   <button class="nav-link" onclick="switchTab('inventario', this)">Inventario y Gramajes</button>
-  <button class="nav-link" onclick="switchTab('clientes', this)">Clientes</button>
-  <div class="nav-group">Administración</div>
   <button class="nav-link" onclick="switchTab('finanzas', this)">Finanzas</button>
 </div>
 
 <div class="main-content">
   <header>
-    <h2 id="pageTitle" style="font-size: 1.2rem;">Dashboard</h2>
-    <div class="header-right">
-      <button class="btn btn-outline" style="padding: 6px 12px;" onclick="toggleTheme()">Tema</button>
-    </div>
+    <h2 id="pageTitle">Dashboard</h2>
+    <button class="btn btn-outline" onclick="toggleTheme()">Cambiar Tema</button>
   </header>
 
   <div class="page-container">
     <!-- DASHBOARD -->
     <div id="dashboard" class="page-section active">
-      <div class="filter-bar">
-        <button class="filter-btn active" onclick="setFilter('hoy', this)">Hoy</button>
-        <button class="filter-btn" onclick="setFilter('semana', this)">Esta Semana</button>
-        <button class="filter-btn" onclick="setFilter('mes', this)">Este Mes</button>
-      </div>
       <div class="grid-stats">
         <div class="card"><h3 style="font-size: 0.8rem; color: var(--text-muted);">Ingresos</h3><p id="dashIncome" style="font-size: 1.5rem; font-weight: 800;">$0.00</p></div>
         <div class="card"><h3 style="font-size: 0.8rem; color: var(--text-muted);">Gastos</h3><p id="dashExpenses" style="font-size: 1.5rem; font-weight: 800;">$0.00</p></div>
         <div class="card"><h3 style="font-size: 0.8rem; color: var(--text-muted);">Ganancia</h3><p id="dashProfit" style="font-size: 1.5rem; font-weight: 800; color: var(--success);">$0.00</p></div>
-        <div class="card"><h3 style="font-size: 0.8rem; color: var(--text-muted);">Pedidos</h3><p id="dashOrdersCount" style="font-size: 1.5rem; font-weight: 800; color: var(--info);">0</p></div>
       </div>
       <div class="card"><canvas id="salesChart" height="70"></canvas></div>
     </div>
@@ -114,7 +81,7 @@
     <div id="pedidos" class="page-section">
       <div class="card" style="padding: 0; overflow-x: auto;">
         <table>
-          <thead><tr><th>Fecha</th><th>Cliente</th><th>Mesa/Entrega</th><th>Productos</th><th>Total</th><th>Estado</th><th>Acción</th></tr></thead>
+          <thead><tr><th>Fecha</th><th>Cliente</th><th>Mesa</th><th>Productos</th><th>Total</th><th>Estado</th><th>Acción</th></tr></thead>
           <tbody id="ordersTableBody"></tbody>
         </table>
       </div>
@@ -124,38 +91,23 @@
     <div id="manual" class="page-section">
       <div class="grid-2">
         <div class="card">
-          <h3 style="margin-bottom: 15px;">Datos del Pedido</h3>
+          <h3>Datos del Pedido</h3>
           <div class="form-group"><label>Nombre del Cliente</label><input type="text" id="manName" class="form-control"></div>
           <div class="form-group"><label>Teléfono</label><input type="tel" id="manPhone" class="form-control"></div>
-          <div class="form-group">
-            <label>Tipo de Entrega</label>
-            <select id="manDeliveryType" class="form-control" onchange="toggleDeliveryType()">
-              <option value="Mesa">Mesa</option>
-              <option value="Delivery">Delivery</option>
-              <option value="Retiro">Retiro en Local</option>
-            </select>
-          </div>
-          <div class="form-group" id="mesaInputGroup">
-            <label>Número de Mesa</label>
-            <input type="number" id="manMesa" class="form-control" value="1">
-          </div>
-          <div class="form-group" id="deliveryInputGroup" style="display:none;">
-            <label>Dirección / Link Maps</label>
-            <input type="text" id="manMaps" class="form-control">
-          </div>
+          <div class="form-group"><label>Tipo de Entrega</label><select id="manDeliveryType" class="form-control" onchange="toggleDeliveryType()"><option value="Mesa">Mesa</option><option value="Delivery">Delivery</option></select></div>
+          <div class="form-group" id="mesaInputGroup"><label>Número de Mesa</label><input type="number" id="manMesa" class="form-control" value="1"></div>
+          <div class="form-group" id="deliveryInputGroup" style="display:none;"><label>Dirección / Link Maps</label><input type="text" id="manMaps" class="form-control"></div>
         </div>
         <div class="card">
-          <h3 style="margin-bottom: 15px;">Productos</h3>
+          <h3>Productos</h3>
           <div id="manualProductsList" style="max-height: 250px; overflow-y: auto; margin-bottom: 15px;"></div>
-          <div style="display: flex; justify-content: space-between; font-size: 1.1rem; font-weight: bold; margin-bottom: 15px;">
-            <span>Total:</span><span id="manTotalText" style="color: var(--primary);">$0.00</span>
-          </div>
-          <button class="btn" style="width: 100%;" onclick="saveManualOrder()">Guardar Pedido</button>
+          <div style="display: flex; justify-content: space-between; font-size: 1.1rem; font-weight: bold; margin-bottom: 15px;"><span>Total:</span><span id="manTotalText">$0.00</span></div>
+          <button class="btn" style="width: 100%;" onclick="saveManualOrder()">Guardar y Generar WhatsApp</button>
         </div>
       </div>
     </div>
 
-    <!-- CATALOGO Y RECETAS -->
+    <!-- CATALOGO -->
     <div id="catalogo" class="page-section">
       <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
         <h3>Productos</h3>
@@ -168,34 +120,22 @@
     <div id="inventario" class="page-section">
       <div class="grid-2">
         <div class="card">
-          <h3 style="margin-bottom: 15px;">Insumos (Gramos / Unidades)</h3>
-          <div id="inventoryList" style="max-height: 400px; overflow-y: auto;"></div>
+          <h3>Insumos (Gramos / Unidades)</h3>
+          <div id="inventoryList" style="max-height: 400px; overflow-y: auto; margin-top: 15px;"></div>
           <button class="btn btn-outline" style="width: 100%; margin-top: 15px;" onclick="openAddIngredientModal()">+ Añadir Insumo</button>
         </div>
         <div class="card">
-          <h3 style="margin-bottom: 15px;">Registrar Movimiento</h3>
+          <h3>Registrar Movimiento</h3>
           <div class="form-group"><label>Insumo</label><select id="invMoveItem" class="form-control"></select></div>
-          <div class="form-group"><label>Tipo</label><select id="invMoveType" class="form-control"><option value="entrada">Entrada (Compra)</option><option value="merma">Merma</option><option value="autoconsumo">Autoconsumo (Cena)</option></select></div>
+          <div class="form-group"><label>Tipo</label><select id="invMoveType" class="form-control"><option value="entrada">Entrada (Compra)</option><option value="autoconsumo">Autoconsumo (Cena)</option></select></div>
           <div class="form-group"><label>Cantidad</label><input type="number" id="invMoveQty" class="form-control" step="0.01"></div>
           <button class="btn btn-success" style="width: 100%;" onclick="saveInventoryMove()">Guardar</button>
         </div>
       </div>
     </div>
 
-    <!-- CLIENTES -->
-    <div id="clientes" class="page-section">
-      <div class="card" style="padding: 0; overflow-x: auto;">
-        <table><thead><tr><th>Nombre</th><th>Teléfono</th><th>Compras</th><th>Total</th></tr></thead><tbody id="clientsTableBody"></tbody></table>
-      </div>
-    </div>
-
-    <!-- FINANZAS MEJORADAS -->
+    <!-- FINANZAS -->
     <div id="finanzas" class="page-section">
-      <div class="grid-stats">
-        <div class="card"><h3 style="font-size: 0.8rem; color: var(--text-muted);">Ingresos</h3><p id="finIncome" style="font-size: 1.5rem; font-weight: 800; color: var(--success);">$0.00</p></div>
-        <div class="card"><h3 style="font-size: 0.8rem; color: var(--text-muted);">Gastos</h3><p id="finExpenses" style="font-size: 1.5rem; font-weight: 800; color: var(--primary);">$0.00</p></div>
-        <div class="card"><h3 style="font-size: 0.8rem; color: var(--text-muted);">Ganancia</h3><p id="finProfit" style="font-size: 1.5rem; font-weight: 800; color: var(--info);">$0.00</p></div>
-      </div>
       <div class="grid-2">
         <div class="card">
           <h3>Registrar Gasto</h3>
@@ -203,9 +143,7 @@
           <div class="form-group"><label>Monto ($)</label><input type="number" id="finAmount" class="form-control" step="0.01"></div>
           <button class="btn" style="width: 100%;" onclick="addTransaction()">Guardar</button>
         </div>
-        <div class="card" style="padding: 0; overflow-x: auto; max-height: 400px;">
-          <table><thead><tr><th>Fecha</th><th>Tipo</th><th>Monto</th></tr></thead><tbody id="financeTableBody"></tbody></table>
-        </div>
+        <div class="card"><canvas id="financeChart"></canvas></div>
       </div>
     </div>
   </div>
@@ -214,13 +152,12 @@
 <!-- MODALES -->
 <div class="modal" id="modalCat">
   <div class="modal-content">
-    <h2 id="modalCatTitle" style="margin-bottom: 15px; color: var(--text-main);">Editar Producto</h2>
+    <h2 id="modalCatTitle" style="margin-bottom: 15px;">Editar Producto</h2>
     <input type="hidden" id="editId">
     <div class="grid-2">
       <div class="form-group"><label>Nombre</label><input type="text" id="editName" class="form-control"></div>
       <div class="form-group"><label>Precio ($)</label><input type="number" id="editPrice" class="form-control" step="0.01"></div>
     </div>
-    <div class="form-group"><label>Categoría</label><select id="editCat" class="form-control"><option value="perros">Perros</option><option value="hamburguesas">Hamburguesas</option><option value="fiesta">Fiesta</option></select></div>
     <div class="form-group"><label>Imagen</label><input type="file" id="editImageFile" accept="image/*" class="form-control"></div>
     <div style="background: var(--bg); padding: 15px; border-radius: 8px; margin: 15px 0;">
       <h4 style="font-size: 0.9rem; margin-bottom: 10px;">Receta (Gramos por unidad)</h4>
@@ -247,10 +184,20 @@
 <div class="modal" id="modalMod">
   <div class="modal-content">
     <h2 style="margin-bottom: 15px;">Quitar Ingredientes</h2>
-    <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px;">Desmarca los que el cliente NO quiere.</p>
+    <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px;">Desmarca los ingredientes que el cliente NO quiere.</p>
     <input type="hidden" id="modProductId">
     <div id="modIngredientsList"></div>
     <button class="btn" style="width: 100%; margin-top: 15px;" onclick="confirmModifiers()">Aplicar</button>
+  </div>
+</div>
+
+<div class="modal" id="modalWa">
+  <div class="modal-content">
+    <h2 style="margin-bottom: 10px; text-align: center;">Pedido Guardado</h2>
+    <p style="margin-bottom: 15px; text-align: center; color: var(--text-muted);">Copia el texto o abre WhatsApp.</p>
+    <textarea id="waTextArea" class="form-control" style="height: 150px; font-size: 0.8rem; margin-bottom: 15px; font-family: monospace;" readonly></textarea>
+    <a id="waLink" href="#" target="_blank" class="btn btn-success" style="display: block; text-decoration: none; text-align: center; margin-bottom: 10px;">Abrir WhatsApp</a>
+    <button class="btn btn-outline" style="width: 100%;" onclick="document.getElementById('modalWa').classList.remove('open')">Cerrar</button>
   </div>
 </div>
 
@@ -267,12 +214,8 @@
   const app = !getApps().length ? initializeApp(firebaseConfig) : getApps()[0];
   const db = getFirestore(app);
 
-  let ordersData = [], transactionsData = [], clientsData = [], catalogData = {}, inventoryData = {};
-  let manualCart = {}, myChart = null;
-
-  const htmlEl = document.documentElement;
-  htmlEl.setAttribute('data-theme', localStorage.getItem('adminTheme') || 'light');
-  window.toggleTheme = () => { const newTheme = htmlEl.getAttribute('data-theme') === 'light' ? 'dark' : 'light'; htmlEl.setAttribute('data-theme', newTheme); localStorage.setItem('adminTheme', newTheme); if(myChart) updateChart(); };
+  let ordersData = [], transactionsData = [], catalogData = {}, inventoryData = {};
+  let manualCart = {}, myChart = null, finChart = null;
 
   document.body.style.display = 'flex';
   initApp();
@@ -286,61 +229,37 @@
   };
 
   function showToast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); }
+  window.toggleTheme = () => { const el = document.documentElement; const newTheme = el.getAttribute('data-theme') === 'light' ? 'dark' : 'light'; el.setAttribute('data-theme', newTheme); };
 
   async function initApp() {
     onSnapshot(query(collection(db, "pedidos"), orderBy("fecha", "desc")), (snap) => { ordersData = []; snap.forEach(d => ordersData.push({ id: d.id, ...d.data() })); renderOrders(); calculateFinances(); });
-    onSnapshot(query(collection(db, "transacciones"), orderBy("fecha", "desc")), (snap) => { transactionsData = []; snap.forEach(d => transactionsData.push({ id: d.id, ...d.data() })); renderTransactions(); calculateFinances(); });
+    onSnapshot(query(collection(db, "transacciones"), orderBy("fecha", "desc")), (snap) => { transactionsData = []; snap.forEach(d => transactionsData.push({ id: d.id, ...d.data() })); calculateFinances(); });
     onSnapshot(collection(db, "catalogo"), (snap) => { catalogData = {}; snap.forEach(d => catalogData[d.id] = { id: d.id, ...d.data() }); renderCatalog(); });
     onSnapshot(collection(db, "inventario"), (snap) => { inventoryData = {}; snap.forEach(d => inventoryData[d.id] = { id: d.id, ...d.data() }); renderInventory(); populateIngredientSelect(); });
-    onSnapshot(collection(db, "usuarios"), (snap) => { clientsData = []; snap.forEach(d => clientsData.push({ id: d.id, ...d.data() })); renderClients(); });
   }
 
-  function renderOrders() { document.getElementById('ordersTableBody').innerHTML = ordersData.map(o => { let prods = typeof o.productos === 'object' ? Object.entries(o.productos).map(([k,v])=>`${v}x ${k}`).join('<br>') : o.productos; let tipo = o.mesa ? `Mesa ${o.mesa}` : o.tipoEntrega; return `<tr><td>${new Date(o.fecha).toLocaleString('es-VE')}</td><td>${o.cliente}</td><td><b>${tipo}</b></td><td>${prods}</td><td style="font-weight:bold;">${o.total}</td><td><select class="form-control" style="padding: 5px;" onchange="updateOrderStatus('${o.id}', this.value)"><option value="Pendiente" ${o.estado==='Pendiente'?'selected':''}>Pendiente</option><option value="En Preparación" ${o.estado==='En Preparación'?'selected':''}>En Preparación</option><option value="Entregado" ${o.estado==='Entregado'?'selected':''}>Entregado</option></select></td><td><a href="https://wa.me/${o.telefono.replace(/\D/g,'')}" target="_blank" style="color: var(--success); font-weight: bold; text-decoration: none;">WA</a></td></tr>`; }).join(''); }
-  window.updateOrderStatus = async (id, status) => await updateDoc(doc(db, "pedidos", id), { estado: status });
-  function renderClients() { document.getElementById('clientsTableBody').innerHTML = clientsData.map(c => `<tr><td>${c.name}</td><td>${c.phone}</td><td>${c.purchases || 0}</td><td style="font-weight:bold; color:var(--success);">$${(c.totalGastado || 0).toFixed(2)}</td></tr>`).join(''); }
-  function renderTransactions() { document.getElementById('financeTableBody').innerHTML = transactionsData.map(t => `<tr><td>${new Date(t.fecha).toLocaleDateString('es-VE')}</td><td>${t.tipo}</td><td style="font-weight:bold; color:${t.tipo.includes('Gasto')?'red':'green'};">$${t.montoUsd.toFixed(2)}</td></tr>`).join(''); }
-  
-  function renderCatalog() { 
-    document.getElementById('catalogEditorGrid').innerHTML = Object.values(catalogData).map(p => `
-      <div class="card" style="cursor: pointer; text-align: center;" onclick="openEditModal('${p.id}')">
-        <img src="${p.image}" style="width: 100%; height: 100px; object-fit: cover; border-radius: 8px; margin-bottom: 10px;" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2UyZThmMCIvPjwvc3ZnPg=='">
-        <h4 style="margin-bottom: 5px;">${p.name}</h4>
-        <div style="color: var(--text-main); font-weight: bold;">$${p.price.toFixed(2)}</div>
-      </div>
-    `).join(''); 
-  }
-  
-  function renderInventory() { document.getElementById('inventoryList').innerHTML = Object.values(inventoryData).map(i => { const isLow = i.stock <= i.minStock; return `<div style="margin-bottom: 15px;"><div style="display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 600;"><span>${i.name}</span><span style="color: ${isLow ? 'red' : 'green'};">${i.stock.toFixed(2)} ${i.unit}</span></div><div class="progress-track"><div class="progress-fill ${isLow ? 'low' : ''}" style="width: ${Math.min((i.stock/(i.minStock*3))*100,100)}%;"></div></div></div>`; }).join(''); }
+  function renderOrders() { document.getElementById('ordersTableBody').innerHTML = ordersData.map(o => { let prods = typeof o.productos === 'object' ? Object.entries(o.productos).map(([k,v])=>`${v}x ${k}`).join('<br>') : o.productos; return `<tr><td>${new Date(o.fecha).toLocaleString('es-VE')}</td><td>${o.cliente}</td><td><b>${o.mesa ? 'Mesa '+o.mesa : o.tipoEntrega}</b></td><td>${prods}</td><td style="font-weight:bold;">${o.total}</td><td>${o.estado}</td><td><a href="https://wa.me/${o.telefono.replace(/\D/g,'')}" target="_blank" style="color: var(--success); font-weight: bold; text-decoration: none;">WA</a></td></tr>`; }).join(''); }
+  function renderCatalog() { document.getElementById('catalogEditorGrid').innerHTML = Object.values(catalogData).map(p => `<div class="card" style="cursor: pointer; text-align: center;" onclick="openEditModal('${p.id}')"><img src="${p.image}" style="width: 100%; height: 100px; object-fit: cover; border-radius: 8px; margin-bottom: 10px;" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2UyZThmMCIvPjwvc3ZnPg=='"><h4 style="margin-bottom: 5px;">${p.name}</h4><div style="color: var(--text-main); font-weight: bold;">$${p.price.toFixed(2)}</div></div>`).join(''); }
+  function renderInventory() { document.getElementById('inventoryList').innerHTML = Object.values(inventoryData).map(i => `<div style="margin-bottom: 10px;"><div style="display: flex; justify-content: space-between; font-size: 0.85rem;"><span>${i.name}</span><span>${i.stock.toFixed(2)} ${i.unit}</span></div></div>`).join(''); }
   function populateIngredientSelect() { document.getElementById('invMoveItem').innerHTML = Object.values(inventoryData).map(i => `<option value="${i.id}">${i.name}</option>`).join(''); }
 
   function calculateFinances() {
     let tOrders = ordersData.reduce((sum, o) => sum + (parseFloat(o.total.replace('$', '')) || 0), 0);
-    let tExpenses = transactionsData.filter(t=>t.tipo.includes('Gasto') || t.tipo.includes('Compra')).reduce((sum,t)=>sum+t.montoUsd,0);
+    let tExpenses = transactionsData.reduce((sum,t)=>sum+t.montoUsd,0);
     let netProfit = tOrders - tExpenses;
-    
-    document.getElementById('dashIncome').textContent = `$${tOrders.toFixed(2)}`; 
-    document.getElementById('dashExpenses').textContent = `$${tExpenses.toFixed(2)}`; 
-    document.getElementById('dashProfit').textContent = `$${netProfit.toFixed(2)}`;
-    document.getElementById('dashOrdersCount').textContent = ordersData.length;
-
-    document.getElementById('finIncome').textContent = `$${tOrders.toFixed(2)}`;
-    document.getElementById('finExpenses').textContent = `$${tExpenses.toFixed(2)}`;
-    document.getElementById('finProfit').textContent = `$${netProfit.toFixed(2)}`;
-    
-    updateChart(ordersData);
+    document.getElementById('dashIncome').textContent = `$${tOrders.toFixed(2)}`; document.getElementById('dashExpenses').textContent = `$${tExpenses.toFixed(2)}`; document.getElementById('dashProfit').textContent = `$${netProfit.toFixed(2)}`;
+    updateCharts(tOrders, tExpenses);
   }
-  function updateChart(filteredOrders) {
-    const ctx = document.getElementById('salesChart').getContext('2d'); const labels = [], dataValues = [], last7Days = {};
-    for (let i = 6; i >= 0; i--) { const d = new Date(); d.setDate(d.getDate() - i); const dateStr = d.toLocaleDateString('es-VE', { month: 'short', day: 'numeric' }); labels.push(dateStr); last7Days[dateStr] = 0; }
-    filteredOrders.forEach(o => { const dateStr = new Date(o.fecha).toLocaleDateString('es-VE', { month: 'short', day: 'numeric' }); if(last7Days[dateStr] !== undefined) last7Days[dateStr] += (parseFloat(o.total.replace('$', '')) || 0); });
-    labels.forEach(l => dataValues.push(last7Days[l]));
+  function updateCharts(income, expenses) {
     if(myChart) myChart.destroy();
-    myChart = new Chart(ctx, { type: 'line', data: { labels, datasets: [{ label: 'Ventas', data: dataValues, borderColor: '#000000', backgroundColor: 'rgba(0,0,0,0.1)', fill: true, tension: 0.4 }] }, options: { responsive: true, plugins: { legend: { display: false } } } });
+    myChart = new Chart(document.getElementById('salesChart').getContext('2d'), { type: 'line', data: { labels: ['Ingresos', 'Gastos'], datasets: [{ label: 'Balance', data: [income, expenses], borderColor: '#000000', backgroundColor: 'rgba(0,0,0,0.1)', fill: true }] }, options: { responsive: true, plugins: { legend: { display: false } } } });
+    if(finChart) finChart.destroy();
+    finChart = new Chart(document.getElementById('financeChart').getContext('2d'), { type: 'bar', data: { labels: ['Ingresos', 'Gastos'], datasets: [{ label: 'Monto ($)', data: [income, expenses], backgroundColor: ['#10B981', '#EF4444'] }] }, options: { responsive: true } });
   }
 
   window.openAddIngredientModal = () => document.getElementById('modalAddIng').classList.add('open');
   window.saveNewIngredient = async () => { const name = document.getElementById('ingName').value; const id = name.toLowerCase().replace(/\s+/g, '_'); await setDoc(doc(db, "inventario", id), { name: name, stock: parseFloat(document.getElementById('ingStock').value) || 0, minStock: parseFloat(document.getElementById('ingMin').value) || 0, unit: document.getElementById('ingUnit').value }); document.getElementById('modalAddIng').classList.remove('open'); showToast('Insumo guardado.'); };
-  window.saveInventoryMove = async () => { const id = document.getElementById('invMoveItem').value; const type = document.getElementById('invMoveType').value; const qty = parseFloat(document.getElementById('invMoveQty').value); if(!id || !qty) return showToast('Faltan datos'); const itemRef = doc(db, "inventario", id); if(type === 'entrada') await updateDoc(itemRef, { stock: increment(qty) }); if(type === 'merma' || type === 'autoconsumo') await updateDoc(itemRef, { stock: increment(-qty) }); document.getElementById('invMoveQty').value = ''; showToast('Movimiento guardado.'); };
+  window.saveInventoryMove = async () => { const id = document.getElementById('invMoveItem').value; const type = document.getElementById('invMoveType').value; const qty = parseFloat(document.getElementById('invMoveQty').value); if(!id || !qty) return showToast('Faltan datos'); const itemRef = doc(db, "inventario", id); if(type === 'entrada') await updateDoc(itemRef, { stock: increment(qty) }); if(type === 'autoconsumo') await updateDoc(itemRef, { stock: increment(-qty) }); document.getElementById('invMoveQty').value = ''; showToast('Movimiento guardado.'); };
 
   window.toggleDeliveryType = () => { const type = document.getElementById('manDeliveryType').value; document.getElementById('mesaInputGroup').style.display = type === 'Mesa' ? 'block' : 'none'; document.getElementById('deliveryInputGroup').style.display = type === 'Delivery' ? 'block' : 'none'; };
   function renderManualProducts() { document.getElementById('manualProductsList').innerHTML = Object.values(catalogData).map(p => `<div style="display:flex; justify-content:space-between; align-items:center; padding: 8px 0; border-bottom: 1px solid var(--border-light);"><div><span style="font-size: 0.9rem;">${p.name}</span><br><small>$${p.price.toFixed(2)}</small></div><div style="display:flex; gap:10px; align-items:center;"><button class="btn btn-outline" style="padding:2px 8px;" onclick="changeManualQty('${p.id}', -1)">-</button><span id="qty_${p.id}" style="font-weight:bold;">${manualCart[p.id] ? manualCart[p.id].qty : 0}</span><button class="btn btn-outline" style="padding:2px 8px;" onclick="changeManualQty('${p.id}', 1)">+</button>${p.receta && p.receta.length > 0 ? `<button class="btn btn-outline" style="padding:2px 8px; font-size:0.7rem;" onclick="openModifiers('${p.id}')">⚙️</button>` : ''}</div></div>`).join(''); }
@@ -353,30 +272,32 @@
     const name = document.getElementById('manName').value; const phone = document.getElementById('manPhone').value; const deliveryType = document.getElementById('manDeliveryType').value;
     const mesa = document.getElementById('manMesa').value; const maps = document.getElementById('manMaps').value;
     if(!name || !phone || Object.keys(manualCart).length === 0) return showToast('Faltan datos');
-    let subtotal = 0, prodsNube = {};
+    let subtotal = 0, prodsNube = {}, msgProductos = "";
     for (let [id, data] of Object.entries(manualCart)) {
       const p = catalogData[id]; subtotal += p.price * data.qty; prodsNube[p.name] = data.qty;
+      msgProductos += `- ${data.qty}x ${p.name} ($${p.price.toFixed(2)}) = $${(p.price*data.qty).toFixed(2)}\n`;
       if(p.receta) { for(let ing of p.receta) { if(!data.removed.includes(ing.id)) { await updateDoc(doc(db, "inventario", ing.id), { stock: increment(-(ing.qty * data.qty)) }); } } }
     }
     try {
       await addDoc(collection(db, "pedidos"), { cliente: name, telefono: phone, productos: prodsNube, total: `$${subtotal.toFixed(2)}`, tipoEntrega: deliveryType, mesa: deliveryType === 'Mesa' ? mesa : null, direccion: maps, fecha: new Date().toISOString(), estado: "Pendiente" });
-      showToast('Pedido guardado.');
-      manualCart = {}; document.getElementById('manName').value = ''; document.getElementById('manPhone').value = ''; renderManualProducts(); calcManualTotal();
-      switchTab('pedidos', document.querySelectorAll('.nav-link')[1]);
+      let msg = `*NUEVO PEDIDO - DIVERMANIA*\n\n*CLIENTE:* ${name}\n*TEL:* ${phone}\n*ENTREGA:* ${deliveryType} ${mesa ? '(Mesa '+mesa+')' : ''}\n\n*PRODUCTOS:*\n${msgProductos}\n*TOTAL:* $${subtotal.toFixed(2)}`;
+      document.getElementById('waLink').href = `https://wa.me/?text=${encodeURIComponent(msg)}`;
+      document.getElementById('waTextArea').value = msg;
+      document.getElementById('modalWa').classList.add('open');
+      manualCart = {}; document.getElementById('manName').value = ''; renderManualProducts(); calcManualTotal();
     } catch(e) { showToast("Error"); }
   };
 
-  window.openNewProductModal = () => { document.getElementById('editId').value = ''; document.getElementById('editName').value = ''; document.getElementById('editPrice').value = ''; document.getElementById('modalCatTitle').textContent = 'Nuevo Producto'; document.getElementById('modalCat').classList.add('open'); };
-  window.openEditModal = (id) => { document.getElementById('editId').value = id; document.getElementById('editName').value = catalogData[id].name; document.getElementById('editPrice').value = catalogData[id].price; document.getElementById('modalCatTitle').textContent = 'Editar Producto'; document.getElementById('modalCat').classList.add('open'); };
-
+  window.openNewProductModal = () => { document.getElementById('editId').value = ''; document.getElementById('editName').value = ''; document.getElementById('editPrice').value = ''; document.getElementById('recipeList').innerHTML = ''; document.getElementById('modalCat').classList.add('open'); };
+  window.openEditModal = (id) => { document.getElementById('editId').value = id; document.getElementById('editName').value = catalogData[id].name; document.getElementById('editPrice').value = catalogData[id].price; const receta = catalogData[id].receta || []; document.getElementById('recipeList').innerHTML = Object.values(inventoryData).map(ing => { const existing = receta.find(r => r.id === ing.id); return `<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px; font-size:0.8rem;"><span>${ing.name} (${ing.unit})</span><input type="number" id="recipe_${ing.id}" value="${existing ? existing.qty : 0}" step="0.01" style="width: 60px; padding: 4px; border-radius: 4px; border: 1px solid #ccc;"></div>`; }).join(''); document.getElementById('modalCat').classList.add('open'); };
   window.saveProduct = async () => {
     const id = document.getElementById('editId').value || 'prod_' + Date.now();
-    const name = document.getElementById('editName').value;
-    const price = parseFloat(document.getElementById('editPrice').value) || 0;
-    await setDoc(doc(db, "catalogo", id), { name: name, price: price }, { merge: true });
+    let imageUrl = catalogData[id] ? catalogData[id].image : '';
+    const fileInput = document.getElementById('editImageFile'); if(fileInput.files.length > 0) { const { url } = await bucket.put(`prod_${id}_${Date.now()}.jpg`, fileInput.files[0]); imageUrl = url; }
+    let receta = []; Object.values(inventoryData).forEach(ing => { const qty = parseFloat(document.getElementById('recipe_' + ing.id).value) || 0; if(qty > 0) receta.push({ id: ing.id, qty: qty }); });
+    await setDoc(doc(db, "catalogo", id), { name: document.getElementById('editName').value, price: parseFloat(document.getElementById('editPrice').value), image: imageUrl, receta: receta }, { merge: true });
     document.getElementById('modalCat').classList.remove('open'); showToast('Producto guardado.');
   };
-
   window.addTransaction = async () => { const tipo = document.getElementById('finType').value; const amount = parseFloat(document.getElementById('finAmount').value); if(!amount || !tipo) return showToast("Faltan datos"); await addDoc(collection(db, "transacciones"), { tipo, montoUsd: amount, fecha: new Date().toISOString() }); document.getElementById('finAmount').value = ''; showToast('Gasto guardado.'); };
 </script>
 </body>
