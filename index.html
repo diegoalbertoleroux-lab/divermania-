@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#8B5CF6">
+<title>DIVERMANIA · Fiesta y Comida</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='%238B5CF6'/><text x='50' y='55' fill='white' font-size='60' font-family='Arial,sans-serif' font-weight='bold' text-anchor='middle' dominant-baseline='central'>D</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root { --bg: #F8F9FA; --surface: #FFFFFF; --text-main: #111827; --text-muted: #6B7280; --primary: #8B5CF6; --border-light: #E5E7EB; --success: #10B981; --radius-card: 20px; --shadow-sm: 0 2px 8px rgba(0,0,0,0.04); --shadow-md: 0 8px 24px rgba(0,0,0,0.08); }
+[data-theme="dark"] { --bg: #121212; --surface: #1E1E1E; --text-main: #F9FAFB; --text-muted: #9CA3AF; --border-light: #374151; --shadow-sm: 0 2px 8px rgba(0,0,0,0.3); --shadow-md: 0 8px 24px rgba(0,0,0,0.5); }
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter', sans-serif; background:var(--bg); color:var(--text-main); padding-bottom:110px; overflow-x:hidden; transition: background-color 0.3s;}
+h1,h2,h3{font-family:'Outfit', sans-serif; letter-spacing: -0.02em;}
+.top-banner { background: var(--primary); color: white; padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 20px rgba(139, 92, 246, 0.3);}
+.brand-anim { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.4rem; display: flex; align-items: center; gap: 8px;}
+.brand-logo{width:38px; height:38px; border-radius:50%; object-fit:cover; border: 2px solid white; background: white;}
+.top-actions { display: flex; gap: 8px; align-items: center;}
+.btn-icon { background: rgba(255,255,255,0.15); border: none; color: white; width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+.btn-icon svg { width: 18px; height: 18px; stroke-width: 2; fill: none; stroke: currentColor; }
+.user-greeting { font-size: 0.8rem; font-weight: 700; background: rgba(255,255,255,0.2); padding: 6px 12px; border-radius: 20px; display: none; }
+.carousel-container { position: relative; width: 100%; height: 200px; overflow: hidden; background: #000; }
+.carousel-slide { position: absolute; inset: 0; opacity: 0; transition: opacity 0.8s; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; color: white; background-size: cover; background-position: center; filter: brightness(0.6); }
+.carousel-slide.active { opacity: 1; }
+.slide-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 100%); z-index: 1; }
+.slide-content { position: relative; z-index: 2; }
+.countdown-container { background: linear-gradient(135deg, #8B5CF6, #6D28D9); color: white; padding: 12px 20px; margin: 10px 16px 0; border-radius: 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+.countdown-text { font-size: 0.85rem; font-weight: 800; text-transform: uppercase; }
+.countdown-timer { font-family: 'Outfit', sans-serif; font-size: 1.2rem; font-weight: 800; background: rgba(0,0,0,0.3); padding: 4px 12px; border-radius: 8px;}
+nav.categories{display:flex;gap:10px;overflow-x:auto;scrollbar-width:none; padding:16px 20px 10px; background: var(--bg); position:sticky; top:60px; z-index:90;}
+nav.categories::-webkit-scrollbar{display:none}
+.cat-btn{ flex:0 0 auto; background:var(--surface); border: 1px solid var(--border-light); color:var(--text-muted); padding:9px 18px; border-radius:99px; font-weight:600; font-size:.82rem; cursor:pointer; white-space:nowrap; }
+.cat-btn.active{ background:var(--surface); color:var(--primary); border-color: var(--primary); font-weight: 700; }
+main{padding:0 16px}
+main section{display:none}
+main section.active{display:block}
+.section-title{font-size:1.4rem; font-weight:700; margin:24px 4px 16px; color: var(--text-main);}
+.catalog-grid{display:grid; grid-template-columns:repeat(1, 1fr); gap:16px; margin-bottom:20px;}
+@media(min-width:640px){.catalog-grid{grid-template-columns:repeat(2,1fr)}}
+.product-card { background:var(--surface); border-radius:var(--radius-card); overflow:hidden; display:flex; flex-direction:column; box-shadow: var(--shadow-sm); }
+.card-image{height:180px; width:100%; background:var(--border-light); position:relative;}
+.card-image img { width: 100%; height: 100%; object-fit: cover; }
+.card-content{padding:16px; display:flex; flex-direction:column; flex:1;}
+.card-footer{display:flex; align-items:center; justify-content:space-between;}
+.card-price{font-family:'Outfit',sans-serif; font-size:1.2rem; font-weight:700; color:var(--primary); }
+.add-btn{background:var(--bg); color:var(--text-main); border:none; width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow: inset 0 0 0 1px var(--border-light);}
+.cart-fab{position:fixed; bottom:24px; left:16px; right:80px; background:var(--text-main); color:var(--bg); border:none; border-radius:16px; padding:16px 20px; font-weight:600; display:none; align-items:center; justify-content:space-between; z-index:60;}
+.overlay{position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:100; display:none; align-items:flex-end; justify-content:center;}
+.overlay.open{display:flex;}
+.modal{background:var(--surface); color:var(--text-main); width:100%; max-width:540px; max-height:92vh; border-radius:24px 24px 0 0; overflow-y:auto; padding:24px 20px; }
+.modal-head{display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;}
+.close-btn{background:var(--bg); border:none; width:32px; height:32px; border-radius:50%; cursor:pointer;}
+.form-group{margin:16px 0;}
+.form-group input, .form-group textarea{width:100%; padding:14px; border:none; border-radius:12px; background:var(--bg); color:var(--text-main); box-shadow: inset 0 0 0 1px var(--border-light);}
+.btn{width:100%; padding:16px; border:none; border-radius:14px; font-weight:700; cursor:pointer; margin-top:16px; }
+.btn-primary{background:var(--primary); color:#fff;}
+#successOverlay{position:fixed; inset:0; background:var(--bg); z-index:9999; display:none; flex-direction:column; align-items:center; justify-content:center;}
+#successOverlay.show{display:flex;}
+</style>
+</head>
+<body>
+
+<div class="top-banner">
+  <div class="brand-anim"><img src="logodivermania.jpg" alt="DIVERMANIA" class="brand-logo" onerror="this.style.display='none'">DIVERMANIA</div>
+  <div class="top-actions">
+    <button class="btn-icon" id="themeToggle" onclick="toggleTheme()"><svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></button>
+  </div>
+</div>
+
+<div class="carousel-container">
+  <div class="carousel-slide active" style="background-image: url('fondo1.jpg');">
+    <div class="slide-overlay"></div>
+    <div class="slide-content"><h2 style="font-size:1.8rem;">Bienvenido a DIVERMANIA</h2><p>Fiesta y Comida en un solo lugar.</p></div>
+  </div>
+</div>
+
+<div class="countdown-container">
+  <div class="countdown-text"><span>OFERTAS ESPECIALES</span></div>
+  <div class="countdown-timer">24:00:00</div>
+</div>
+
+<nav class="categories">
+  <button class="cat-btn active" data-cat="fiesta">Artículos de Fiesta</button>
+  <button class="cat-btn" data-cat="perros">Perros Calientes</button>
+  <button class="cat-btn" data-cat="combos">Combos</button>
+</nav>
+
+<main>
+  <section id="fiesta" class="active"><div class="catalog-grid" data-grid="fiesta"></div></section>
+  <section id="perros"><div class="catalog-grid" data-grid="perros"></div></section>
+  <section id="combos"><div class="catalog-grid" data-grid="combos"></div></section>
+</main>
+
+<button class="cart-fab" id="cartFab" onclick="openCart()"><span>Ver mi pedido</span><span class="badge" id="cartCount">0</span></button>
+
+<div class="overlay" id="cartOverlay">
+  <div class="modal">
+    <div class="modal-head"><h2>Tu Pedido</h2><button class="close-btn" onclick="document.getElementById('cartOverlay').classList.remove('open')">X</button></div>
+    <div id="cartItems"></div>
+    <div style="margin-top:20px; font-weight:bold; display:flex; justify-content:space-between;">
+      <span>Total:</span><span id="cartTotal" style="color:var(--primary);">$0.00</span>
+    </div>
+    <div id="checkoutForm" style="display:none; margin-top:20px;">
+      <div class="form-group"><label>Tus datos</label><input id="custName" placeholder="Nombre" style="margin-bottom:10px;"><input id="custPhone" type="tel" placeholder="Teléfono"></div>
+      <div class="form-group"><label>Dirección de entrega</label><textarea id="custAddress" rows="2" placeholder="Calle, casa..."></textarea></div>
+      <button class="btn btn-primary" onclick="processAndSend()">Enviar Pedido por WhatsApp</button>
+    </div>
+  </div>
+</div>
+
+<div id="successOverlay">
+  <h1 style="color:var(--success); font-size:2rem; margin-bottom:12px;">¡Gracias por tu compra!</h1>
+  <p>En breve te contactaremos por WhatsApp.</p>
+</div>
+
+<div id="toast" style="position:fixed; bottom:20px; background:black; color:white; padding:10px; border-radius:10px; display:none;"></div>
+
+<script>
+// CONFIGURACIÓN DE DIVERMANIA
+const WHATSAPP_NUMBER = "584120000000"; // <--- CAMBIA ESTO POR TU NÚMERO
+const TASA_CAMBIO = 40.00; 
+
+window.PRODUCTS = [];
+const DEFAULT_PRODUCTS = [
+  // CATEGORÍA FIESTA
+  { id:'f1', cat:'fiesta', name:'Globos Payaso x10', desc:'Colores surtidos', price:2.50, image:'globos1.jpg' },
+  { id:'f2', cat:'fiesta', name:'Globo Metalizado', desc:'Número o Letra', price:4.00, image:'globo2.jpg' },
+  { id:'f3', cat:'fiesta', name:'Disfraz de Princesa', desc:'Incluye vestido y accesorios', price:15.00, image:'disfraz1.jpg' },
+  { id:'f4', cat:'fiesta', name:'Piñata Clásica', desc:'Elige tu personaje', price:12.00, image:'pinata1.jpg' },
+  
+  // CATEGORÍA PERROS Y COMIDA
+  { id:'p1', cat:'perros', name:'Perro Sencillo', desc:'Salchicha, papas y salsas', price:1.50, image:'perrosencillo.jpeg' },
+  { id:'p2', cat:'perros', name:'Perro Clásico', desc:'Salchicha premium, papas trituradas', price:2.50, image:'perroclasico.jpeg' },
+  { id:'p3', cat:'perros', name:'Perro Especial', desc:'Doble salchicha, queso fundido', price:4.00, image:'perroespecial.jpeg' },
+  
+  // COMBOS
+  { id:'c1', cat:'combos', name:'COMBO FIESTA', desc:'20 Globos + 1 Piñata Pequeña', price:10.00, oldPrice:15.00, image:'combo1.jpg', isOffer:true },
+  { id:'c2', cat:'combos', name:'COMBO COMIDA', desc:'2 Perros Clásicos + Refresco', price:6.00, image:'combo2.jpg' }
+];
+
+let cart = JSON.parse(localStorage.getItem('cart') || '{}');
+const saveCart = () => localStorage.setItem('cart', JSON.stringify(cart));
+const money = n => '$' + n.toFixed(2);
+const cartCount = () => Object.values(cart).reduce((a,b)=>a+b,0);
+const cartSubtotal = () => Object.entries(cart).reduce((sum,[id,qty])=>{ const p = window.PRODUCTS.find(x=>x.id===id); return sum + (p ? p.price * qty : 0); },0);
+
+function renderMenu(){
+  ['fiesta','perros','combos'].forEach(cat=>{
+    const grid = document.querySelector(`[data-grid="${cat}"]`); if(!grid) return;
+    const items = window.PRODUCTS.filter(p=>p.cat===cat);
+    grid.innerHTML = items.map((p)=>{
+      return `
+        <article class="product-card" onclick="handleAddToCart(event, '${p.id}')">
+          <div class="card-image">${p.image ? `<img src="${p.image}">` : ''}</div>
+          <div class="card-content">
+            <h3>${p.name}</h3><p style="font-size:0.8rem; color:var(--text-muted);">${p.desc}</p>
+            <div class="card-footer" style="margin-top:10px;">
+              <span class="card-price">${money(p.price)}</span>
+              <button class="add-btn"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></button>
+            </div>
+          </div>
+        </article>`;
+    }).join('');
+  });
+}
+window.renderMenu = renderMenu; 
+
+function handleAddToCart(e, id) {
+  cart[id] = (cart[id] || 0) + 1; saveCart(); updateFab(); toast('Añadido al pedido');
+}
+function updateFab(){ const count = cartCount(); document.getElementById('cartFab').style.display = count > 0 ? 'flex' : 'none'; document.getElementById('cartCount').textContent = count; }
+window.updateFab = updateFab;
+
+function openCart() {
+  const box = document.getElementById('cartItems'); const entries = Object.entries(cart);
+  if(!entries.length){ box.innerHTML = '<p style="text-align:center;">Carrito vacío</p>'; document.getElementById('checkoutForm').style.display = 'none'; }
+  else {
+    box.innerHTML = entries.map(([id,qty])=>{ const p = window.PRODUCTS.find(x=>x.id===id); return `<div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #ccc;"><span>${qty}x ${p.name}</span><span>${money(p.price * qty)}</span></div>`; }).join('');
+    document.getElementById('checkoutForm').style.display = 'block';
+    document.getElementById('cartTotal').textContent = money(cartSubtotal());
+  }
+  document.getElementById('cartOverlay').classList.add('open');
+}
+
+function processAndSend() {
+  const name = document.getElementById('custName').value, phone = document.getElementById('custPhone').value, address = document.getElementById('custAddress').value;
+  if(!name || !phone) return alert('Faltan datos');
+  let msg = `*NUEVO PEDIDO - DIVERMANIA*\n\nCliente: ${name}\nTel: ${phone}\nDirección: ${address}\n\n*PRODUCTOS:*\n`;
+  Object.entries(cart).forEach(([id,qty])=>{ const p = window.PRODUCTS.find(x=>x.id===id); msg += `- ${qty}x ${p.name} = ${money(p.price * qty)}\n`; });
+  const total = cartSubtotal();
+  msg += `\n*TOTAL: ${money(total)}*`;
+  window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank');
+  document.getElementById('successOverlay').classList.add('show');
+  setTimeout(() => { document.getElementById('successOverlay').classList.remove('show'); cart = {}; saveCart(); updateFab(); document.getElementById('cartOverlay').classList.remove('open'); }, 3000);
+}
+
+// TEMA Y NAVEGACIÓN
+function toggleTheme() { const el = document.documentElement; const newTheme = el.getAttribute('data-theme') === 'light' ? 'dark' : 'light'; el.setAttribute('data-theme', newTheme); }
+document.querySelectorAll('.cat-btn').forEach(btn => { btn.addEventListener('click', () => { document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active')); document.querySelectorAll('main section').forEach(s=>s.classList.remove('active')); btn.classList.add('active'); document.getElementById(btn.dataset.cat).classList.add('active'); }); });
+function toast(msg){ const t = document.getElementById('toast'); t.textContent = msg; t.style.display = 'block'; setTimeout(()=> t.style.display = 'none', 3000); }
+renderMenu();
+</script>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+  // TUS LLAVES DE DIVERMANIA
+  const firebaseConfig = {
+    apiKey: "AIzaSyArZsARX2njLeLNBYCwu1hPyXBUU_Vg09ko",
+    authDomain: "divermania-3f104.firebaseapp.com",
+    projectId: "divermania-3f104",
+    storageBucket: "divermania-3f104.firebasestorage.app",
+    messagingSenderId: "230376484506",
+    appId: "1:230376484506:web:7534dd68d9085f499cb923",
+    measurementId: "G-P2SNN9VDEE"
+  };
+  
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  onSnapshot(collection(db, "catalogo"), (snapshot) => {
+    if(!snapshot.empty) {
+      let nuevosProductos = [];
+      snapshot.forEach((doc) => nuevosProductos.push({ id: doc.id, ...doc.data() }));
+      window.PRODUCTS = nuevosProductos;
+      if (window.renderMenu) window.renderMenu(); 
+      if (window.updateFab) window.updateFab();  
+    }
+  });
+</script>
+</body>
+</html>
