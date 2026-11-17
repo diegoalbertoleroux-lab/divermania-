@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<link rel="stylesheet" href="/gestion-identidad.css"><title>DIVERMANIA · Panel de Gestión</title>
+<link rel="icon" href="logodivermania.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+<script src="/legacy/chart.js"></script>
+<style>
+  :root { --bg: #F3F4F6; --surface: #FFFFFF; --text-main: #111827; --text-muted: #6B7280; --primary: #000000; --border-light: #D1D5DB; --success: #10B981; --danger: #EF4444; --info: #3B82F6; --warning: #F59E0B; --radius-card: 12px; }
+  [data-theme="dark"] { --bg: #111111; --surface: #1F1F1F; --text-main: #F9FAFB; --text-muted: #9CA3AF; --primary: #FFFFFF; --border-light: #333333; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; transition: 0.3s; }
+  h1, h2, h3, h4 { font-family: 'Outfit', sans-serif; }
+  .sidebar { width: 260px; background: var(--surface); border-right: 1px solid var(--border-light); display: flex; flex-direction: column; padding: 24px 16px; overflow-y: auto; transition: transform 0.3s ease; z-index: 200; }
+  .brand { font-family: 'Outfit', sans-serif; font-size: 1.4rem; font-weight: 800; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; padding-left: 8px;}
+  .brand img { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid var(--border-light); }
+  .nav-link { display: flex; align-items: center; padding: 10px 16px; border-radius: 8px; color: var(--text-muted); font-weight: 600; font-size: 0.9rem; cursor: pointer; margin-bottom: 4px; border: none; background: transparent; width: 100%; text-align: left; }
+  .nav-link:hover { background: var(--bg); }
+  .nav-link.active { background: var(--bg); color: var(--primary); border-left: 4px solid var(--primary); }
+  .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+  header { padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; background: var(--surface); border-bottom: 1px solid var(--border-light); }
+  .menu-toggle { display: none; background: none; border: none; color: var(--text-main); font-size: 1.5rem; cursor: pointer; }
+  .page-container { flex: 1; overflow-y: auto; padding: 30px; }
+  .page-section { display: none; animation: fadeIn 0.3s; }
+  .page-section.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  .btn { background: var(--primary); color: var(--surface); border: 1px solid var(--primary); padding: 10px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; }
+  .btn-outline { background: transparent; color: var(--text-main); border: 1px solid var(--border-light); }
+  .btn-success { background: var(--success); border-color: var(--success); color: white; }
+  .btn-warning { background: var(--warning); border-color: var(--warning); color: white; }
+  .btn-danger { background: var(--danger); border-color: var(--danger); color: white; padding: 6px 10px; font-size: 0.8rem;}
+  .card { background: var(--surface); border-radius: var(--radius-card); padding: 20px; border: 1px solid var(--border-light); margin-bottom: 20px; position: relative;}
+  .form-group { margin-bottom: 15px; }
+  .form-group label { display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 6px; }
+  .form-control { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-light); background: var(--bg); color: var(--text-main); outline: none; }
+  
+  table { width: 100%; border-collapse: collapse; }
+  th, td { padding: 12px; text-align: left; border-bottom: 1px solid var(--border-light); font-size: 0.85rem; vertical-align: middle;}
+  th { background: var(--bg); color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; }
+  
+  .status-badge { padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 700; display: inline-block; text-align: center; min-width: 80px; }
+  .status-Pendiente { background: #FEF3C7; color: #92400E; }
+  .status-En-Proceso { background: #DBEAFE; color: #1E40AF; }
+  .status-Listo { background: #D1FAE5; color: #065F46; }
+  .status-Entregado { background: #E5E7EB; color: #374151; }
+  .status-cancelado { background: #FEE2E2; color: #991B1B; }
+  .status-select { padding: 6px; border-radius: 6px; border: 1px solid var(--border-light); background: var(--surface); color: var(--text-main); font-weight: 600; font-size: 0.8rem; cursor: pointer; outline: none; }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .grid-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
+  
+  .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000; align-items: center; justify-content: center; cursor: pointer;}
+  .modal.open { display: flex; }
+  .modal-content { background: var(--surface); padding: 25px; border-radius: 16px; width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto; cursor: default;}
+  
+  .sub-tabs { display: flex; gap: 10px; border-bottom: 1px solid var(--border-light); margin-bottom: 20px; overflow-x: auto; }
+  .sub-tab { padding: 10px 15px; font-weight: 600; color: var(--text-muted); cursor: pointer; border-bottom: 2px solid transparent; white-space: nowrap; }
+  .sub-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+  .sub-content { display: none; }
+  .sub-content.active { display: block; }
+  
+  .btn-delete-product { position: absolute; top: 10px; right: 10px; background: rgba(239, 68, 68, 0.9); color: white; border: none; width: 30px; height: 30px; border-radius: 50%; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10;}
+  .mesa-card { background: var(--surface); border: 1px solid var(--border-light); border-radius: var(--radius-card); padding: 15px; text-align: center; }
+  .mesa-card h4 { font-size: 1.2rem; margin-bottom: 10px; }
+  .qr-img { width: 150px; height: 150px; margin: 0 auto 10px; display: block; border: 4px solid white; border-radius: 8px; }
+  
+  @media (max-width: 768px) {
+    .sidebar { position: fixed; top: 0; bottom: 0; left: 0; transform: translateX(-100%); box-shadow: 2px 0 10px rgba(0,0,0,0.5); }
+    .sidebar.open { transform: translateX(0); }
+    .menu-toggle { display: block; }
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    .page-container { padding: 15px; }
+    header { padding: 15px; }
+  }
+  #toast { position: fixed; bottom: 20px; right: 20px; background: var(--text-main); color: var(--bg); padding: 12px 24px; border-radius: 10px; font-weight: 600; opacity: 0; transition: 0.3s; z-index: 2000; pointer-events: none; }
+  #toast.show { opacity: 1; transform: translateY(0); }
+</style>
+</head>
+<body>
+
+<div class="sidebar" id="sidebar">
+  <div class="brand"><img src="logodivermania.png" onerror="this.style.display='none'"> DIVERMANIA</div>
+  <button class="nav-link active" onclick="switchTab('dashboard', this)">Dashboard</button>
+  <button class="nav-link" onclick="switchTab('pedidos', this)">Pedidos</button>
+  <button class="nav-link" onclick="switchTab('manual', this)">Nuevo Pedido (Mesas)</button>
+  <button class="nav-link" onclick="switchTab('mesas', this)">Mesas y QR</button>
+  <button class="nav-link" onclick="switchTab('catalogo', this)">Catálogo y Recetas</button>
+  <button class="nav-link" onclick="switchTab('inventario', this)">Inventario</button>
+  <button class="nav-link" onclick="switchTab('finanzas', this)">Finanzas</button>
+</div>
+
+<div class="main-content">
+  <header>
+    <div style="display: flex; align-items: center; gap: 15px;">
+      <button class="menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+      <h2 id="pageTitle">Dashboard</h2>
+    </div>
+    <div style="display: flex; gap: 15px; align-items: center;">
+      <span id="bcvRate" style="font-size: 0.85rem; font-weight: 600;">Cargando Tasa...</span>
+      <button class="btn btn-outline" onclick="toggleTheme()">Tema</button>
+    </div>
+  </header>
+
+  <div class="page-container">
+    
+    <div id="dashboard" class="page-section active">
+      <div class="grid-stats">
+        <div class="card"><h3 style="font-size: 0.8rem; color: var(--text-muted);">Cobros registrados</h3><p id="dashIncome" style="font-size: 1.5rem; font-weight: 800;">$0.00</p><p id="dashIncomeBs" style="font-size: 0.8rem; color: var(--text-muted);">Bs. 0.00</p></div>
+        <div class="card"><h3 style="font-size: 0.8rem; color: var(--text-muted);">Gastos</h3><p id="dashExpenses" style="font-size: 1.5rem; font-weight: 800;">$0.00</p><p id="dashExpensesBs" style="font-size: 0.8rem; color: var(--text-muted);">Bs. 0.00</p></div>
+        <div class="card"><h3 style="font-size: 0.8rem; color: var(--text-muted);">Balance operativo</h3><p id="dashProfit" style="font-size: 1.5rem; font-weight: 800; color: var(--success);">$0.00</p><p id="dashProfitBs" style="font-size: 0.8rem; color: var(--text-muted);">Bs. 0.00</p></div>
+      </div>
+      <div class="card"><canvas id="salesChart" height="70"></canvas></div>
+    </div>
+
+    <div id="pedidos" class="page-section">
+      <div class="card" style="padding: 0; overflow-x: auto;">
+        <table>
+          <thead><tr><th>Fecha</th><th>Cliente</th><th>Mesa</th><th>Productos</th><th>Observaciones</th><th>Total</th><th>Estado</th><th>WA</th></tr></thead>
+          <tbody id="ordersTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="manual" class="page-section">
+      <div class="grid-2">
+        <div class="card">
+          <h3>Datos del Pedido</h3>
+          <div class="form-group"><label>Nombre del Cliente</label><input type="text" id="manName" class="form-control"></div>
+          <div class="form-group"><label>Teléfono (opcional en el local)</label><input type="tel" id="manPhone" class="form-control"></div>
+          <div class="form-group"><label>Tipo de Entrega</label><select id="manDeliveryType" class="form-control" onchange="toggleDeliveryType()"><option value="Mesa">Mesa</option><option value="Delivery">Delivery</option></select></div>
+          <div class="form-group" id="mesaInputGroup"><label>Número de Mesa</label><input type="number" id="manMesa" class="form-control" value="1"></div>
+          <div class="form-group" id="deliveryInputGroup" style="display:none;"><label>Dirección / Link Maps</label><input type="text" id="manMaps" class="form-control"></div>
+          <div class="form-group"><label>Observaciones (Opcional)</label><textarea id="manNotes" class="form-control" rows="2" placeholder="Ej: Sin servilletas, tocar timbre..."></textarea></div>
+        </div>
+        <div class="card">
+          <h3>Productos</h3>
+          <div id="manualProductsList" style="max-height: 250px; overflow-y: auto; margin-bottom: 15px;"></div>
+          <div style="display: flex; justify-content: space-between; font-size: 1.1rem; font-weight: bold; margin-bottom: 15px;"><span>Total:</span><span id="manTotalText">$0.00</span></div>
+          <button class="btn" style="width: 100%;" onclick="saveManualOrder()">Guardar y Generar WhatsApp</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="mesas" class="page-section">
+      <h3 style="margin-bottom: 20px;">Generador de Códigos QR para Mesas</h3>
+      <div class="grid-3" id="mesasGrid"></div>
+    </div>
+
+    <div id="catalogo" class="page-section">
+      <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+        <h3>Productos</h3>
+        <button class="btn" onclick="openNewProductModal()">+ Nuevo Producto</button>
+      </div>
+      <div class="grid-stats" id="catalogEditorGrid"></div>
+    </div>
+
+    <div id="inventario" class="page-section">
+      <div class="grid-2">
+        <div class="card">
+          <h3>Insumos (Gramos / Unidades)</h3>
+          <div id="inventoryList" style="max-height: 400px; overflow-y: auto; margin-top: 15px;"></div>
+          <button class="btn btn-outline" style="width: 100%; margin-top: 15px;" onclick="openAddIngredientModal()">+ Añadir Insumo</button>
+        </div>
+        <div class="card">
+          <h3>Registrar Movimiento</h3>
+          <div class="form-group"><label>Insumo</label><select id="invMoveItem" class="form-control"></select></div>
+          <div class="form-group"><label>Tipo</label><select id="invMoveType" class="form-control"><option value="entrada">Entrada (Compra)</option><option value="autoconsumo">Autoconsumo (Cena)</option></select></div>
+          <div class="form-group"><label>Cantidad</label><input type="number" id="invMoveQty" class="form-control" step="0.01"></div>
+          <button class="btn btn-success" style="width: 100%;" onclick="saveInventoryMove()">Guardar</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="finanzas" class="page-section">
+      <div class="sub-tabs">
+        <div class="sub-tab active" onclick="switchSubTab('sub-compras', this)">Registrar Compra</div>
+        <div class="sub-tab" onclick="switchSubTab('sub-trans', this)">Movimientos</div>
+        <div class="sub-tab" onclick="switchSubTab('sub-cxc', this)">Cobrar (Fiados)</div>
+        <div class="sub-tab" onclick="switchSubTab('sub-cxp', this)">Pagar (Proveedores)</div>
+      </div>
+
+      <div id="sub-compras" class="sub-content active">
+        <div class="grid-2">
+          <div class="card">
+            <h3>Registrar Compra de Mercancía</h3>
+            <div class="form-group"><label>Insumo Comprado</label><select id="compraItem" class="form-control"></select></div>
+            <div class="form-group"><label>Cantidad Comprada</label><input type="number" id="compraQty" class="form-control" step="0.01"></div>
+            <div class="form-group"><label>Costo Total de la Compra ($)</label><input type="number" id="compraCost" class="form-control" step="0.01"></div>
+            <button class="btn btn-warning" style="width: 100%;" onclick="registrarCompra()">Registrar Compra</button>
+          </div>
+          <div class="card">
+            <h3>Últimas Compras</h3>
+            <div style="max-height: 300px; overflow-y: auto;"><table><thead><tr><th>Fecha</th><th>Descripción</th><th>Monto</th></tr></thead><tbody id="comprasTableBody"></tbody></table></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="sub-trans" class="sub-content">
+        <div class="grid-2">
+          <div class="card">
+            <h3>Movimiento Manual</h3>
+            <div class="form-group"><label>Tipo</label><select id="finType" class="form-control"><option value="Gasto (Otro)">Gasto (Otro)</option><option value="Ingreso Extra">Ingreso Extra</option></select></div>
+            <div class="form-group"><label>Monto ($)</label><input type="number" id="finAmount" class="form-control" step="0.01"></div>
+            <div class="form-group"><label>Descripción</label><input type="text" id="finDesc" class="form-control"></div>
+            <button class="btn" style="width: 100%;" onclick="addTransaction()">Guardar</button>
+          </div>
+          <div class="card" style="padding: 0; overflow-x: auto; max-height: 400px;">
+            <table><thead><tr><th>Fecha</th><th>Tipo</th><th>Descripción</th><th>Monto ($)</th><th>Monto (Bs)</th></tr></thead><tbody id="financeTableBody"></tbody></table>
+          </div>
+        </div>
+      </div>
+
+      <div id="sub-cxc" class="sub-content">
+        <div class="card">
+          <h3>Anotar Fiado</h3>
+          <div class="grid-3">
+            <div class="form-group"><label>Cliente</label><input type="text" id="cxcName" class="form-control"></div>
+            <div class="form-group"><label>Monto ($)</label><input type="number" id="cxcAmount" class="form-control" step="0.01"></div>
+            <div class="form-group" style="display: flex; align-items: flex-end;"><button class="btn" style="width: 100%;" onclick="addCxC()">Anotar</button></div>
+          </div>
+        </div>
+        <div class="card" style="padding: 0; overflow-x: auto;"><table><thead><tr><th>Fecha</th><th>Cliente</th><th>Monto ($)</th><th>Monto (Bs)</th><th>Estado</th><th>Acción</th></tr></thead><tbody id="cxcTableBody"></tbody></table></div>
+      </div>
+
+      <div id="sub-cxp" class="sub-content">
+        <div class="card">
+          <h3>Anotar Deuda a Proveedor</h3>
+          <div class="grid-3">
+            <div class="form-group"><label>Proveedor</label><input type="text" id="cxpName" class="form-control"></div>
+            <div class="form-group"><label>Monto ($)</label><input type="number" id="cxpAmount" class="form-control" step="0.01"></div>
+            <div class="form-group" style="display: flex; align-items: flex-end;"><button class="btn btn-warning" style="width: 100%;" onclick="addCxP()">Anotar</button></div>
+          </div>
+        </div>
+        <div class="card" style="padding: 0; overflow-x: auto;"><table><thead><tr><th>Fecha</th><th>Proveedor</th><th>Monto ($)</th><th>Monto (Bs)</th><th>Estado</th><th>Acción</th></tr></thead><tbody id="cxpTableBody"></tbody></table></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODALES -->
+<div class="modal" id="modalCat">
+  <div class="modal-content">
+    <h2 id="modalCatTitle" style="margin-bottom: 15px;">Editar Producto</h2>
+    <input type="hidden" id="editId">
+    <div class="grid-2">
+      <div class="form-group"><label>Nombre</label><input type="text" id="editName" class="form-control"></div>
+      <div class="form-group"><label>Precio ($)</label><input type="number" id="editPrice" class="form-control" step="0.01"></div>
+    </div>
+    <div class="form-group"><label>Categoría</label><select id="editCat" class="form-control"><option value="perros">Perros</option><option value="hamburguesas">Hamburguesas</option><option value="fiesta">Fiesta</option><option value="pizzas">Pizzas</option><option value="snacks">Snacks</option><option value="combos">Combos</option><option value="bebidas">Bebidas</option></select></div>
+    <div class="form-group"><label>URL de la Imagen</label><input type="text" id="editImageUrl" class="form-control"></div>
+    <div style="background: var(--bg); padding: 15px; border-radius: 8px; margin: 15px 0;">
+      <h4 style="font-size: 0.9rem; margin-bottom: 10px;">Receta</h4>
+      <div id="recipeList" style="max-height: 150px; overflow-y: auto;"></div>
+    </div>
+    <button class="btn" style="width: 100%;" onclick="saveProduct()">Guardar</button>
+    <button class="btn btn-outline" style="width: 100%; margin-top: 10px;" onclick="document.getElementById('modalCat').classList.remove('open')">Cancelar</button>
+  </div>
+</div>
+
+<div class="modal" id="modalAddIng">
+  <div class="modal-content">
+    <h2 style="margin-bottom: 15px;">Nuevo Insumo</h2>
+    <div class="form-group"><label>Nombre</label><input type="text" id="ingName" class="form-control"></div>
+    <div class="grid-2">
+      <div class="form-group"><label>Stock Actual</label><input type="number" id="ingStock" class="form-control" step="0.01"></div>
+      <div class="form-group"><label>Stock Mínimo</label><input type="number" id="ingMin" class="form-control" step="0.01"></div>
+    </div>
+    <div class="form-group"><label>Unidad</label><select id="ingUnit" class="form-control"><option value="und">Unidad</option><option value="g">Gramos</option><option value="ml">Mililitros</option></select></div>
+    <button class="btn" style="width: 100%;" onclick="saveNewIngredient()">Guardar</button>
+  </div>
+</div>
+
+<div class="modal" id="modalMod">
+  <div class="modal-content">
+    <h2 style="margin-bottom: 15px;">Quitar Ingredientes</h2>
+    <input type="hidden" id="modProductId">
+    <div id="modIngredientsList"></div>
+    <button class="btn" style="width: 100%; margin-top: 15px;" onclick="confirmModifiers()">Aplicar</button>
+  </div>
+</div>
+
+<div class="modal" id="modalWa">
+  <div class="modal-content">
+    <h2 style="margin-bottom: 10px; text-align: center;">Pedido Guardado</h2>
+    <button class="btn btn-primary" onclick="printManualTurn()">Imprimir número de turno</button><textarea id="waTextArea" class="form-control" style="height: 150px; font-size: 0.8rem; margin-bottom: 15px; font-family: monospace;" readonly></textarea>
+    <a id="waLink" href="#" target="_blank" class="btn btn-success" style="display: block; text-decoration: none; text-align: center; margin-bottom: 10px;">Abrir WhatsApp</a>
+    <button class="btn btn-outline" style="width: 100%;" onclick="document.getElementById('modalWa').classList.remove('open')">Cerrar</button>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script src="/qr.js" defer></script><script type="module">
+  import {waitForStaff} from "/app/session.js";
+  import {execute as controlExecute} from "/app/store.js";
+  import {statusFromCloud} from "/shared/codec.js";
+  await waitForStaff();
+  import { initializeApp, getApps } from "/legacy/firebase-app.js";
+  import { getFirestore, collection, onSnapshot, query, orderBy, doc, updateDoc, addDoc, setDoc, increment, deleteDoc } from "/legacy/firebase-firestore.js";
+
+  const firebaseConfig = { apiKey: "AIzaSyArZsARX2njLeLNBYCwu1hPyXBUU_Vg09ko", authDomain: "divermania-3f104.firebaseapp.com", projectId: "divermania-3f104", storageBucket: "divermania-3f104.firebasestorage.app", messagingSenderId: "230376484506", appId: "1:230376484506:web:7534dd68d9085f499cb923", measurementId: "G-P2SNN9VDEE" };
+  const app = !getApps().length ? initializeApp(firebaseConfig) : getApps()[0];
+  const db = getFirestore(app);
+
+  const escapeHTML=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  let ordersData = [], transactionsData = [], catalogData = {}, inventoryData = {}, cxcData = [], cxpData = [];
+  let TASA_CAMBIO = NaN;
+  let manualCart = {}, myChart = null;
+
+  const bcvRateEl = document.getElementById('bcvRate');
+  fetch('https://ve.dolarapi.com/v1/dolares/oficial').then(res=>res.json()).then(data => {
+    if(data && data.promedio) { TASA_CAMBIO = parseFloat(data.promedio); bcvRateEl.textContent = `Tasa BCV: Bs. ${TASA_CAMBIO.toFixed(2)}`; }
+  }).catch(()=>{bcvRateEl.textContent='Tasa BCV no disponible';});
+
+  document.querySelectorAll('.modal').forEach(modal => { modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('open'); }); });
+  document.body.style.display = 'flex';
+  initApp();
+  generarQRs();
+
+  window.switchTab = (tabId, btn) => {
+    document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-link').forEach(a => a.classList.remove('active'));
+    document.getElementById(tabId).classList.add('active'); btn.classList.add('active');
+    document.getElementById('pageTitle').textContent = btn.textContent;
+    if(tabId === 'manual') renderManualProducts();
+    document.getElementById('sidebar').classList.remove('open');
+  };
+
+  window.switchSubTab = (subId, btn) => {
+    document.querySelectorAll('.sub-content').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.sub-tab').forEach(a => a.classList.remove('active'));
+    document.getElementById(subId).classList.add('active'); btn.classList.add('active');
+  };
+
+  function showToast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); }
+  window.toggleTheme = () => { const el = document.documentElement; const newTheme = el.getAttribute('data-theme') === 'light' ? 'dark' : 'light'; el.setAttribute('data-theme', newTheme); };
+
+  function generarQRs(){const grid=document.getElementById('mesasGrid');grid.innerHTML=Array.from({length:10},(_,i)=>`<div class="mesa-card"><h4>Mesa ${i+1}</h4><div id="mesa-qr-${i+1}" style="display:inline-block"></div><p style="font-size:11px">Escanea y pide</p></div>`).join('');for(let i=1;i<=10;i++)if(window.QRCode)new QRCode(document.getElementById('mesa-qr-'+i),{text:location.origin+'/?mesa='+i,width:150,height:150});}
+  async function initApp() {
+    onSnapshot(query(collection(db, "pedidos"), orderBy("fecha", "desc")), (snap) => { ordersData = []; snap.forEach(d => ordersData.push({ id: d.id, ...d.data() })); renderOrders(); calculateFinances(); });
+    onSnapshot(query(collection(db, "transacciones"), orderBy("fecha", "desc")), (snap) => { transactionsData = []; snap.forEach(d => transactionsData.push({ id: d.id, ...d.data() })); renderTransactions(); calculateFinances(); });
+    onSnapshot(collection(db, "catalogo"), (snap) => { catalogData = {}; snap.forEach(d => catalogData[d.id] = { id: d.id, ...d.data() }); renderCatalog(); });
+    onSnapshot(collection(db, "inventario"), (snap) => { inventoryData = {}; snap.forEach(d => inventoryData[d.id] = { id: d.id, ...d.data() }); renderInventory(); populateIngredientSelect(); });
+    onSnapshot(query(collection(db, "cxc"), orderBy("fecha", "desc")), (snap) => { cxcData = []; snap.forEach(d => cxcData.push({ id: d.id, ...d.data() })); renderCxC(); });
+    onSnapshot(query(collection(db, "cxp"), orderBy("fecha", "desc")), (snap) => { cxpData = []; snap.forEach(d => cxpData.push({ id: d.id, ...d.data() })); renderCxP(); });
+  }
+
+  function renderOrders() { 
+    document.getElementById('ordersTableBody').innerHTML = ordersData.map(o => { 
+      let prods = typeof o.productos === 'object' ? Object.entries(o.productos).map(([k,v])=> {
+        let formattedName = escapeHTML(k).replace(/(\(Sin:.*?\))/g, '<br><span style="color:var(--danger); font-weight:bold; font-size:0.75rem;">$1</span>');
+        return `${escapeHTML(v)}x ${formattedName}`;
+      }).join('<br>') : escapeHTML(o.productos); 
+      
+      let obs = o.observaciones ? `<span style="font-size:0.8rem; color:var(--warning); font-weight:600;">${escapeHTML(o.observaciones)}</span>` : '<span style="color:var(--text-muted); font-size:0.8rem;">-</span>';
+      
+      let statusClass = 'status-Pendiente';
+      if (o.estado === 'En Proceso') statusClass = 'status-En-Proceso';
+      if (o.estado === 'Listo') statusClass = 'status-Listo';
+      if (o.estado === 'Entregado') statusClass = 'status-Entregado';
+      if (o.estado === 'Cancelado') statusClass = 'status-cancelado';
+
+      return `<tr>
+        <td><span style="font-size:0.75rem;">${new Date(o.fecha).toLocaleString('es-VE', {dateStyle:'short', timeStyle:'short'})}</span></td>
+        <td><b>${escapeHTML(o.cliente)}</b><br><small>${escapeHTML(o.telefono)}</small></td>
+        <td><span class="status-badge" style="background:var(--bg); border:1px solid var(--border-light); color:var(--text-main);">${o.mesa ? 'Mesa '+escapeHTML(o.mesa) : escapeHTML(o.tipoEntrega)}</span></td>
+        <td>${prods}</td>
+        <td style="max-width: 150px;">${obs}</td>
+        <td style="font-weight:bold;">${escapeHTML(o.total)}</td>
+        <td>
+          <select class="status-select ${statusClass}" onchange="updateOrderStatus('${o.id}', this.value, this)">
+            <option value="Pendiente" ${o.estado==='Pendiente'?'selected':''}>Pendiente</option>
+            <option value="En Proceso" ${o.estado==='En Proceso'?'selected':''}>En Proceso</option>
+            <option value="Listo" ${o.estado==='Listo'?'selected':''}>Listo</option>
+            <option value="Entregado" ${o.estado==='Entregado'?'selected':''}>Entregado</option>
+          </select>
+        </td>
+        <td><a href="https://wa.me/${String(o.telefono||'').replace(/\D/g,'')}" target="_blank" style="color: var(--success); font-weight: bold; text-decoration: none;">WA</a></td>
+      </tr>`; 
+    }).join(''); 
+  }
+
+  window.updateOrderStatus=async(id,status,selectEl)=>{try{await controlExecute('order.status',{id,status:statusFromCloud[status]});showToast('Estado actualizado.');}catch(error){showToast(error.message);renderOrders();}};
+  function renderCatalog() { 
+    document.getElementById('catalogEditorGrid').innerHTML = Object.values(catalogData).map(p => `
+      <div class="card" style="cursor: pointer; text-align: center;">
+        <button class="btn-delete-product" onclick="deleteProduct('${p.id}', event)" title="Eliminar">X</button>
+        <div onclick="openEditModal('${p.id}')">
+          <img src="${p.image || 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2UyZThmMCIvPjwvc3ZnPg=='}" style="width: 100%; height: 100px; object-fit: cover; border-radius: 8px; margin-bottom: 10px;">
+          <h4 style="margin-bottom: 5px;">${p.name}</h4>
+          <div style="color: var(--text-main); font-weight: bold;">$${(Number.isFinite(p.price)?p.price.toFixed(2):'Por definir')}</div>
+          <div style="font-size:0.7rem; color:var(--text-muted);">${p.cat || 'Sin Cat'}</div>
+        </div>
+      </div>
+    `).join(''); 
+  }
+
+  window.deleteProduct = async (id, event) => {
+    event.stopPropagation();
+    if(confirm('¿Eliminar producto?')) { await deleteDoc(doc(db, "catalogo", id)); showToast('Producto eliminado.'); }
+  };
+
+  function renderInventory(){document.getElementById('inventoryList').innerHTML=Object.values(inventoryData).map(i=>{const low=Number(i.minStock)>0&&Number(i.stock)<=Number(i.minStock);return `<div style="margin-bottom:12px;padding:10px;border-radius:9px;background:${low?'#fff0dc':'transparent'}"><div style="display:flex;justify-content:space-between;gap:12px;font-size:13px"><span>${escapeHTML(i.name)}${low?' · Stock bajo':''}</span><b style="color:${low?'#c66a1a':'inherit'}">${Number(i.stock).toFixed(2)} ${escapeHTML(i.unit)}</b></div></div>`;}).join('');}
+  function populateIngredientSelect() { const options = Object.values(inventoryData).map(i => `<option value="${i.id}">${i.name}</option>`).join(''); document.getElementById('invMoveItem').innerHTML = options; document.getElementById('compraItem').innerHTML = options; }
+  
+  function renderTransactions() { document.getElementById('financeTableBody').innerHTML = transactionsData.map(t => `<tr><td>${new Date(t.fecha).toLocaleDateString('es-VE')}</td><td>${t.tipo}</td><td>${t.desc || '-'}</td><td style="font-weight:bold; color:${t.tipo.includes('Gasto')||t.tipo.includes('Compra')?'var(--danger)':'var(--success)'};">$${t.montoUsd.toFixed(2)}</td><td>Bs. ${(Number.isFinite(TASA_CAMBIO)?(t.montoUsd * TASA_CAMBIO).toFixed(2):'—')}</td></tr>`).join(''); const compras = transactionsData.filter(t => t.tipo.includes('Compra')); document.getElementById('comprasTableBody').innerHTML = compras.map(t => `<tr><td>${new Date(t.fecha).toLocaleDateString('es-VE')}</td><td>${escapeHTML(t.desc)}</td><td style="color:var(--danger); font-weight:bold;">$${t.montoUsd.toFixed(2)}</td></tr>`).join(''); }
+  function renderCxC() { document.getElementById('cxcTableBody').innerHTML = cxcData.map(c => `<tr><td>${new Date(c.fecha).toLocaleDateString('es-VE')}</td><td>${escapeHTML(c.cliente)}</td><td style="color:var(--danger); font-weight:bold;">$${c.monto.toFixed(2)}</td><td>Bs. ${(Number.isFinite(TASA_CAMBIO)?(c.monto * TASA_CAMBIO).toFixed(2):'—')}</td><td>${c.estado}</td><td>${c.estado==='Pendiente' ? `<button class="btn btn-success" style="padding:4px 8px; font-size:0.7rem;" onclick="payCxC('${c.id}')">Cobrar</button>` : 'Pagado'}</td></tr>`).join(''); }
+  function renderCxP() { document.getElementById('cxpTableBody').innerHTML = cxpData.map(c => `<tr><td>${new Date(c.fecha).toLocaleDateString('es-VE')}</td><td>${escapeHTML(c.proveedor)}</td><td style="color:var(--danger); font-weight:bold;">$${c.monto.toFixed(2)}</td><td>Bs. ${(Number.isFinite(TASA_CAMBIO)?(c.monto * TASA_CAMBIO).toFixed(2):'—')}</td><td>${c.estado}</td><td>${c.estado==='Pendiente' ? `<button class="btn btn-success" style="padding:4px 8px; font-size:0.7rem;" onclick="payCxP('${c.id}')">Pagar</button>` : 'Pagado'}</td></tr>`).join(''); }
+
+  function calculateFinances() {
+    let tOrders = ordersData.filter(o=>o.paymentConfirmed&&o.estado!=='Cancelado').reduce((sum, o) => sum + (parseFloat(o.total.replace('$', '')) || 0), 0);
+    let tIncome = transactionsData.filter(t=>t.tipo.includes('Ingreso')).reduce((sum,t)=>sum+t.montoUsd,0);
+    let tExpenses = transactionsData.filter(t=>!t.tipo.includes('Ingreso')).reduce((sum,t)=>sum+t.montoUsd,0);
+    let totalIncome = tOrders + tIncome; let netProfit = totalIncome - tExpenses;
+    document.getElementById('dashIncome').textContent = `$${totalIncome.toFixed(2)}`; document.getElementById('dashIncomeBs').textContent = `Bs. ${(Number.isFinite(TASA_CAMBIO)?(totalIncome * TASA_CAMBIO).toFixed(2):'—')}`;
+    document.getElementById('dashExpenses').textContent = `$${tExpenses.toFixed(2)}`; document.getElementById('dashExpensesBs').textContent = `Bs. ${(Number.isFinite(TASA_CAMBIO)?(tExpenses * TASA_CAMBIO).toFixed(2):'—')}`;
+    document.getElementById('dashProfit').textContent = `$${netProfit.toFixed(2)}`; document.getElementById('dashProfitBs').textContent = `Bs. ${(Number.isFinite(TASA_CAMBIO)?(netProfit * TASA_CAMBIO).toFixed(2):'—')}`;
+    if(myChart) myChart.destroy();
+    myChart = new Chart(document.getElementById('salesChart').getContext('2d'), { type: 'line', data: { labels: ['Ingresos', 'Gastos'], datasets: [{ label: 'Balance', data: [totalIncome, tExpenses], borderColor: '#000000', backgroundColor: 'rgba(0,0,0,0.1)', fill: true }] }, options: { responsive: true, plugins: { legend: { display: false } } } });
+  }
+
+  window.registrarCompra=async()=>{const id=document.getElementById('compraItem').value,qty=Number(document.getElementById('compraQty').value),costUsd=Number(document.getElementById('compraCost').value);if(!id||qty<=0||costUsd<=0)return showToast('Cantidad y costo deben ser positivos.');const key=window.purchaseKey||(window.purchaseKey=crypto.randomUUID());try{await controlExecute('inventory.purchase',{id,qty,costUsd},key);window.purchaseKey=null;document.getElementById('compraQty').value='';document.getElementById('compraCost').value='';showToast('Compra y entrada de inventario registradas.');}catch(error){showToast(error.message);}};
+  window.openAddIngredientModal = () => document.getElementById('modalAddIng').classList.add('open');
+  window.saveNewIngredient = async () => { const name = document.getElementById('ingName').value; const id = name.toLowerCase().replace(/\s+/g, '_'); await setDoc(doc(db, "inventario", id), { name: name, stock: parseFloat(document.getElementById('ingStock').value) || 0, minStock: parseFloat(document.getElementById('ingMin').value) || 0, unit: document.getElementById('ingUnit').value }); document.getElementById('modalAddIng').classList.remove('open'); showToast('Insumo guardado.'); };
+  window.saveInventoryMove=async()=>{const id=document.getElementById('invMoveItem').value,moveType=document.getElementById('invMoveType').value,qty=Number(document.getElementById('invMoveQty').value);if(!id||qty<=0)return showToast('Indica una cantidad positiva.');const key=window.inventoryMoveKey||(window.inventoryMoveKey=crypto.randomUUID());try{await controlExecute('inventory.move',{id,moveType,qty},key);window.inventoryMoveKey=null;document.getElementById('invMoveQty').value='';showToast('Movimiento registrado.');}catch(error){showToast(error.message);}};
+  window.toggleDeliveryType = () => { const type = document.getElementById('manDeliveryType').value; document.getElementById('mesaInputGroup').style.display = type === 'Mesa' ? 'block' : 'none'; document.getElementById('deliveryInputGroup').style.display = type === 'Delivery' ? 'block' : 'none'; };
+  window.manualOptions={};
+  function renderManualProducts(){document.getElementById('manualProductsList').innerHTML=Object.values(catalogData).filter(p=>p.enabled!==false&&Number.isFinite(p.price)).map(p=>{const options=(p.options||[]).flatMap(o=>o.values||[o.value||o.label||o]);return `<div style="display:flex;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px solid var(--border-light)"><div><b>${p.name}</b><br><small>$${p.price.toFixed(2)}</small>${options.length?`<select class="form-control" onchange="window.manualOptions['${p.id}']=this.value" style="margin-top:8px"><option value="">Elige la opción</option>${options.map(o=>`<option value="${o}">${o}</option>`).join('')}</select>`:''}</div><div style="display:flex;align-items:center;gap:9px"><button class="btn btn-outline" onclick="changeManualQty('${p.id}',-1)">−</button><span id="qty_${p.id}">${manualCart[p.id]?.qty||0}</span><button class="btn btn-outline" onclick="changeManualQty('${p.id}',1)">+</button>${p.receta?.length?`<button class="btn btn-outline" onclick="openModifiers('${p.id}')">Ingredientes</button>`:''}</div></div>`;}).join('');}
+  window.changeManualQty = (id, delta) => { if(!manualCart[id]) manualCart[id] = { qty: 0, removed: [] }; manualCart[id].qty += delta; if(manualCart[id].qty <= 0) delete manualCart[id]; document.getElementById(`qty_${id}`).textContent = manualCart[id] ? manualCart[id].qty : 0; calcManualTotal(); };
+  function calcManualTotal() { let subtotal = 0; Object.entries(manualCart).forEach(([id, data]) => { if(catalogData[id]) subtotal += catalogData[id].price * data.qty; }); document.getElementById('manTotalText').textContent = `$${subtotal.toFixed(2)} / Bs. ${(Number.isFinite(TASA_CAMBIO)?(subtotal * TASA_CAMBIO).toFixed(2):'—')}`; }
+  window.openModifiers = (id) => { document.getElementById('modProductId').value = id; const p = catalogData[id]; const currentRemoved = manualCart[id] ? manualCart[id].removed : []; document.getElementById('modIngredientsList').innerHTML = p.receta.map(ing => { const iData = inventoryData[ing.id]; if(!iData) return ''; const isChecked = currentRemoved.includes(ing.id) ? '' : 'checked'; return `<label style="display:block; margin-bottom:8px; font-size:0.9rem;"><input type="checkbox" value="${ing.id}" ${isChecked} class="mod-checkbox"> ${iData.name} (${ing.qty} ${iData.unit})</label>`; }).join(''); document.getElementById('modalMod').classList.add('open'); };
+  window.confirmModifiers = () => { const id = document.getElementById('modProductId').value; const checkboxes = document.querySelectorAll('.mod-checkbox'); const removed = []; checkboxes.forEach(cb => { if(!cb.checked) removed.push(cb.value); }); if(!manualCart[id]) manualCart[id] = { qty: 0, removed: [] }; manualCart[id].removed = removed; document.getElementById('modalMod').classList.remove('open'); showToast('Ingredientes actualizados'); };
+
+  window.printManualTurn=()=>{if(!window.lastManualTurn)return;document.getElementById('print-turn')?.remove();const div=document.createElement('div');div.id='print-turn';div.className='print-turn';div.innerHTML='<h2>DIVERMANÍA</h2><p>Tu número de turno</p><strong>#'+Number(window.lastManualTurn)+'</strong><p>Espera tu número en la pantalla.</p><p>Control interno · No es una factura</p>';document.body.appendChild(div);window.print();};
+  window.saveManualOrder = async () => {
+    const name=document.getElementById('manName').value,phone=document.getElementById('manPhone').value;
+    const deliveryType=document.getElementById('manDeliveryType').value,mesa=document.getElementById('manMesa').value,address=document.getElementById('manMaps').value,notes=document.getElementById('manNotes').value;
+    if(!name||!Object.keys(manualCart).length)return showToast('Indica el cliente y los productos.');
+    const key=window.manualRequestKey||(window.manualRequestKey=crypto.randomUUID());
+    const button=document.querySelector('button[onclick="saveManualOrder()"]');if(button)button.disabled=true;
+    try{
+      const items=Object.entries(manualCart).filter(([,d])=>d.qty>0).map(([productId,d])=>({productId,qty:d.qty,removed:d.removed.map(id=>inventoryData[id]?.name||id),option:window.manualOptions?.[productId]||''}));
+      const result=await controlExecute('order.create',{name,phone,deliveryType,table:deliveryType==='Mesa'?mesa:'Retiro',address,notes,items},key);
+      window.lastManualTurn=result.number;const total=items.reduce((sum,i)=>sum+catalogData[i.productId].price*i.qty,0);
+      let msg=`*DIVERMANÍA · Pedido #${result.number}*\nCliente: ${name}\n${deliveryType==='Mesa'?'Mesa '+mesa:deliveryType}\n${items.map(i=>`${i.qty}x ${catalogData[i.productId].name}${i.option?' ('+i.option+')':''}${i.removed.length?' (Sin: '+i.removed.join(', ')+')':''}`).join('\n')}\nTotal: $${total.toFixed(2)}\n`;
+      if(address)msg+='Dirección: '+address+'\n';if(notes)msg+='Observaciones: '+notes+'\n';msg+='Seguimiento: '+location.origin+'/seguimiento.html?token='+encodeURIComponent(result.token);
+      document.getElementById('waLink').href='https://wa.me/?text='+encodeURIComponent(msg);document.getElementById('waTextArea').value=msg;document.getElementById('modalWa').classList.add('open');manualCart={};window.manualOptions={};window.manualRequestKey=null;renderManualProducts();calcManualTotal();showToast('Pedido #'+result.number+' registrado.');
+    }catch(error){showToast(error.message);}finally{if(button)button.disabled=false;}
+  };
+
+  window.openNewProductModal = () => {window.recipeVariant=null;window.recipeDraft={};document.getElementById('recipe-variant-wrap')?.remove(); document.getElementById('editId').value = ''; document.getElementById('editName').value = ''; document.getElementById('editPrice').value = ''; document.getElementById('editImageUrl').value = ''; document.getElementById('editCat').value = 'perros'; document.getElementById('recipeList').innerHTML = Object.values(inventoryData).map(i=>`<div style="display:flex;justify-content:space-between;gap:12px;margin:6px 0"><span>${i.name} (${i.unit})</span><input type="number" min="0" step="0.01" id="recipe_${i.id}" value="0" style="width:80px"></div>`).join(''); document.getElementById('modalCat').classList.add('open'); };
+  function readRecipeForm(){return Object.values(inventoryData).map(ing=>({id:ing.id,qty:Number(document.getElementById('recipe_'+ing.id)?.value)||0})).filter(i=>i.qty>0);}
+  function showRecipeForm(recipe){document.getElementById('recipeList').innerHTML=Object.values(inventoryData).map(ing=>`<div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin:8px 0;font-size:13px"><span>${escapeHTML(ing.name)} (${escapeHTML(ing.unit)})</span><input type="number" id="recipe_${ing.id}" value="${recipe.find(r=>r.id===ing.id)?.qty||0}" min="0" step="0.01" style="width:80px;padding:7px"></div>`).join('');}
+  window.openEditModal=id=>{const p=catalogData[id];document.getElementById('editId').value=id;document.getElementById('editName').value=p.name;document.getElementById('editPrice').value=p.price??'';document.getElementById('editCat').value=p.cat||'perros';document.getElementById('editImageUrl').value=p.image||'';window.recipeDraft=structuredClone(p.recipesByOption||{});const options=(p.options||[]).flatMap(o=>o.values||[o.value||o.label||o]);window.recipeVariant=options[0]||null;document.getElementById('recipe-variant-wrap')?.remove();if(options.length){document.getElementById('recipeList').insertAdjacentHTML('beforebegin',`<div id="recipe-variant-wrap" class="form-group"><label>Receta para la opción</label><select id="recipe-variant" class="form-control">${options.map(o=>`<option value="${escapeHTML(o)}">${escapeHTML(o)}</option>`).join('')}</select></div>`);document.getElementById('recipe-variant').onchange=e=>{window.recipeDraft[window.recipeVariant]=readRecipeForm();window.recipeVariant=e.target.value;showRecipeForm(window.recipeDraft[window.recipeVariant]||[]);};}showRecipeForm(window.recipeVariant?window.recipeDraft[window.recipeVariant]||[]:p.receta||[]);document.getElementById('modalCat').classList.add('open');};
+  window.saveProduct=async()=>{
+    try{
+      const id=document.getElementById('editId').value||null,name=document.getElementById('editName').value.trim(),rawPrice=document.getElementById('editPrice').value;
+      if(!name||rawPrice.trim()===''||!Number.isFinite(Number(rawPrice)))return showToast('Indica nombre y precio.');
+      const receta=[];for(const ing of Object.values(inventoryData)){const input=document.getElementById('recipe_'+ing.id),qty=Number(input?.value)||0;if(qty>0)receta.push({id:ing.id,qty});}
+      if(window.recipeVariant){window.recipeDraft[window.recipeVariant]=receta;}await controlExecute('catalog.save',{id,name,recipesByOption:window.recipeDraft||{},price:Number(rawPrice),cat:document.getElementById('editCat').value,image:document.getElementById('editImageUrl').value.trim(),desc:catalogData[id]?.desc||'',receta,enabled:true});document.getElementById('modalCat').classList.remove('open');showToast('Producto y receta guardados.');
+    }catch(error){showToast(error.message);}
+  };
+
+  window.addTransaction = async () => { const tipo = document.getElementById('finType').value; const amount = parseFloat(document.getElementById('finAmount').value); const desc = document.getElementById('finDesc').value; if(!amount || !tipo) return showToast("Faltan datos"); await addDoc(collection(db, "transacciones"), { tipo, montoUsd: amount, desc, fecha: new Date().toISOString() }); document.getElementById('finAmount').value = ''; document.getElementById('finDesc').value = ''; showToast('Movimiento guardado.'); };
+  window.addCxC = async () => { const cliente = document.getElementById('cxcName').value; const monto = parseFloat(document.getElementById('cxcAmount').value); if(!cliente || !monto) return showToast('Faltan datos'); await addDoc(collection(db, "cxc"), { cliente, monto, estado: 'Pendiente', fecha: new Date().toISOString() }); document.getElementById('cxcName').value = ''; document.getElementById('cxcAmount').value = ''; showToast('Fiado registrado.'); };
+  window.payCxC = async (id) => { await updateDoc(doc(db, "cxc", id), { estado: 'Pagado' }); showToast('Deuda saldada.'); };
+  window.addCxP = async () => { const proveedor = document.getElementById('cxpName').value; const monto = parseFloat(document.getElementById('cxpAmount').value); if(!proveedor || !monto) return showToast('Faltan datos'); await addDoc(collection(db, "cxp"), { proveedor, monto, estado: 'Pendiente', fecha: new Date().toISOString() }); document.getElementById('cxpName').value = ''; document.getElementById('cxpAmount').value = ''; showToast('Deuda registrada.'); };
+  window.payCxP = async (id) => { await updateDoc(doc(db, "cxp", id), { estado: 'Pagado' }); showToast('Deuda pagada.'); };
+</script>
+<a class="back-control" href="/admin.html">← Centro de control</a><script>const tab=new URLSearchParams(location.search).get('tab');if(tab)setTimeout(()=>{const b=Array.from(document.querySelectorAll('.nav-link')).find(b=>b.getAttribute('onclick')?.includes("'"+tab+"'"));if(b)b.click();},350);</script></body>
+</html>

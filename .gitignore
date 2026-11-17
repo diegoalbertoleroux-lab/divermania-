@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.dev.vars
+.env*
+.firebase/
+functions/node_modules/
+functions/domain.js
+functions/settings.js
+functions/codec.js
+firebase-debug.log

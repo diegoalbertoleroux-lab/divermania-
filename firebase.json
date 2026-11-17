@@ -1,0 +1,1 @@
+{"functions":[{"source":"functions","codebase":"divermania-control","runtime":"nodejs22","predeploy":["node scripts/prepare-functions.mjs"]}],"firestore":{"rules":"firestore.rules","indexes":"firestore.indexes.json"},"emulators":{"functions":{"port":5001},"firestore":{"port":8087},"auth":{"port":9099},"ui":{"enabled":false}}}

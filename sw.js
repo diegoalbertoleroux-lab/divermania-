@@ -1,7 +1,4 @@
-const CACHE_NAME = 'divermania-v1';
-self.addEventListener('install', event => {
-  self.skipWaiting();
-});
-self.addEventListener('fetch', event => {
-  event.respondWith(fetch(event.request).catch(() => caches.match(event.request)));
-});
+const VERSION='divermania-v3';
+self.addEventListener('install',()=>self.skipWaiting());
+self.addEventListener('activate',event=>event.waitUntil(self.clients.claim()));
+// Orders, staff sessions and Firebase requests must always use the network.
