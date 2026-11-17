@@ -36,7 +36,7 @@ export function applyCommand(original,command,now=Date.now()) {
  if(command.type==='ticket.create') {
   assert(['play','park'].includes(p.area),'Selecciona el área.');assert(rates[p.area]?.[Number(p.minutes)]!==undefined,'Duración inválida.');
   assert(p.paymentConfirmed===true,'Taquilla debe confirmar el pago antes de emitir el pase.');assert(clean(p.paymentRef),'Registra una referencia o comprobante de taquilla.');
-  const ticket={id:uid(),number:Math.max(0,...s.tickets.map(t=>t.number))+1,area:p.area,minutes:Number(p.minutes),amount:rates[p.area][p.minutes],name:clean(p.name)||'Visitante',customerId,paymentConfirmed:true,paymentRef:clean(p.paymentRef),invoiceRef:clean(p.invoiceRef),createdAt:now,startedAt:null,endAt:null,stationId:null,status:'waiting'};
+  const ticket={id:uid(),token:(uid()+uid()).replaceAll('-',''),number:Math.max(0,...s.tickets.map(t=>t.number))+1,area:p.area,minutes:Number(p.minutes),amount:rates[p.area][p.minutes],name:clean(p.name)||'Visitante',customerId,paymentConfirmed:true,paymentRef:clean(p.paymentRef),invoiceRef:clean(p.invoiceRef),createdAt:now,startedAt:null,endAt:null,stationId:null,status:'waiting'};
   s.tickets.push(ticket);result={id:ticket.id,number:ticket.number};
  } else if(command.type==='session.start') {
   const t=s.tickets.find(t=>t.id===p.id);assert(t&&t.status==='waiting','Este pase ya fue activado o no está disponible.');assert(t.paymentConfirmed,'El pase no tiene pago confirmado.');

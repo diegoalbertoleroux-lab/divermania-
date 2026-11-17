@@ -16,6 +16,7 @@ service cloud.firestore {
   match /estaciones_publicas/{id} {allow read: if staff() || display('gamer') || display('park'); allow write: if false;}
   match /tablero_pedidos/{id} {allow read: if staff() || display('orders'); allow write: if false;}
   match /tablero_sesiones/{id} {allow read: if staff() || display('gamer') || display('park'); allow write: if false;}
+  match /pases_publicos/{token} {allow get: if token.size() >= 48; allow list,write: if false;}
   match /seguimiento/{token} {allow get: if token.size() >= 48; allow list,write: if false;}
   match /clientes/{id} {allow read: if cashier() || role() == 'entrance'; allow write: if false; match /visitas/{day}{allow read: if cashier() || role() == 'entrance'; allow write: if false;}}
   match /transacciones/{id} {allow read,write: if cashier();}
