@@ -1,9 +1,10 @@
+import {resolveRoute} from '../shared/routes.js';
 import {preview,connection,firebaseConfig} from './config.js';
 import {baseState,productFromCloud,orderFromCloud} from '../shared/codec.js';
 import {demoState,setClockOffset,applyCommand} from '../shared/domain.js';
 import {sessionReady} from './session.js';
 const listeners=new Set();let state=baseState(),driver=null,revision=0,secondary=null;
-const params=new URLSearchParams(location.search),view=params.get('view')||(['/admin.html','/televisores.html','/inventario.html','/ticketeras.html','/imagenes.html'].includes(location.pathname)?'staff':location.pathname==='/pase.html'?'pass':location.pathname==='/seguimiento.html'?'track':'menu');
+const params=new URLSearchParams(location.search),{view}=resolveRoute(location.pathname,location.search,{view:document.documentElement.dataset.appView,page:document.documentElement.dataset.appPage});
 const publish=()=>{state.revision=++revision;for(const fn of listeners)fn(state);};
 export const readState=()=>state;
 export const subscribe=fn=>{listeners.add(fn);return ()=>listeners.delete(fn);};

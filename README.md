@@ -2,6 +2,10 @@
 
 La aplicación conserva el proyecto Firebase **divermania-3f104** y el alojamiento en Cloudflare Pages. La nueva versión añade menú basado en el PDF, taquilla, sesiones por tiempo, clientes frecuentes, cocina y pantallas vinculadas. Los dos HTML originales se conservan byte por byte en `originales/`.
 
+Las dos entradas son **`/cliente`** y **`/admin`**. Las URLs con `.html` también se admiten; el alojamiento puede redirigirlas a URLs sin extensión. Inventario, recetas, clientes, imágenes, ticketeras y TV se abren dentro del administrador.
+
+Para activar el proyecto con tu propia cuenta, sigue [ACTIVAR-FIREBASE.md](ACTIVAR-FIREBASE.md).
+
 ## Qué se prepara en esta rama
 
 - Menú de 41 productos y combos transcritos del PDF, con categorías, pizzas por tamaño, opciones, modificadores, observaciones, mesa QR, retiro/delivery y seguimiento por enlace. Los dos combos mixtos sin precio están desactivados.
@@ -12,7 +16,7 @@ La aplicación conserva el proyecto Firebase **divermania-3f104** y el alojamien
 - Cocina con turnos, ingredientes quitados y estados. Los clientes sin teléfono pueden seguir su número en la TV; quienes lo tienen abren el seguimiento. La impresión del turno sigue siendo opcional, sin requerir ticketeras físicas.
 - Pantallas de pedidos con fotos y QR; pantallas de gamer/parque con cuentas regresivas y avisos. No se superponen mensajes al juego que llega por HDMI.
 - Vinculación de pantallas con código de un solo uso de 10 caracteres, vencimiento de 10 minutos, sesión de dispositivo, latidos cada minuto y revocación. Su funcionamiento real requiere publicar Firebase Functions y reglas.
-- Clientes identificados por teléfono normalizado sin duplicados, autorización para guardar historial y consentimiento separado para promociones. Las fichas no se exponen al público.
+- Clientes identificados por teléfono normalizado sin duplicados, autorización para guardar historial y consentimiento separado para promociones. Las fichas no se exponen al público. El checkout permite autorizar su registro con el pedido; el teléfono normalizado reúne las compras posteriores, sin sobrescribir una ficha existente desde el acceso público. También se pueden guardar personas que solo usan parque o Play desde taquilla.
 - Inventario tiene una pantalla propia con mínimos, alta de insumos, compras y autoconsumo. Los nuevos insumos empiezan en cero; la unidad no se cambia para mantener coherencia con las recetas. Se conservan catálogo, recetas, transacciones, CxC y CxP en `gestion.html`, con acceso del equipo. Compras y movimientos de stock pasan por transacciones de servidor; las compras suman stock y gasto juntos. Los pases generan un ingreso una sola vez, sin contar dos veces los canjes de comida.
 - Las recetas de variantes Carne/Pollo se configuran por separado. Un producto sin receta o gramajes completos se identifica como pendiente; no se inventan consumos exactos.
 - El panel financiero cuenta pedidos como cobros solo al confirmar pago externo. Se denomina “Balance operativo”, no utilidad neta. Se consulta la tasa BCV; si falla se muestra “—”, no una tasa ficticia. No se emiten facturas ni se verifican cobros bancarios.

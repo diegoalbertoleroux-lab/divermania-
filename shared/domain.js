@@ -5,11 +5,11 @@ export const rates=Object.fromEntries(Object.entries(packages).map(([area,items]
 export const inventorySeed={pan:{name:'Pan',stock:100,minStock:15,unit:'und'},carne:{name:'Carne',stock:10000,minStock:1000,unit:'g'},salchicha:{name:'Salchicha',stock:80,minStock:10,unit:'und'},queso:{name:'Queso',stock:5000,minStock:500,unit:'g'},tomate:{name:'Tomate',stock:3000,minStock:300,unit:'g'},lechuga:{name:'Lechuga',stock:2000,minStock:200,unit:'g'},papitas:{name:'Papitas',stock:3000,minStock:300,unit:'g'},salsa:{name:'Salsa',stock:5000,minStock:500,unit:'ml'}};
 export const recipes={burger:[{id:'pan',qty:1},{id:'carne',qty:150},{id:'queso',qty:30},{id:'tomate',qty:20},{id:'lechuga',qty:10},{id:'salsa',qty:20}],hotdog:[{id:'pan',qty:1},{id:'salchicha',qty:1},{id:'queso',qty:20},{id:'papitas',qty:20},{id:'salsa',qty:20}]};
 export const catalog = [
- {id:'burger',name:'Hamburguesa clásica',description:'Carne, queso, vegetales y nuestra salsa.',price:650,category:'Hamburguesas',emoji:'🍔',color:'peach',ingredients:['Queso','Tomate','Lechuga','Salsa']},
- {id:'hotdog',name:'Perro especial',description:'Salchicha, queso, papitas y salsas.',price:350,category:'Perros',emoji:'🌭',color:'pink',ingredients:['Queso','Papitas','Salsas']},
- {id:'fries',name:'Papas para compartir',description:'Doraditas, crujientes y recién hechas.',price:300,category:'Acompañantes',emoji:'🍟',color:'yellow',ingredients:[]},
- {id:'juice',name:'Jugo de frutas',description:'Una pausa fresca para seguir disfrutando.',price:200,category:'Bebidas',emoji:'🥤',color:'mint',ingredients:[]},
- {id:'water',name:'Agua mineral',description:'Botella individual.',price:100,category:'Bebidas',emoji:'💧',color:'blue',ingredients:[]}
+ {id:'burger',name:'Hamburguesa clásica',description:'Carne, queso, vegetales y nuestra salsa.',price:650,category:'Hamburguesas',color:'peach',ingredients:['Queso','Tomate','Lechuga','Salsa']},
+ {id:'hotdog',name:'Perro especial',description:'Salchicha, queso, papitas y salsas.',price:350,category:'Perros',color:'pink',ingredients:['Queso','Papitas','Salsas']},
+ {id:'fries',name:'Papas para compartir',description:'Doraditas, crujientes y recién hechas.',price:300,category:'Acompañantes',color:'yellow',ingredients:[]},
+ {id:'juice',name:'Jugo de frutas',description:'Una pausa fresca para seguir disfrutando.',price:200,category:'Bebidas',color:'mint',ingredients:[]},
+ {id:'water',name:'Agua mineral',description:'Botella individual.',price:100,category:'Bebidas',color:'blue',ingredients:[]}
 ];
 export function demoState(now=Date.now()) {
  const customers=[{id:'demo-ana',name:'Ana Pérez',phone:'0000000001',consent:true,promotions:false,createdAt:now-86400000*18},{id:'demo-luis',name:'Luis García',phone:'0000000002',consent:true,promotions:true,createdAt:now-86400000*12},{id:'demo-sofia',name:'Sofía Rojas',phone:'0000000003',consent:true,promotions:false,createdAt:now-86400000*8}];
@@ -32,7 +32,9 @@ export function applyCommand(original,command,now=Date.now()) {
  const s=structuredClone(original);const p=command.payload||{};let result={};
  assert(typeof command.key==='string'&&command.key.length>=8&&command.key.length<=100,'Identificador de operación inválido.');
  const previous=s.idempotency.find(x=>x.key===command.key);if(previous)return {state:original,result:previous.result,duplicate:true};
- const customerId=p.customerId||null; if(customerId)assert(s.customers.some(c=>c.id===customerId),'Cliente no encontrado.');
+ let customerId=p.customerId||null;
+ if(command.type==='order.create'&&p.rememberCustomer===true){const phone=normalizePhone(p.phone);assert(phone.length>=10&&phone.length<=15,'Indica un teléfono válido para guardar tu ficha.');assert(clean(p.name).length>=2,'Indica tu nombre para guardar la ficha.');let customer=s.customers.find(c=>normalizePhone(c.phone)===phone);if(!customer){customer={id:uid(),name:clean(p.name),phone,consent:true,promotions:false,source:'web-order',consentVersion:'historial-v1',consentAt:now,createdAt:now};s.customers.push(customer);}customerId=customer.id;}
+ if(customerId)assert(s.customers.some(c=>c.id===customerId),'Cliente no encontrado.');
  if(command.type==='ticket.create') {
   assert(['play','park'].includes(p.area),'Selecciona el área.');assert(rates[p.area]?.[Number(p.minutes)]!==undefined,'Duración inválida.');
   assert(p.paymentConfirmed===true,'Taquilla debe confirmar el pago antes de emitir el pase.');assert(clean(p.paymentRef),'Registra una referencia o comprobante de taquilla.');
