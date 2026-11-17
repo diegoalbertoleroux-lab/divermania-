@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es" data-theme="light">
-<head>
+<head><script>if(new URLSearchParams(location.search).get("embed")==="1")document.documentElement.dataset.embedded="true";</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <link rel="stylesheet" href="/gestion-identidad.css"><title>DIVERMANIA · Panel de Gestión</title>
@@ -471,6 +471,8 @@
   window.payCxC = async (id) => { await updateDoc(doc(db, "cxc", id), { estado: 'Pagado' }); showToast('Deuda saldada.'); };
   window.addCxP = async () => { const proveedor = document.getElementById('cxpName').value; const monto = parseFloat(document.getElementById('cxpAmount').value); if(!proveedor || !monto) return showToast('Faltan datos'); await addDoc(collection(db, "cxp"), { proveedor, monto, estado: 'Pendiente', fecha: new Date().toISOString() }); document.getElementById('cxpName').value = ''; document.getElementById('cxpAmount').value = ''; showToast('Deuda registrada.'); };
   window.payCxP = async (id) => { await updateDoc(doc(db, "cxp", id), { estado: 'Pagado' }); showToast('Deuda pagada.'); };
+
+ const selectedTab=new URLSearchParams(location.search).get('tab');if(selectedTab){const button=Array.from(document.querySelectorAll('.nav-link')).find(b=>b.getAttribute('onclick')?.includes("'"+selectedTab+"'"));if(button)window.switchTab(selectedTab,button);}
 </script>
-<a class="back-control" href="/admin.html">← Centro de control</a><script>const tab=new URLSearchParams(location.search).get('tab');if(tab)setTimeout(()=>{const b=Array.from(document.querySelectorAll('.nav-link')).find(b=>b.getAttribute('onclick')?.includes("'"+tab+"'"));if(b)b.click();},350);</script></body>
+<a class="back-control" href="/admin.html">← Centro de control</a></body>
 </html>

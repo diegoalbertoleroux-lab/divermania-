@@ -6,6 +6,14 @@ Las dos entradas son **`/cliente`** y **`/admin`**. Las URLs con `.html` tambié
 
 Para activar el proyecto con tu propia cuenta, sigue [ACTIVAR-FIREBASE.md](ACTIVAR-FIREBASE.md).
 
+## Recetas e inventario
+
+Catálogo y recetas se abre directamente en el administrador, con una sola navegación. El editor muestra únicamente los ingredientes del producto, permite añadirlos o quitarlos y conserva las cantidades ya guardadas. `data/recipe-templates.json` aporta ingredientes descritos en el PDF: las cantidades que el menú no especifica quedan pendientes, no en cero. Al guardar, los ingredientes nuevos se registran con stock cero, para cargar sus existencias reales en Inventario.
+
+Los productos preparados usan receta en gramos, mililitros o unidades. Los productos empacados (refrescos, Doritos, Pepitos y otros snacks) se vinculan con una existencia en unidades: cada venta descuenta una unidad, sin permitir quitarla como modificador. Cada presentación lleva su propio producto. Cancelar antes de preparar devuelve las existencias una sola vez. La carga del menú conserva recetas, variantes y productos registrados que no figuran en el PDF.
+
+El módulo financiero conserva las funciones anteriores en una vista sin segunda barra lateral. La selección de su sección espera a que el módulo haya terminado de inicializarse.
+
 ## Qué se prepara en esta rama
 
 - Menú de 41 productos y combos transcritos del PDF, con categorías, pizzas por tamaño, opciones, modificadores, observaciones, mesa QR, retiro/delivery y seguimiento por enlace. Los dos combos mixtos sin precio están desactivados.
