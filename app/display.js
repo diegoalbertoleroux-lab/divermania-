@@ -1,4 +1,4 @@
-import {promotionalSlides,displayMessages,fulfillmentOf,displayKey} from '../shared/presentation.js';
+import {promotionalSlides,displayMessages,fulfillmentOf,displayKey,orderDisplayName} from '../shared/presentation.js';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let mountedKind=null,previous=null,announcementUntil=0,announcementText='',promoIndex=0,promoAt=0,messageAt=0,slideId='',messageIndex=0,context,latest,slideTimer;
 const pulseUntil=new Map(),leaving=new Map();
@@ -21,7 +21,7 @@ export function updateDisplay(state,kind,c){
 function updateOrders(orders,c){
  const now=Date.now(),current=new Map(orders.map(o=>[displayKey(o),o])),fresh=previous===null?[]:orders.filter(o=>o.status==='ready'&&previous.get(displayKey(o))?.status!=='ready');
  for(const o of fresh)pulseUntil.set(displayKey(o),now+8000);
- if(fresh.length){announcementText=fresh.length===1?`Pedido ${fresh[0].number}, listo para retirar.`:`Pedidos ${fresh.map(o=>o.number).join(', ')}, listos para retirar.`;announcementUntil=now+8000;c.onReady();}
+ if(fresh.length){announcementText=fresh.length===1?`Pedido ${fresh[0].number}, ${orderDisplayName(fresh[0])}, listo para retirar.`:`Pedidos ${fresh.map(o=>o.number).join(', ')}, listos para retirar.`;announcementUntil=now+8000;c.onReady();}
  for(const el of document.querySelectorAll('[data-turn-key]'))if(!current.has(el.dataset.turnKey)&&!leaving.has(el.dataset.turnKey)){
   const key=el.dataset.turnKey;el.classList.add('turn-leaving');leaving.set(key,setTimeout(()=>{el.remove();leaving.delete(key);},reduced()?0:280));
  }
@@ -29,10 +29,10 @@ function updateOrders(orders,c){
  for(const order of sorted){
   const key=displayKey(order);let el=[...document.querySelectorAll('[data-turn-key]')].find(el=>el.dataset.turnKey===key),parent=document.querySelector(order.status==='ready'?'#display-ready':'#display-preparing');if(!parent)continue;
   const type=fulfillmentOf(order),label={table:'En mesa',pickup:'Para retirar',delivery:'Delivery'}[type];
-  if(!el){el=document.createElement('div');el.className='turn-number turn-card turn-entering';el.dataset.turnKey=key;el.innerHTML=`<strong></strong><span class="turn-type"></span>`;setTimeout(()=>el.classList.remove('turn-entering'),450);}
+  if(!el){el=document.createElement('div');el.className='turn-number turn-card turn-entering';el.dataset.turnKey=key;el.innerHTML=`<strong></strong><span class="turn-customer"></span><span class="turn-type"></span>`;setTimeout(()=>el.classList.remove('turn-entering'),450);}
   if(leaving.has(key)){clearTimeout(leaving.get(key));leaving.delete(key);el.classList.remove('turn-leaving');}
   const moved=el.parentElement&&el.parentElement!==parent;
-  el.querySelector('strong').textContent=String(order.number);el.querySelector('.turn-type').innerHTML=c.icon(type==='delivery'?'external':type==='table'?'grid':'bag')+esc(label);el.setAttribute('aria-label',`Pedido ${order.number}, ${order.status==='ready'?'listo para retirar':'en preparación'}, ${label}`);
+  el.querySelector('strong').textContent=String(order.number);el.querySelector('.turn-customer').textContent=orderDisplayName(order);el.querySelector('.turn-type').innerHTML=c.icon(type==='delivery'?'external':type==='table'?'grid':'bag')+esc(label);el.setAttribute('aria-label',`Pedido ${order.number}, ${order.status==='ready'?'listo para retirar':'en preparación'}, ${label}, ${orderDisplayName(order)}`);
   const oldRect=moved&&el.getBoundingClientRect?el.getBoundingClientRect():null;
   // Append in the right order without replacing a card: pulses survive unrelated snapshots.
   parent.appendChild(el);el.dataset.orderStatus=order.status;

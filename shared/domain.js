@@ -1,4 +1,4 @@
-import {controlReference,fulfillmentOf} from './presentation.js';
+import {controlReference,fulfillmentOf,boardOrder,orderDisplayName} from './presentation.js';
 import {packages,normalizePhone} from './settings.js';
 export const money = cents => new Intl.NumberFormat('es-VE',{style:'currency',currency:'USD'}).format(cents/100);
 export const uid = () => crypto.randomUUID();
@@ -76,5 +76,5 @@ let clockOffset=0;export const setClockOffset=n=>{clockOffset=Number(n)||0;};exp
 export const remaining=(t,now=serverTime())=>t.endAt?Math.max(0,t.endAt-now):0;
 export function clock(ms){const sec=Math.max(0,Math.ceil(ms/1000));return `${String(Math.floor(sec/60)).padStart(2,'0')}:${String(sec%60).padStart(2,'0')}`;}
 export const orderLabels={pending:'Recibido',preparing:'En preparación',ready:'Listo para retirar',delivered:'Entregado',cancelled:'Cancelado'};
-export function publicOrder(o) {return o?{number:o.number,status:o.status,createdAt:o.createdAt,updatedAt:o.updatedAt,items:o.items,total:o.total,table:o.table}:null;}
-export function publicBoard(s,type){return type==='orders'?{orders:s.orders.filter(o=>['preparing','ready'].includes(o.status)).map(o=>({id:o.id,number:o.number,status:o.status,updatedAt:o.updatedAt,fulfillment:fulfillmentOf(o)}))}:{stations:s.stations,tickets:s.tickets.filter(t=>t.status==='active'&&t.area===(type==='park'?'park':'play')).map(t=>({number:t.number,stationId:t.stationId,area:t.area,endAt:t.endAt,minutes:t.minutes})),capacity:s.capacity};}
+export function publicOrder(o) {return o?{displayName:orderDisplayName(o),number:o.number,status:o.status,createdAt:o.createdAt,updatedAt:o.updatedAt,items:o.items,total:o.total,table:o.table}:null;}
+export function publicBoard(s,type){return type==='orders'?{orders:s.orders.filter(o=>['preparing','ready'].includes(o.status)).map(boardOrder)}:{stations:s.stations,tickets:s.tickets.filter(t=>t.status==='active'&&t.area===(type==='park'?'park':'play')).map(t=>({number:t.number,stationId:t.stationId,area:t.area,endAt:t.endAt,minutes:t.minutes})),capacity:s.capacity};}

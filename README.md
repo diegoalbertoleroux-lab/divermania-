@@ -6,6 +6,22 @@ Las dos entradas son **`/cliente`** y **`/admin`**. Las URLs con `.html` tambié
 
 Para activar el proyecto con tu propia cuenta, sigue [ACTIVAR-FIREBASE.md](ACTIVAR-FIREBASE.md).
 
+## Un solo administrador
+
+Todos los apartados del panel anterior están integrados: resumen, pedidos/cocina, pedido manual, mesas/QR, catálogo/recetas, inventario y finanzas. No se abren ventanas del panel antiguo ni se incrustan sus menús. `gestion.html?tab=manual`, `mesas`, `catalogo`, `inventario`, `finanzas` y `pedidos` redirigen a su sección equivalente; la fuente original sigue conservada en `originales/`.
+
+- `/admin?page=manual`: nombre, teléfono opcional en local, mesa/retiro/delivery, dirección, notas, variantes y modificadores. Guardar crea el pedido una sola vez, genera turno y seguimiento y permite preparar WhatsApp al cliente. No realiza el cobro.
+- `/admin?page=tables`: 10 mesas inicialmente, cantidad configurable por administración (1–100), QR por mesa para abrir, copiar, descargar PNG con margen blanco o imprimir/guardar PDF. Los enlaces conservan `?mesa=N`. En revisión los QR abren datos de prueba y no sincronizan dispositivos reales.
+- `/admin?page=finances`: resumen y gráfico, compras con entrada de stock, movimientos, CxC y CxP. Lee las colecciones existentes `transacciones`, `cxc`, `cxp`; conserva sus nombres de campos. Marcar una cuenta saldada actualiza su estado sin generar otro cobro/gasto automáticamente. Los cambios nuevos pasan por operaciones protegidas e idempotentes.
+
+La TV muestra número y nombre de pila junto al tipo de entrega; no muestra teléfono, dirección ni apellido. Mantiene las transiciones y el pulso de recién listos. Los canjes incluidos se identifican como canjes de pase.
+
+### Formas de avisar
+
+1. Seguimiento por enlace o QR del pedido: estado en vivo y sonido con la página abierta; avisos del navegador cuando son compatibles y el cliente da permiso. No hay Web Push para el navegador cerrado.
+2. TV del local: número, nombre y alerta visual/sonora, útil sin teléfono.
+3. WhatsApp manual: el botón prepara el mensaje con el estado actual y enlace de seguimiento; la persona del equipo confirma el envío. WhatsApp automático requiere una integración de Business Platform/proveedor y no se activa por generar un QR.
+
 ## Pantallas, tiempos y taquilla
 
 La pantalla de pedidos conserva cada tarjeta al recibir cambios, anima la entrada, el traslado a listos y la salida, y resalta los recién listos durante ocho segundos. El primer conjunto de pedidos recibido al abrir la pantalla se toma como estado inicial y no vuelve a llamar todos los turnos. El carrusel rota cada nueve segundos con productos disponibles en el catálogo, tarifas informadas de parque/gamer, horario de Caracas y una invitación general a celebrar cumpleaños, sin fechas de eventos inventadas. El QR visible abre un menú donde se puede elegir mesa, retiro o delivery.
@@ -22,7 +38,7 @@ Catálogo y recetas se abre directamente en el administrador, con una sola naveg
 
 Los productos preparados usan receta en gramos, mililitros o unidades. Los productos empacados (refrescos, Doritos, Pepitos y otros snacks) se vinculan con una existencia en unidades: cada venta descuenta una unidad, sin permitir quitarla como modificador. Cada presentación lleva su propio producto. Cancelar antes de preparar devuelve las existencias una sola vez. La carga del menú conserva recetas, variantes y productos registrados que no figuran en el PDF.
 
-El módulo financiero conserva las funciones anteriores en una vista sin segunda barra lateral. La selección de su sección espera a que el módulo haya terminado de inicializarse.
+El módulo financiero conserva sus flujos y colecciones originales dentro del administrador, sin una segunda barra lateral ni un iframe.
 
 ## Qué se prepara en esta rama
 
@@ -35,7 +51,7 @@ El módulo financiero conserva las funciones anteriores en una vista sin segunda
 - Pantallas de pedidos con fotos y QR; pantallas de gamer/parque con cuentas regresivas y avisos. No se superponen mensajes al juego que llega por HDMI.
 - Vinculación de pantallas con código de un solo uso de 10 caracteres, vencimiento de 10 minutos, sesión de dispositivo, latidos cada minuto y revocación. Su funcionamiento real requiere publicar Firebase Functions y reglas.
 - Clientes identificados por teléfono normalizado sin duplicados, autorización para guardar historial y consentimiento separado para promociones. Las fichas no se exponen al público. El checkout permite autorizar su registro con el pedido; el teléfono normalizado reúne las compras posteriores, sin sobrescribir una ficha existente desde el acceso público. También se pueden guardar personas que solo usan parque o Play desde taquilla.
-- Inventario tiene una pantalla propia con mínimos, alta de insumos, compras y autoconsumo. Los nuevos insumos empiezan en cero; la unidad no se cambia para mantener coherencia con las recetas. Se conservan catálogo, recetas, transacciones, CxC y CxP en `gestion.html`, con acceso del equipo. Compras y movimientos de stock pasan por transacciones de servidor; las compras suman stock y gasto juntos. Los pases generan un ingreso una sola vez, sin contar dos veces los canjes de comida.
+- Inventario tiene una pantalla propia con mínimos, alta de insumos, compras y autoconsumo. Los nuevos insumos empiezan en cero; la unidad no se cambia para mantener coherencia con las recetas. Se conservan catálogo, recetas, transacciones, CxC y CxP en los módulos del administrador, con acceso del equipo. Compras y movimientos de stock pasan por transacciones de servidor; las compras suman stock y gasto juntos. Los pases generan un ingreso una sola vez, sin contar dos veces los canjes de comida.
 - Las recetas de variantes Carne/Pollo se configuran por separado. Un producto sin receta o gramajes completos se identifica como pendiente; no se inventan consumos exactos.
 - El panel financiero cuenta pedidos como cobros solo al confirmar pago externo. Se denomina “Balance operativo”, no utilidad neta. Se consulta la tasa BCV; si falla se muestra “—”, no una tasa ficticia. No se emiten facturas ni se verifican cobros bancarios.
 
@@ -51,7 +67,7 @@ El módulo financiero conserva las funciones anteriores en una vista sin segunda
 - `/imagenes.html`: elegir imágenes incluidas, pegar una URL o subir JPG/PNG/WebP hasta 5 MB a Firebase Storage. En preview se conservan solo en el navegador, hasta 2 MB por archivo.
 - `/televisores.html`: vinculación de dispositivos, con rol de administración.
 - `/?view=board&kind=orders`: pedidos; `kind=gamer` y `kind=park`: tiempos.
-- `/gestion.html?tab=catalogo`, `inventario` o `finanzas`: módulos existentes.
+- `/gestion.html?tab=...`: enlaces anteriores, redirigidos a los módulos integrados.
 
 ## Publicar frontend en Cloudflare Pages
 

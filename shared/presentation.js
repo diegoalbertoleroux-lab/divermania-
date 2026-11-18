@@ -2,6 +2,8 @@ import {packages,schedules} from './settings.js';
 export const controlReference=number=>'TAQ-'+String(number).padStart(6,'0');
 export const visitorName=t=>t.childName||t.name||'Visitante';
 export function fulfillmentOf(o){if(['table','pickup','delivery'].includes(o.fulfillment))return o.fulfillment;if(o.deliveryType==='Delivery'||o.tipoEntrega==='Delivery')return 'delivery';return o.table&&o.table!=='Retiro'||o.mesa?'table':'pickup';}
+export function orderDisplayName(o){if(o.displayName!==undefined)return String(o.displayName).trim().slice(0,32)||'Visitante';if(o.kind==='package'||o.voucherId)return 'Canje de pase';const name=String(o.name||o.cliente||'Visitante').trim().split(/\s+/)[0];return name.slice(0,32)||'Visitante';}
+export function boardOrder(o){return {id:o.id,number:o.number,status:o.status,updatedAt:o.updatedAt,fulfillment:fulfillmentOf(o),displayName:orderDisplayName(o)};}
 export const displayKey=o=>String(o.id||o.number);
 export function daySchedule(now=Date.now()){
  const day=new Intl.DateTimeFormat('en-US',{timeZone:'America/Caracas',weekday:'short'}).format(now);
