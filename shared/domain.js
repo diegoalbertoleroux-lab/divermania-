@@ -1,3 +1,4 @@
+import {controlReference,fulfillmentOf} from './presentation.js';
 import {packages,normalizePhone} from './settings.js';
 export const money = cents => new Intl.NumberFormat('es-VE',{style:'currency',currency:'USD'}).format(cents/100);
 export const uid = () => crypto.randomUUID();
@@ -37,9 +38,11 @@ export function applyCommand(original,command,now=Date.now()) {
  if(customerId)assert(s.customers.some(c=>c.id===customerId),'Cliente no encontrado.');
  if(command.type==='ticket.create') {
   assert(['play','park'].includes(p.area),'Selecciona el área.');assert(rates[p.area]?.[Number(p.minutes)]!==undefined,'Duración inválida.');
-  assert(p.paymentConfirmed===true,'Taquilla debe confirmar el pago antes de emitir el pase.');assert(clean(p.paymentRef),'Registra una referencia o comprobante de taquilla.');
-  const ticket={id:uid(),token:(uid()+uid()).replaceAll('-',''),number:Math.max(0,...s.tickets.map(t=>t.number))+1,area:p.area,minutes:Number(p.minutes),amount:rates[p.area][p.minutes],name:clean(p.name)||'Visitante',customerId,paymentConfirmed:true,paymentRef:clean(p.paymentRef),invoiceRef:clean(p.invoiceRef),createdAt:now,startedAt:null,endAt:null,stationId:null,status:'waiting'};
+  assert(p.paymentConfirmed===true,'Taquilla debe confirmar el pago antes de emitir el pase.');
+  const nextNumber=Math.max(0,...s.tickets.map(t=>t.number))+1;const childName=clean(p.childName||p.name);assert(childName,'Indica el nombre del niño o jugador.');const ticket={id:uid(),token:(uid()+uid()).replaceAll('-',''),number:nextNumber,controlRef:controlReference(nextNumber),area:p.area,minutes:Number(p.minutes),amount:rates[p.area][p.minutes],name:childName,childName,responsibleName:clean(p.responsibleName),customerId,paymentConfirmed:true,paymentRef:clean(p.paymentRef)||controlReference(nextNumber),referenceAuto:!clean(p.paymentRef),invoiceRef:clean(p.invoiceRef),createdAt:now,startedAt:null,endAt:null,stationId:null,status:'waiting'};
   s.tickets.push(ticket);result={id:ticket.id,number:ticket.number};
+ } else if(command.type==='ticket.update') {
+  const t=s.tickets.find(t=>t.id===p.id);assert(t,'Pase no encontrado.');const childName=clean(p.childName);assert(childName,'Indica el nombre del niño o jugador.');Object.assign(t,{childName,name:childName,responsibleName:clean(p.responsibleName)});result={id:t.id};
  } else if(command.type==='session.start') {
   const t=s.tickets.find(t=>t.id===p.id);assert(t&&t.status==='waiting','Este pase ya fue activado o no está disponible.');assert(t.paymentConfirmed,'El pase no tiene pago confirmado.');
   if(t.area==='play') {assert(s.stations.some(x=>x.id===p.stationId),'Selecciona una estación.');assert(!s.tickets.some(x=>x.status==='active'&&x.stationId===p.stationId),'Esa Play sigue ocupada. Finaliza primero la sesión anterior.');t.stationId=p.stationId;}
@@ -48,13 +51,13 @@ export function applyCommand(original,command,now=Date.now()) {
  } else if(command.type==='session.finish') {
   const t=s.tickets.find(t=>t.id===p.id);assert(t&&t.status==='active','La sesión no está activa.');Object.assign(t,{status:'finished',finishedAt:now});
  } else if(command.type==='session.extend') {
-  const t=s.tickets.find(t=>t.id===p.id);assert(t&&t.status==='active','La sesión no está activa.');assert(rates[t.area]?.[Number(p.minutes)]!==undefined,'Ampliación inválida.');assert(p.paymentConfirmed===true&&clean(p.paymentRef),'Confirma en taquilla el pago de la ampliación.');
-  const amount=rates[t.area][p.minutes];t.endAt=Math.max(now,t.endAt)+Number(p.minutes)*60000;t.minutes+=Number(p.minutes);t.amount+=amount;(t.extensions??=[]).push({minutes:Number(p.minutes),amount,paymentRef:clean(p.paymentRef),at:now});
+  const t=s.tickets.find(t=>t.id===p.id);assert(t&&t.status==='active','La sesión no está activa.');assert(rates[t.area]?.[Number(p.minutes)]!==undefined,'Ampliación inválida.');assert(p.paymentConfirmed===true,'Confirma en taquilla el pago de la ampliación.');
+  const amount=rates[t.area][p.minutes];t.endAt=Math.max(now,t.endAt)+Number(p.minutes)*60000;t.minutes+=Number(p.minutes);t.amount+=amount;(t.extensions??=[]).push({minutes:Number(p.minutes),amount,paymentRef:clean(p.paymentRef)||`${t.controlRef||controlReference(t.number)}-A${String((t.extensions?.length||0)+1).padStart(2,'0')}`,at:now});
  } else if(command.type==='order.create') {
   assert(Array.isArray(p.items)&&p.items.length>0&&p.items.length<=30,'Agrega al menos un producto.');
   const items=p.items.map(item=>{const product=s.catalog.find(x=>x.id===item.productId);assert(product&&product.enabled!==false&&Number.isInteger(product.price)&&product.price>=0,'Producto no disponible.');const qty=Number(item.qty);assert(Number.isInteger(qty)&&qty>=1&&qty<=20,'Cantidad inválida.');const option=clean(item.option,100);const options=(product.options||[]).flatMap(o=>o.values||[o.value||o.label||o]);if(options.length)assert(options.includes(option),'Elige una opción válida para '+product.name+'.');return {productId:product.id,name:product.name,option,qty,unitPrice:product.price,removed:[...new Set((product.inventoryMode==='unit'?[]:Array.isArray(item.removed)?item.removed:[]).filter(x=>(product.ingredients||[]).includes(x)))]};});
   const stockMoves={};for(const item of items){const product=s.catalog.find(x=>x.id===item.productId);for(const ing of recipeFor(product,item.option)){const inv=s.inventory?.[ing.id];assert(inv,'No está disponible un insumo de '+product.name+'.');if(!item.removed.includes(inv.name))stockMoves[ing.id]=(stockMoves[ing.id]||0)+ing.qty*item.qty;}}for(const [id,qty] of Object.entries(stockMoves)){assert(Number.isFinite(qty)&&qty>0,'Receta inválida.');assert(s.inventory[id].stock>=qty,'Stock insuficiente de '+s.inventory[id].name+'.');}for(const [id,qty] of Object.entries(stockMoves))s.inventory[id].stock-=qty;
-  assert(p.deliveryType!=='Delivery'||clean(p.address,300),'Escribe una dirección para el delivery.');
+  assert(p.deliveryType!=='Delivery'||clean(p.address,300),'Escribe una dirección para el delivery.');assert(p.deliveryType!=='Mesa'||/^[1-9][0-9]{0,2}$/.test(String(p.table||'')),'Indica un número de mesa válido.');
   const order={id:uid(),stockMoves,phone:clean(p.phone,25),deliveryType:clean(p.deliveryType,20)||'Retiro',address:clean(p.address,300),number:Math.max(100,...s.orders.map(o=>o.number))+1,token:uid()+uid().replaceAll('-',''),name:clean(p.name)||'Visitante',customerId,table:clean(p.table,30)||'Retiro',notes:clean(p.notes,400),items,total:items.reduce((sum,x)=>sum+x.qty*x.unitPrice,0),status:'pending',paymentConfirmed:false,invoiceRef:'',createdAt:now,updatedAt:now};
   s.orders.push(order);result={id:order.id,number:order.number,token:order.token};
  } else if(command.type==='order.status') {
@@ -74,4 +77,4 @@ export const remaining=(t,now=serverTime())=>t.endAt?Math.max(0,t.endAt-now):0;
 export function clock(ms){const sec=Math.max(0,Math.ceil(ms/1000));return `${String(Math.floor(sec/60)).padStart(2,'0')}:${String(sec%60).padStart(2,'0')}`;}
 export const orderLabels={pending:'Recibido',preparing:'En preparación',ready:'Listo para retirar',delivered:'Entregado',cancelled:'Cancelado'};
 export function publicOrder(o) {return o?{number:o.number,status:o.status,createdAt:o.createdAt,updatedAt:o.updatedAt,items:o.items,total:o.total,table:o.table}:null;}
-export function publicBoard(s,type){return type==='orders'?{orders:s.orders.filter(o=>['preparing','ready'].includes(o.status)).map(o=>({number:o.number,status:o.status,updatedAt:o.updatedAt}))}:{stations:s.stations,tickets:s.tickets.filter(t=>t.status==='active'&&t.area===(type==='park'?'park':'play')).map(t=>({number:t.number,stationId:t.stationId,area:t.area,endAt:t.endAt,minutes:t.minutes})),capacity:s.capacity};}
+export function publicBoard(s,type){return type==='orders'?{orders:s.orders.filter(o=>['preparing','ready'].includes(o.status)).map(o=>({id:o.id,number:o.number,status:o.status,updatedAt:o.updatedAt,fulfillment:fulfillmentOf(o)}))}:{stations:s.stations,tickets:s.tickets.filter(t=>t.status==='active'&&t.area===(type==='park'?'park':'play')).map(t=>({number:t.number,stationId:t.stationId,area:t.area,endAt:t.endAt,minutes:t.minutes})),capacity:s.capacity};}

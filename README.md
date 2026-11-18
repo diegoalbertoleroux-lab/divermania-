@@ -6,6 +6,16 @@ Las dos entradas son **`/cliente`** y **`/admin`**. Las URLs con `.html` tambié
 
 Para activar el proyecto con tu propia cuenta, sigue [ACTIVAR-FIREBASE.md](ACTIVAR-FIREBASE.md).
 
+## Pantallas, tiempos y taquilla
+
+La pantalla de pedidos conserva cada tarjeta al recibir cambios, anima la entrada, el traslado a listos y la salida, y resalta los recién listos durante ocho segundos. El primer conjunto de pedidos recibido al abrir la pantalla se toma como estado inicial y no vuelve a llamar todos los turnos. El carrusel rota cada nueve segundos con productos disponibles en el catálogo, tarifas informadas de parque/gamer, horario de Caracas y una invitación general a celebrar cumpleaños, sin fechas de eventos inventadas. El QR visible abre un menú donde se puede elegir mesa, retiro o delivery.
+
+Taquilla pide el nombre del niño o jugador y permite un adulto responsable separado. Cada pase tiene un código `TAQ-000001` generado con el contador del servidor. El comprobante externo es opcional y solo relaciona el pase con otro sistema de caja. Las ampliaciones generan sufijos `-A01`, `-A02` si no se aporta comprobante. La confirmación de pago sigue siendo obligatoria. Los nombres se muestran al equipo; las pantallas públicas mantienen números de pase.
+
+Con la página abierta y el sonido activado en ese dispositivo, los avisos suenan a cinco y un minuto; al llegar a cero aparece una alerta visual y una alarma que se repite cada doce segundos hasta reconocerla. Reconocer una alarma silencia este dispositivo y no libera la estación. La ampliación reactiva los avisos con la nueva hora final. El navegador requiere una interacción para habilitar audio; revisar volumen, pantalla activa y comportamiento real en cada TV/PC. La alarma se produce en el navegador del encargado o de la pantalla compartida, sin superponerse al HDMI del juego.
+
+Las cotufas incluidas en paquetes se vinculan a un producto del catálogo: receta para preparación en el local, o unidad para bolsa empacada. Ventas y canjes utilizan la misma existencia. Se conserva la compatibilidad con recetas de cotufas guardadas previamente. La revisión local también crea canjes e ingresos de pases, respeta configuración de paquetes y protege reintentos de compras, productos y canjes.
+
 ## Recetas e inventario
 
 Catálogo y recetas se abre directamente en el administrador, con una sola navegación. El editor muestra únicamente los ingredientes del producto, permite añadirlos o quitarlos y conserva las cantidades ya guardadas. `data/recipe-templates.json` aporta ingredientes descritos en el PDF: las cantidades que el menú no especifica quedan pendientes, no en cero. Al guardar, los ingredientes nuevos se registran con stock cero, para cargar sus existencias reales en Inventario.
