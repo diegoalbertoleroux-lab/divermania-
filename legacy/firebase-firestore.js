@@ -1,0 +1,13 @@
+import {preview} from '../app/config.js';
+const sdk=preview?await import('./demo-firestore.js'):await import('https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js');
+export const getFirestore=(...a)=>sdk.getFirestore(...a);
+export const collection=(...a)=>sdk.collection(...a);
+export const doc=(...a)=>sdk.doc(...a);
+export const onSnapshot=(...a)=>sdk.onSnapshot(...a);
+export const query=(...a)=>sdk.query(...a);
+export const orderBy=(...a)=>sdk.orderBy(...a);
+export const updateDoc=(...a)=>sdk.updateDoc(...a);
+export const addDoc=(...a)=>sdk.addDoc(...a);
+export const setDoc=(...a)=>sdk.setDoc(...a);
+export const increment=(...a)=>sdk.increment(...a);
+export const deleteDoc=(...a)=>sdk.deleteDoc(...a);

@@ -1,0 +1,19 @@
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: SAMEORIGIN
+/app/*
+  Cache-Control: no-cache
+/shared/*
+  Cache-Control: no-cache
+/sw.js
+  Cache-Control: no-cache
+/*.html
+  Cache-Control: no-cache
+
+/admin*
+  Cache-Control: no-cache
+/gestion*
+  Cache-Control: no-store
+/cliente*
+  Cache-Control: no-cache

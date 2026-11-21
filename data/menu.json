@@ -1,0 +1,1210 @@
+[
+  {
+    "id": "menu-perro-tradicional",
+    "name": "Perro Tradicional",
+    "cat": "perros",
+    "priceCents": 230,
+    "price": 2.3,
+    "description": "Pan regular, vegetales, papas, salsas tradicionales y queso amarillo.",
+    "desc": "Pan regular, vegetales, papas, salsas tradicionales y queso amarillo.",
+    "image": "/perrosencillo.jpeg",
+    "enabled": true,
+    "recipeStatus": "pending",
+    "receta": [],
+    "source": {
+      "document": "Menú Divermanía.pdf",
+      "page": 2,
+      "priceVerifiedVisually": true
+    },
+    "modifierNames": [
+      "Vegetales",
+      "Papas",
+      "Salsas tradicionales",
+      "Queso amarillo"
+    ],
+    "priceNotation": "El precio aparece como $2.3: USD 2,30."
+  },
+  {
+    "id": "menu-perro-especial",
+    "name": "Perro Especial",
+    "cat": "perros",
+    "priceCents": 300,
+    "price": 3.0,
+    "description": "Pan regular, vegetales, papas, salsas tradicionales, queso amarillo, tocineta y maíz.",
+    "desc": "Pan regular, vegetales, papas, salsas tradicionales, queso amarillo, tocineta y maíz.",
+    "image": "/perroespecial.jpeg",
+    "enabled": true,
+    "recipeStatus": "pending",
+    "receta": [],
+    "source": {
+      "document": "Menú Divermanía.pdf",
+      "page": 2,
+      "priceVerifiedVisually": true
+    },
+    "modifierNames": [
+      "Vegetales",
+      "Papas",
+      "Salsas tradicionales",
+      "Queso amarillo",
+      "Tocineta",
+      "Maíz"
+    ]
+  },
+  {
+    "id": "menu-perro-polaco",
+    "name": "Perro Polaco",
+    "cat": "perros",
+    "priceCents": 800,
+    "price": 8.0,
+    "description": "Pan grande, salchicha polaca, vegetales, papas, salsas tradicionales, queso amarillo, tocineta y maíz.",
+    "desc": "Pan grande, salchicha polaca, vegetales, papas, salsas tradicionales, queso amarillo, tocineta y maíz.",
+    "image": "/assets/menu/hotdog.png",
+    "enabled": true,
+    "recipeStatus": "pending",
+    "receta": [],
+    "source": {
+      "document": "Menú Divermanía.pdf",
+      "page": 2,
+      "priceVerifiedVisually": true
+    },
+    "imageMask": "/assets/menu/hotdog-mask.png",
+    "illustrativeImage": true,
+    "modifierNames": [
+      "Vegetales",
+      "Papas",
+      "Salsas tradicionales",
+      "Queso amarillo",
+      "Tocineta",
+      "Maíz"
+    ]
+  },
+  {
+    "id": "menu-burger-sencilla",
+    "name": "Hamburguesa Sencilla",
+    "cat": "hamburguesas",
+    "priceCents": 550,
+    "price": 5.5,
+    "description": "Pan regular, carne de res y cerdo ahumado, vegetales y salsas tradicionales.",
+    "desc": "Pan regular, carne de res y cerdo ahumado, vegetales y salsas tradicionales.",
+    "image": "/assets/menu/burger.png",
+    "enabled": true,
+    "recipeStatus": "pending",
+    "receta": [],
+    "source": {
+      "document": "Menú Divermanía.pdf",
+      "page": 2,
+      "priceVerifiedVisually": true
+    },
+    "modifierNames": [
+      "Vegetales",
+      "Salsas tradicionales"
+    ],
+    "imageMask": "/assets/menu/burger-mask.png",
+    "illustrativeImage": true
+  },
+  {
+    "id": "menu-burger-tradicional",
+    "name": "Diver Tradicional",
+    "cat": "hamburguesas",
+    "priceCents": 650,
+    "price": 6.5,
+    "description": "Pan regular, carne de res y cerdo ahumado o pollo crispy, vegetales, salsas tradicionales, huevo, jamón y queso amarillo.",
+    "desc": "Pan regular, carne de res y cerdo ahumado o pollo crispy, vegetales, salsas tradicionales, huevo, jamón y queso amarillo.",
+    "image": "/assets/menu/burger.png",
+    "enabled": true,
+    "recipeStatus": "pending",
+    "receta": [],
+    "source": {
+      "document": "Menú Divermanía.pdf",
+      "page": 2,
+      "priceVerifiedVisually": true
+    },
+    "modifierNames": [
+      "Vegetales",
+      "Salsas tradicionales",
+      "Huevo",
+      "Jamón",
+      "Queso amarillo"
+    ],
+    "options": [
+      {
+        "id": "proteina",
+        "label": "Elige carne o pollo",
+        "required": true,
+        "values": [
+          "Carne de res y cerdo ahumado",
+          "Pollo crispy"
+        ]
+      }
+    ],
+    "imageMask": "/assets/menu/burger-mask.png",
+    "illustrativeImage": true
+  },
+  {
+    "id": "menu-burger-diver-especial",
+    "name": "Diver Especial",
+    "cat": "hamburguesas",
+    "priceCents": 800,
+    "price": 8.0,
+    "description": "Pan regular, carne de res y cerdo ahumado, vegetales, salsas tradicionales, huevo, jamón, queso amarillo, tocineta y calabresa.",
+    "desc": "Pan regular, carne de res y cerdo ahumado, vegetales, salsas tradicionales, huevo, jamón, queso amarillo, tocineta y calabresa.",
+    "image": "/assets/menu/burger.png",
+    "enabled": true,
+    "recipeStatus": "pending",
+    "receta": [],
+    "source": {
+      "document": "Menú Divermanía.pdf",
+      "page": 2,
+      "priceVerifiedVisually": true
+    },
+    "modifierNames": [
+      "Vegetales",
+      "Salsas tradicionales",
+      "Huevo",
+      "Jamón",
+      "Queso amarillo",
+      "Tocineta",
+      "Calabresa"
+    ],
+    "imageMask": "/assets/menu/burger-mask.png",
+    "illustrativeImage": true
+  },
+  {
+    "id": "menu-burger-mania-mixta",
+    "name": "Manía Mixta",
+    "cat": "hamburguesas",
+    "priceCents": 800,
+    "price": 8.0,
+    "description": "Pan regular, carne de res y cerdo ahumado más pollo crispy, vegetales, salsas tradicionales, huevo, jamón, queso amarillo, tocineta y calabresa.",
+    "desc": "Pan regular, carne de res y cerdo ahumado más pollo crispy, vegetales, salsas tradicionales, huevo, jamón, queso amarillo, tocineta y calabresa.",
+    "image": "/assets/menu/burger.png",
+    "enabled": true,
+    "recipeStatus": "pending",
+    "receta": [],
+    "source": {
+      "document": "Menú Divermanía.pdf",
+      "page": 2,
+      "priceVerifiedVisually": true
+    },
+    "modifierNames": [
+      "Vegetales",
+      "Salsas tradicionales",
+      "Huevo",
+      "Jamón",
+      "Queso amarillo",
+      "Tocineta",
+      "Calabresa"
+    ],
+    "imageMask": "/assets/menu/burger-mask.png",
+    "illustrativeImage": true
+  },
+  {
+    "id": "menu-burger-trampolin",
+    "name": "Trampolín",
+    "cat": "hamburguesas",
+    "priceCents": 1800,
+    "price": 18.0,
+    "description": "Pan tipo burra, carne de res y cerdo ahumado, vegetales, salsas tradicionales, huevo, calabresa, jamón y queso amarillo.",
+    "desc": "Pan tipo burra, carne de res y cerdo ahumado, vegetales, salsas tradicionales, huevo, calabresa, jamón y queso amarillo.",
+    "image": "/assets/menu/burger.png",
+    "enabled": true,
+    "recipeStatus": "pending",
+    "receta": [],
+    "source": {
+      "document": "Menú Divermanía.pdf",
+      "page": 2,
+      "priceVerifiedVisually": true
+    },
+    "modifierNames": [
+      "Vegetales",
+      "Salsas tradicionales",
+      "Huevo",
+      "Calabresa",
+      "Jamón",
+      "Queso amarillo"
+    ],
+    "subCategory": "Super burgers",
+    "imageMask": "/assets/menu/burger-mask.png",
+    "illustrativeImage": true
+  },
+  {
+    "id": "menu-burger-tobogan",
+    "name": "Tobogán",
+    "cat": "hamburguesas",
+    "priceCents": 2300,
+    "price": 23.0,
+    "description": "Pan tipo portavión, carne de res y cerdo ahumado, vegetales, salsas tradicionales, huevo, calabresa, jamón y queso amarillo.",
+    "desc": "Pan tipo portavión, carne de res y cerdo ahumado, vegetales, salsas tradicionales, huevo, calabresa, jamón y queso amarillo.",
+    "image": "/assets/menu/burger.png",
+    "enabled": true,
+    "recipeStatus": "pending",
+    "receta": [],
+    "source": {
+      "document": "Menú Divermanía.pdf",
+      "page": 2,
+      "priceVerifiedVisually": true
+    },
+    "modifierNames": [
+      "Vegetales",
+      "Salsas tradicionales",
+      "Huevo",
+      "Calabresa",
+      "Jamón",
+      "Queso amarillo"
+    ],
+    "subCategory": "Super burgers",
+    "imageMask": "/assets/menu/burger-mask.png",
+    "illustrativeImage": true
+  },
+  {
+    "id": "menu-pizza-margarita-p",
+    "name": "Diver Margarita P (25 cm)",
+    "cat": "pizzas",
+    "priceCents": 700,
+    "price": 7.0,
+    "description": "Salsa, queso y jamón.",
+    "desc": "Salsa, queso y jamón.",
+    "image": "/assets/menu/pizza.jpg",
+    "enabled": true,
+    "recipeStatus": "pending",
+    "receta": [],
+    "source": {
+      "document": "Menú Divermanía.pdf",
+      "page": 2,
+      "priceVerifiedVisually": true
+    },
+    "size": "P",
+    "diameterCm": 25,
+    "familyName": "Diver Margarita",
+    "illustrativeImage": true,
+    "modifierNames": [
+      "Salsa",
+      "Queso",
+      "Jamón"
+    ]
+  },
+  {
+    "id": "menu-pizza-margarita-m",
+    "name": "Diver Margarita M (30 cm)",
+    "cat": "pizzas",
+    "priceCents": 1000,
+    "price": 10.0,
+    "description": "Salsa, queso y jamón.",
+    "desc": "Salsa, queso y jamón.",
+    "image": "/assets/menu/pizza.jpg",
+    "enabled": true,
+    "recipeStatus": "pending",
+    "receta": [],
+    "source": {
+      "document": "Menú Divermanía.pdf",
+      "page": 2,
+      "priceVerifiedVisually": true
+    },
+    "size": "M",
+    "diameterCm": 30,
+    "familyName": "Diver Margarita",
+    "illustrativeImage": true,
+    "modifierNames": [
+      "Salsa",
+      "Queso",
+      "Jamón"
+    ]
+  },
+  {
+    "id": "menu-pizza-margarita-g",
+    "name": "Diver Margarita G (40 cm)",
+    "cat": "pizzas",
+    "priceCents": 1350,
+    "price": 13.5,
+    "description": "Salsa, queso y jamón.",
+    "desc": "Salsa, queso y jamón.",
+    "image": "/assets/menu/pizza.jpg",
+    "enabled": true,
+    "recipeStatus": "pending",
+    "receta": [],
+    "source": {
+      "document": "Menú Divermanía.pdf",
+      "page": 2,
+      "priceVerifiedVisually": true
+    },
+    "size": "G",
+    "diameterCm": 40,
+    "familyName": "Diver Margarita",
+    "illustrativeImage": true,
+    "modifierNames": [
+      "Salsa",
+      "Queso",
+      "Jamón"
+    ]
+  },
+  {
+    "id": "menu-pizza-pepperoni-p",
+    "name": "Pepperoni Manía P (25 cm)",
+    "cat": "pizzas",
+    "priceCents": 735,
+    "price": 7.35,
+    "description": "Salsa, queso, jamón y pepperoni.",
+    "desc": "Salsa, queso, jamón y pepperoni.",
+    "image": "/assets/menu/pizza.jpg",
+    "enabled": true,
+    "recipeStatus": "pending",
+    "receta": [],
+    "source": {
+      "document": "Menú Divermanía.pdf",
+      "page": 2,
+      "priceVerifiedVisually": true
+    },
+    "size": "P",
+    "diameterCm": 25,
+    "familyName": "Pepperoni Manía",
+    "illustrativeImage": true,
+    "modifierNames": [
+      "Salsa",
+      "Queso",
+      "Jamón",
+      "Pepperoni"
+    ]
+  },
+  {
+    "id": "menu-pizza-pepperoni-m",
+    "name": "Pepperoni Manía M (30 cm)",
+    "cat": "pizzas",
+    "priceCents": 1200,
+    "price": 12.0,
+    "description": "Salsa, queso, jamón y pepperoni.",
+    "desc": "Salsa, queso, jamón y pepperoni.",
+    "image": "/assets/menu/pizza.jpg",
+    "enabled": true,
+    "recipeStatus": "pending",
+    "receta": [],
+    "source": {
+      "document": "Menú Divermanía.pdf",
+      "page": 2,
+      "priceVerifiedVisually": true
+    },
+    "size": "M",
+    "diameterCm": 30,
+    "familyName": "Pepperoni Manía",
+    "illustrativeImage": true,
+    "modifierNames": [
+      "Salsa",
+      "Queso",
+      "Jamón",
+      "Pepperoni"
+    ]
+  },
+  {
+    "id": "menu-pizza-pepperoni-g",
+    "name": "Pepperoni Manía G (40 cm)",
+    "cat": "pizzas",
+    "priceCents": 1575,
+    "price": 15.75,
+    "description": "Salsa, queso, jamón y pepperoni.",
+    "desc": "Salsa, queso, jamón y pepperoni.",
+    "image": "/assets/menu/pizza.jpg",
+    "enabled": true,
+    "recipeStatus": "pending",
+    "receta": [],
+    "source": {
+      "document": "Menú Divermanía.pdf",
+      "page": 2,
+      "priceVerifiedVisually": true
+    },
+    "size": "G",
+    "diameterCm": 40,
+    "familyName": "Pepperoni Manía",
+    "illustrativeImage": true,
+    "modifierNames": [
+      "Salsa",
+      "Queso",
+      "Jamón",
+      "Pepperoni"
+    ]
+  },
+  {
+    "id": "menu-pizza-divermania-p",
+    "name": "Divermanía P (25 cm)",
+    "cat": "pizzas",
+    "priceCents": 1200,
+    "price": 12.0,
+    "description": "Salsa, queso, jamón, pepperoni, maíz, salchichón y tocineta.",
+    "desc": "Salsa, queso, jamón, pepperoni, maíz, salchichón y tocineta.",
+    "image": "/assets/menu/pizza.jpg",
+    "enabled": true,
+    "recipeStatus": "pending",
+    "receta": [],
+    "source": {
+      "document": "Menú Divermanía.pdf",
+      "page": 2,
+      "priceVerifiedVisually": true
+    },
+    "size": "P",
+    "diameterCm": 25,
+    "familyName": "Divermanía",
+    "illustrativeImage": true,
+    "modifierNames": [
+      "Salsa",
+      "Queso",
+      "Jamón",
+      "Pepperoni",
+      "Maíz",
+      "Salchichón",
+      "Tocineta"
+    ]
+  },
+  {
+    "id": "menu-pizza-divermania-m",
+    "name": "Divermanía M (30 cm)",
+    "cat": "pizzas",
+    "priceCents": 1500,
+    "price": 15.0,
+    "description": "Salsa, queso, jamón, pepperoni, maíz, salchichón y tocineta.",
+    "desc": "Salsa, queso, jamón, pepperoni, maíz, salchichón y tocineta.",
+    "image": "/assets/menu/pizza.jpg",
+    "enabled": true,
+    "recipeStatus": "pending",
+    "receta": [],
+    "source": {
+      "document": "Menú Divermanía.pdf",
+      "page": 2,
+      "priceVerifiedVisually": true
+    },
+    "size": "M",
+    "diameterCm": 30,
+    "familyName": "Divermanía",
+    "illustrativeImage": true,
+    "modifierNames": [
+      "Salsa",
+      "Queso",
+      "Jamón",
+      "Pepperoni",
+      "Maíz",
+      "Salchichón",
+      "Tocineta"
+    ]
+  },
+  {
+    "id": "menu-pizza-divermania-g",
+    "name": "Divermanía G (40 cm)",
+    "cat": "pizzas",
+    "priceCents": 1875,
+    "price": 18.75,
+    "description": "Salsa, queso, jamón, pepperoni, maíz, salchichón y tocineta.",
+    "desc": "Salsa, queso, jamón, pepperoni, maíz, salchichón y tocineta.",
+    "image": "/assets/menu/pizza.jpg",
+    "enabled": true,
+    "recipeStatus": "pending",
+    "receta": [],
+    "source": {
+      "document": "Menú Divermanía.pdf",
+      "page": 2,
+      "priceVerifiedVisually": true
+    },
+    "size": "G",
+    "diameterCm": 40,
+    "familyName": "Divermanía",
+    "illustrativeImage": true,
+    "modifierNames": [
+      "Salsa",
+      "Queso",
+      "Jamón",
+      "Pepperoni",
+      "Maíz",
+      "Salchichón",
+      "Tocineta"
+    ]
+  },
+  {
+    "id": "menu-papas",
+    "name": "Ración de Papas",
+    "cat": "snacks",
+    "priceCents": 300,
+    "price": 3.0,
+    "description": "Ración de papas fritas.",
+    "desc": "Ración de papas fritas.",
+    "image": null,
+    "enabled": true,
+    "recipeStatus": "pending",
+    "receta": [],
+    "source": {
+      "document": "Menú Divermanía.pdf",
+      "page": 2,
+      "priceVerifiedVisually": true
+    }
+  },
+  {
+    "id": "menu-tequenos",
+    "name": "Ración de Tequeños",
+    "cat": "snacks",
+    "priceCents": 500,
+    "price": 5.0,
+    "description": "Ración de tequeños. La cantidad de unidades no se especifica en el menú.",
+    "desc": "Ración de tequeños. La cantidad de unidades no se especifica en el menú.",
+    "image": null,
+    "enabled": true,
+    "recipeStatus": "pending",
+    "receta": [],
+    "source": {
+      "document": "Menú Divermanía.pdf",
+      "page": 2,
+      "priceVerifiedVisually": true
+    }
+  },
+  {
+    "id": "menu-salchipapa",
+    "name": "Salchipapa",
+    "cat": "snacks",
+    "priceCents": 1000,
+    "price": 10.0,
+    "description": "Salchipapa. La composición y cantidad de esta versión no se detallan en el menú.",
+    "desc": "Salchipapa. La composición y cantidad de esta versión no se detallan en el menú.",
+    "image": null,
+    "enabled": true,
+    "recipeStatus": "pending",
+    "receta": [],
+    "source": {
+      "document": "Menú Divermanía.pdf",
+      "page": 2,
+      "priceVerifiedVisually": true
+    }
+  },
+  {
+    "id": "menu-salchipapa-especial",
+    "name": "Salchipapa Especial",
+    "cat": "snacks",
+    "priceCents": 1200,
+    "price": 12.0,
+    "description": "350 g de papas fritas, salchichas, pollo crispy, tocineta, queso amarillo y salsas tradicionales.",
+    "desc": "350 g de papas fritas, salchichas, pollo crispy, tocineta, queso amarillo y salsas tradicionales.",
+    "image": null,
+    "enabled": true,
+    "recipeStatus": "pending",
+    "receta": [],
+    "source": {
+      "document": "Menú Divermanía.pdf",
+      "page": 2,
+      "priceVerifiedVisually": true
+    },
+    "modifierNames": [
+      "Salchichas",
+      "Pollo crispy",
+      "Tocineta",
+      "Queso amarillo",
+      "Salsas tradicionales"
+    ],
+    "sourceQuantityNote": "El PDF indica 350 g de papas para esta presentación. No indica gramajes de los demás insumos; no constituye una receta completa."
+  },
+  {
+    "id": "menu-sandwich",
+    "name": "Sándwich",
+    "cat": "snacks",
+    "priceCents": 600,
+    "price": 6.0,
+    "description": "Sándwich, incluye papas. El menú no especifica su relleno.",
+    "desc": "Sándwich, incluye papas. El menú no especifica su relleno.",
+    "image": null,
+    "enabled": true,
+    "recipeStatus": "pending",
+    "receta": [],
+    "source": {
+      "document": "Menú Divermanía.pdf",
+      "page": 2,
+      "priceVerifiedVisually": true
+    },
+    "components": [
+      {
+        "name": "Sándwich",
+        "qty": 1
+      },
+      {
+        "name": "Ración de papas",
+        "qty": 1
+      }
+    ]
+  },
+  {
+    "id": "menu-club-house",
+    "name": "Club House",
+    "cat": "snacks",
+    "priceCents": 1200,
+    "price": 12.0,
+    "description": "Club House, incluye papas. El menú no especifica su receta completa.",
+    "desc": "Club House, incluye papas. El menú no especifica su receta completa.",
+    "image": null,
+    "enabled": true,
+    "recipeStatus": "pending",
+    "receta": [],
+    "source": {
+      "document": "Menú Divermanía.pdf",
+      "page": 2,
+      "priceVerifiedVisually": true
+    },
+    "components": [
+      {
+        "name": "Club House",
+        "qty": 1
+      },
+      {
+        "name": "Ración de papas",
+        "qty": 1
+      }
+    ]
+  },
+  {
+    "id": "menu-panini",
+    "name": "Panini",
+    "cat": "snacks",
+    "priceCents": 800,
+    "price": 8.0,
+    "description": "Jamón, queso y pollo crispy.",
+    "desc": "Jamón, queso y pollo crispy.",
+    "image": null,
+    "enabled": true,
+    "recipeStatus": "pending",
+    "receta": [],
+    "source": {
+      "document": "Menú Divermanía.pdf",
+      "page": 2,
+      "priceVerifiedVisually": true
+    },
+    "modifierNames": [
+      "Jamón",
+      "Queso",
+      "Pollo crispy"
+    ]
+  },
+  {
+    "id": "menu-combo-perros-2",
+    "name": "Combo 2",
+    "cat": "combos",
+    "priceCents": 500,
+    "price": 5.0,
+    "description": "2 Perro Tradicional; 1 Refresco de botellita 350 ml.",
+    "desc": "2 Perro Tradicional; 1 Refresco de botellita 350 ml.",
+    "image": "/perrosencillo.jpeg",
+    "enabled": true,
+    "recipeStatus": "pending",
+    "receta": [],
+    "source": {
+      "document": "Menú Divermanía.pdf",
+      "page": 1,
+      "priceVerifiedVisually": true
+    },
+    "components": [
+      {
+        "name": "Perro Tradicional",
+        "qty": 2
+      },
+      {
+        "name": "Refresco de botellita 350 ml",
+        "qty": 1
+      }
+    ],
+    "subCategory": "Promos de perros"
+  },
+  {
+    "id": "menu-combo-perros-4",
+    "name": "Combo 4",
+    "cat": "combos",
+    "priceCents": 1200,
+    "price": 12.0,
+    "description": "4 Perro Tradicional; 1 Refresco de 1 litro; 1 Ración de papas fritas.",
+    "desc": "4 Perro Tradicional; 1 Refresco de 1 litro; 1 Ración de papas fritas.",
+    "image": "/perrosencillo.jpeg",
+    "enabled": true,
+    "recipeStatus": "pending",
+    "receta": [],
+    "source": {
+      "document": "Menú Divermanía.pdf",
+      "page": 1,
+      "priceVerifiedVisually": true
+    },
+    "components": [
+      {
+        "name": "Perro Tradicional",
+        "qty": 4
+      },
+      {
+        "name": "Refresco de 1 litro",
+        "qty": 1
+      },
+      {
+        "name": "Ración de papas fritas",
+        "qty": 1
+      }
+    ],
+    "subCategory": "Promos de perros"
+  },
+  {
+    "id": "menu-combo-perros-6",
+    "name": "Combo 6",
+    "cat": "combos",
+    "priceCents": 1850,
+    "price": 18.5,
+    "description": "6 Perro Tradicional; 1 Refresco de 1 litro; 2 Ración de papas fritas.",
+    "desc": "6 Perro Tradicional; 1 Refresco de 1 litro; 2 Ración de papas fritas.",
+    "image": "/perrosencillo.jpeg",
+    "enabled": true,
+    "recipeStatus": "pending",
+    "receta": [],
+    "source": {
+      "document": "Menú Divermanía.pdf",
+      "page": 1,
+      "priceVerifiedVisually": true
+    },
+    "components": [
+      {
+        "name": "Perro Tradicional",
+        "qty": 6
+      },
+      {
+        "name": "Refresco de 1 litro",
+        "qty": 1
+      },
+      {
+        "name": "Ración de papas fritas",
+        "qty": 2
+      }
+    ],
+    "subCategory": "Promos de perros"
+  },
+  {
+    "id": "menu-combo-perros-10",
+    "name": "Combo 10",
+    "cat": "combos",
+    "priceCents": 2450,
+    "price": 24.5,
+    "description": "10 Perro Tradicional; 1 Refresco de 1,5 litros.",
+    "desc": "10 Perro Tradicional; 1 Refresco de 1,5 litros.",
+    "image": "/perrosencillo.jpeg",
+    "enabled": true,
+    "recipeStatus": "pending",
+    "receta": [],
+    "source": {
+      "document": "Menú Divermanía.pdf",
+      "page": 1,
+      "priceVerifiedVisually": true
+    },
+    "components": [
+      {
+        "name": "Perro Tradicional",
+        "qty": 10
+      },
+      {
+        "name": "Refresco de 1,5 litros",
+        "qty": 1
+      }
+    ],
+    "subCategory": "Promos de perros"
+  },
+  {
+    "id": "menu-combo-perros-12",
+    "name": "Combo 12",
+    "cat": "combos",
+    "priceCents": 3450,
+    "price": 34.5,
+    "description": "12 Perro Tradicional; 1 Refresco de 2 litros; 3 Ración de papas fritas.",
+    "desc": "12 Perro Tradicional; 1 Refresco de 2 litros; 3 Ración de papas fritas.",
+    "image": "/perrosencillo.jpeg",
+    "enabled": true,
+    "recipeStatus": "pending",
+    "receta": [],
+    "source": {
+      "document": "Menú Divermanía.pdf",
+      "page": 1,
+      "priceVerifiedVisually": true
+    },
+    "components": [
+      {
+        "name": "Perro Tradicional",
+        "qty": 12
+      },
+      {
+        "name": "Refresco de 2 litros",
+        "qty": 1
+      },
+      {
+        "name": "Ración de papas fritas",
+        "qty": 3
+      }
+    ],
+    "subCategory": "Promos de perros"
+  },
+  {
+    "id": "menu-combo-polacos",
+    "name": "Combo Polacos",
+    "cat": "combos",
+    "priceCents": 1650,
+    "price": 16.5,
+    "description": "2 Perro Polaco; 2 Refresco de botellita 350 ml.",
+    "desc": "2 Perro Polaco; 2 Refresco de botellita 350 ml.",
+    "image": "/perrosencillo.jpeg",
+    "enabled": true,
+    "recipeStatus": "pending",
+    "receta": [],
+    "source": {
+      "document": "Menú Divermanía.pdf",
+      "page": 1,
+      "priceVerifiedVisually": true
+    },
+    "components": [
+      {
+        "name": "Perro Polaco",
+        "qty": 2
+      },
+      {
+        "name": "Refresco de botellita 350 ml",
+        "qty": 2
+      }
+    ],
+    "subCategory": "Promos de perros"
+  },
+  {
+    "id": "menu-combo-burger-1",
+    "name": "Combo Burger 1",
+    "cat": "combos",
+    "priceCents": 800,
+    "price": 8.0,
+    "description": "1 Hamburguesa Diver Tradicional; 1 Ración de papas fritas; 1 Refresco de botellita 350 ml.",
+    "desc": "1 Hamburguesa Diver Tradicional; 1 Ración de papas fritas; 1 Refresco de botellita 350 ml.",
+    "image": "/assets/menu/burger.png",
+    "enabled": true,
+    "recipeStatus": "pending",
+    "receta": [],
+    "source": {
+      "document": "Menú Divermanía.pdf",
+      "page": 1,
+      "priceVerifiedVisually": true
+    },
+    "components": [
+      {
+        "name": "Hamburguesa Diver Tradicional",
+        "qty": 1
+      },
+      {
+        "name": "Ración de papas fritas",
+        "qty": 1
+      },
+      {
+        "name": "Refresco de botellita 350 ml",
+        "qty": 1
+      }
+    ],
+    "subCategory": "Combos burgers",
+    "imageMask": "/assets/menu/burger-mask.png",
+    "illustrativeImage": true
+  },
+  {
+    "id": "menu-combo-burger-2",
+    "name": "Combo Burger 2",
+    "cat": "combos",
+    "priceCents": 1800,
+    "price": 18.0,
+    "description": "4 Hamburguesa Sencilla; 1 Refresco de 1 litro.",
+    "desc": "4 Hamburguesa Sencilla; 1 Refresco de 1 litro.",
+    "image": "/assets/menu/burger.png",
+    "enabled": true,
+    "recipeStatus": "pending",
+    "receta": [],
+    "source": {
+      "document": "Menú Divermanía.pdf",
+      "page": 1,
+      "priceVerifiedVisually": true
+    },
+    "components": [
+      {
+        "name": "Hamburguesa Sencilla",
+        "qty": 4
+      },
+      {
+        "name": "Refresco de 1 litro",
+        "qty": 1
+      }
+    ],
+    "subCategory": "Combos burgers",
+    "imageMask": "/assets/menu/burger-mask.png",
+    "illustrativeImage": true
+  },
+  {
+    "id": "menu-combo-burger-3",
+    "name": "Combo Burger 3",
+    "cat": "combos",
+    "priceCents": 2800,
+    "price": 28.0,
+    "description": "4 Hamburguesa Diver Tradicional; 2 Ración de papas fritas; 1 Refresco de 1 litro.",
+    "desc": "4 Hamburguesa Diver Tradicional; 2 Ración de papas fritas; 1 Refresco de 1 litro.",
+    "image": "/assets/menu/burger.png",
+    "enabled": true,
+    "recipeStatus": "pending",
+    "receta": [],
+    "source": {
+      "document": "Menú Divermanía.pdf",
+      "page": 1,
+      "priceVerifiedVisually": true
+    },
+    "components": [
+      {
+        "name": "Hamburguesa Diver Tradicional",
+        "qty": 4
+      },
+      {
+        "name": "Ración de papas fritas",
+        "qty": 2
+      },
+      {
+        "name": "Refresco de 1 litro",
+        "qty": 1
+      }
+    ],
+    "subCategory": "Combos burgers",
+    "imageMask": "/assets/menu/burger-mask.png",
+    "illustrativeImage": true
+  },
+  {
+    "id": "menu-combo-trampolin",
+    "name": "Combo Trampolín",
+    "cat": "combos",
+    "priceCents": 2800,
+    "price": 28.0,
+    "description": "1 Hamburguesa Trampolín; 2 Ración de papas fritas; 1 Refresco de 1 litro. Para 4 a 6 personas.",
+    "desc": "1 Hamburguesa Trampolín; 2 Ración de papas fritas; 1 Refresco de 1 litro. Para 4 a 6 personas.",
+    "image": "/assets/menu/burger.png",
+    "enabled": true,
+    "recipeStatus": "pending",
+    "receta": [],
+    "source": {
+      "document": "Menú Divermanía.pdf",
+      "page": 1,
+      "priceVerifiedVisually": true
+    },
+    "components": [
+      {
+        "name": "Hamburguesa Trampolín",
+        "qty": 1
+      },
+      {
+        "name": "Ración de papas fritas",
+        "qty": 2
+      },
+      {
+        "name": "Refresco de 1 litro",
+        "qty": 1
+      }
+    ],
+    "subCategory": "Combos burgers",
+    "serves": "4 a 6 personas",
+    "imageMask": "/assets/menu/burger-mask.png",
+    "illustrativeImage": true
+  },
+  {
+    "id": "menu-combo-kids",
+    "name": "Combo Kids",
+    "cat": "combos",
+    "priceCents": 1150,
+    "price": 11.5,
+    "description": "1 Burger kids de carne o pollo; 1 Ración de papas fritas; 1 Juguito; 1 Manzana.",
+    "desc": "1 Burger kids de carne o pollo; 1 Ración de papas fritas; 1 Juguito; 1 Manzana.",
+    "image": "/assets/menu/burger.png",
+    "enabled": true,
+    "recipeStatus": "pending",
+    "receta": [],
+    "source": {
+      "document": "Menú Divermanía.pdf",
+      "page": 1,
+      "priceVerifiedVisually": true
+    },
+    "components": [
+      {
+        "name": "Burger kids de carne o pollo",
+        "qty": 1
+      },
+      {
+        "name": "Ración de papas fritas",
+        "qty": 1
+      },
+      {
+        "name": "Juguito",
+        "qty": 1
+      },
+      {
+        "name": "Manzana",
+        "qty": 1
+      }
+    ],
+    "subCategory": "Combos burgers",
+    "imageMask": "/assets/menu/burger-mask.png",
+    "illustrativeImage": true
+  },
+  {
+    "id": "menu-combo-mixto-1",
+    "name": "Combo Mixto 1",
+    "cat": "combos",
+    "priceCents": null,
+    "price": null,
+    "description": "1 Club House; 1 Diver Margarita M (30 cm); 1 Refresco de 1 litro.",
+    "desc": "1 Club House; 1 Diver Margarita M (30 cm); 1 Refresco de 1 litro.",
+    "image": "/assets/menu/pizza.jpg",
+    "enabled": false,
+    "recipeStatus": "pending",
+    "receta": [],
+    "source": {
+      "document": "Menú Divermanía.pdf",
+      "page": 1,
+      "priceVerifiedVisually": false
+    },
+    "components": [
+      {
+        "name": "Club House",
+        "qty": 1
+      },
+      {
+        "name": "Diver Margarita M (30 cm)",
+        "qty": 1
+      },
+      {
+        "name": "Refresco de 1 litro",
+        "qty": 1
+      }
+    ],
+    "subCategory": "Combos mixtos",
+    "pendingReason": "El precio no aparece en el PDF. Requiere confirmación del negocio.",
+    "illustrativeImage": true
+  },
+  {
+    "id": "menu-combo-mixto-2",
+    "name": "Combo Mixto 2",
+    "cat": "combos",
+    "priceCents": null,
+    "price": null,
+    "description": "1 Club House; 1 Hamburguesa de pollo crispy; 1 Refresco de 1 litro.",
+    "desc": "1 Club House; 1 Hamburguesa de pollo crispy; 1 Refresco de 1 litro.",
+    "image": "/assets/menu/pizza.jpg",
+    "enabled": false,
+    "recipeStatus": "pending",
+    "receta": [],
+    "source": {
+      "document": "Menú Divermanía.pdf",
+      "page": 1,
+      "priceVerifiedVisually": false
+    },
+    "components": [
+      {
+        "name": "Club House",
+        "qty": 1
+      },
+      {
+        "name": "Hamburguesa de pollo crispy",
+        "qty": 1
+      },
+      {
+        "name": "Refresco de 1 litro",
+        "qty": 1
+      }
+    ],
+    "subCategory": "Combos mixtos",
+    "pendingReason": "El precio no aparece en el PDF. Requiere confirmación del negocio.",
+    "illustrativeImage": true
+  },
+  {
+    "id": "menu-combo-pizza-1",
+    "name": "Combo Pizza 1",
+    "cat": "combos",
+    "priceCents": 2000,
+    "price": 20.0,
+    "description": "1 Diver Margarita G (40 cm); 1 Pepperoni Manía P (25 cm); 1 Refresco de 1 litro.",
+    "desc": "1 Diver Margarita G (40 cm); 1 Pepperoni Manía P (25 cm); 1 Refresco de 1 litro.",
+    "image": "/assets/menu/pizza.jpg",
+    "enabled": true,
+    "recipeStatus": "pending",
+    "receta": [],
+    "source": {
+      "document": "Menú Divermanía.pdf",
+      "page": 1,
+      "priceVerifiedVisually": true
+    },
+    "components": [
+      {
+        "name": "Diver Margarita G (40 cm)",
+        "qty": 1
+      },
+      {
+        "name": "Pepperoni Manía P (25 cm)",
+        "qty": 1
+      },
+      {
+        "name": "Refresco de 1 litro",
+        "qty": 1
+      }
+    ],
+    "subCategory": "Promociones pizza",
+    "illustrativeImage": true
+  },
+  {
+    "id": "menu-combo-pizza-2",
+    "name": "Combo Pizza 2",
+    "cat": "combos",
+    "priceCents": 2300,
+    "price": 23.0,
+    "description": "2 Diver Margarita G (40 cm); 1 Refresco de 1 litro.",
+    "desc": "2 Diver Margarita G (40 cm); 1 Refresco de 1 litro.",
+    "image": "/assets/menu/pizza.jpg",
+    "enabled": true,
+    "recipeStatus": "pending",
+    "receta": [],
+    "source": {
+      "document": "Menú Divermanía.pdf",
+      "page": 1,
+      "priceVerifiedVisually": true
+    },
+    "components": [
+      {
+        "name": "Diver Margarita G (40 cm)",
+        "qty": 2
+      },
+      {
+        "name": "Refresco de 1 litro",
+        "qty": 1
+      }
+    ],
+    "subCategory": "Promociones pizza",
+    "illustrativeImage": true
+  },
+  {
+    "id": "menu-combo-pizza-3",
+    "name": "Combo Pizza 3",
+    "cat": "combos",
+    "priceCents": 3000,
+    "price": 30.0,
+    "description": "1 Diver Margarita G (40 cm); 1 Pepperoni Manía M (30 cm); 1 Divermanía P (25 cm); 1 Refresco de 2 litros.",
+    "desc": "1 Diver Margarita G (40 cm); 1 Pepperoni Manía M (30 cm); 1 Divermanía P (25 cm); 1 Refresco de 2 litros.",
+    "image": "/assets/menu/pizza.jpg",
+    "enabled": true,
+    "recipeStatus": "pending",
+    "receta": [],
+    "source": {
+      "document": "Menú Divermanía.pdf",
+      "page": 1,
+      "priceVerifiedVisually": true
+    },
+    "components": [
+      {
+        "name": "Diver Margarita G (40 cm)",
+        "qty": 1
+      },
+      {
+        "name": "Pepperoni Manía M (30 cm)",
+        "qty": 1
+      },
+      {
+        "name": "Divermanía P (25 cm)",
+        "qty": 1
+      },
+      {
+        "name": "Refresco de 2 litros",
+        "qty": 1
+      }
+    ],
+    "subCategory": "Promociones pizza",
+    "illustrativeImage": true
+  }
+]

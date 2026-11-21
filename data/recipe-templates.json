@@ -1,0 +1,864 @@
+{
+  "menu-perro-tradicional": {
+    "rows": [
+      {
+        "name": "Pan para perro",
+        "unit": "und",
+        "qty": null
+      },
+      {
+        "name": "Vegetales",
+        "unit": "g",
+        "qty": null
+      },
+      {
+        "name": "Papas para perros",
+        "unit": "g",
+        "qty": null
+      },
+      {
+        "name": "Salsas tradicionales",
+        "unit": "ml",
+        "qty": null
+      },
+      {
+        "name": "Queso amarillo",
+        "unit": "g",
+        "qty": null
+      }
+    ],
+    "note": "Ingredientes transcritos del menú. Completa cantidades y los componentes que use tu preparación."
+  },
+  "menu-perro-especial": {
+    "rows": [
+      {
+        "name": "Pan para perro",
+        "unit": "und",
+        "qty": null
+      },
+      {
+        "name": "Vegetales",
+        "unit": "g",
+        "qty": null
+      },
+      {
+        "name": "Papas para perros",
+        "unit": "g",
+        "qty": null
+      },
+      {
+        "name": "Salsas tradicionales",
+        "unit": "ml",
+        "qty": null
+      },
+      {
+        "name": "Queso amarillo",
+        "unit": "g",
+        "qty": null
+      },
+      {
+        "name": "Tocineta",
+        "unit": "g",
+        "qty": null
+      },
+      {
+        "name": "Maíz",
+        "unit": "g",
+        "qty": null
+      }
+    ],
+    "note": "Ingredientes transcritos del menú. Completa cantidades y los componentes que use tu preparación."
+  },
+  "menu-perro-polaco": {
+    "rows": [
+      {
+        "name": "Pan para perro grande",
+        "unit": "und",
+        "qty": null
+      },
+      {
+        "name": "Salchicha polaca",
+        "unit": "und",
+        "qty": null
+      },
+      {
+        "name": "Vegetales",
+        "unit": "g",
+        "qty": null
+      },
+      {
+        "name": "Papas para perros",
+        "unit": "g",
+        "qty": null
+      },
+      {
+        "name": "Salsas tradicionales",
+        "unit": "ml",
+        "qty": null
+      },
+      {
+        "name": "Queso amarillo",
+        "unit": "g",
+        "qty": null
+      },
+      {
+        "name": "Tocineta",
+        "unit": "g",
+        "qty": null
+      },
+      {
+        "name": "Maíz",
+        "unit": "g",
+        "qty": null
+      }
+    ],
+    "note": "Ingredientes transcritos del menú. Completa cantidades y los componentes que use tu preparación."
+  },
+  "menu-burger-sencilla": {
+    "rows": [
+      {
+        "name": "Pan de hamburguesa",
+        "unit": "und",
+        "qty": null
+      },
+      {
+        "name": "Carne de res y cerdo ahumado",
+        "unit": "g",
+        "qty": null
+      },
+      {
+        "name": "Vegetales",
+        "unit": "g",
+        "qty": null
+      },
+      {
+        "name": "Salsas tradicionales",
+        "unit": "ml",
+        "qty": null
+      }
+    ],
+    "note": "Ingredientes transcritos del menú. Completa cantidades y los componentes que use tu preparación."
+  },
+  "menu-burger-tradicional": {
+    "rows": [
+      {
+        "name": "Pan de hamburguesa",
+        "unit": "und",
+        "qty": null
+      },
+      {
+        "name": "Carne de res y cerdo ahumado",
+        "unit": "g",
+        "qty": null
+      },
+      {
+        "name": "Pollo crispy",
+        "unit": "g",
+        "qty": null
+      },
+      {
+        "name": "Vegetales",
+        "unit": "g",
+        "qty": null
+      },
+      {
+        "name": "Salsas tradicionales",
+        "unit": "ml",
+        "qty": null
+      },
+      {
+        "name": "Huevo",
+        "unit": "und",
+        "qty": null
+      },
+      {
+        "name": "Jamón",
+        "unit": "g",
+        "qty": null
+      },
+      {
+        "name": "Queso amarillo",
+        "unit": "g",
+        "qty": null
+      }
+    ],
+    "note": "Ingredientes transcritos del menú. Completa cantidades y los componentes que use tu preparación.",
+    "variants": {
+      "Carne de res y cerdo ahumado": [
+        {
+          "name": "Pan de hamburguesa",
+          "unit": "und",
+          "qty": null
+        },
+        {
+          "name": "Carne de res y cerdo ahumado",
+          "unit": "g",
+          "qty": null
+        },
+        {
+          "name": "Vegetales",
+          "unit": "g",
+          "qty": null
+        },
+        {
+          "name": "Salsas tradicionales",
+          "unit": "ml",
+          "qty": null
+        },
+        {
+          "name": "Huevo",
+          "unit": "und",
+          "qty": null
+        },
+        {
+          "name": "Jamón",
+          "unit": "g",
+          "qty": null
+        },
+        {
+          "name": "Queso amarillo",
+          "unit": "g",
+          "qty": null
+        }
+      ],
+      "Pollo crispy": [
+        {
+          "name": "Pan de hamburguesa",
+          "unit": "und",
+          "qty": null
+        },
+        {
+          "name": "Pollo crispy",
+          "unit": "g",
+          "qty": null
+        },
+        {
+          "name": "Vegetales",
+          "unit": "g",
+          "qty": null
+        },
+        {
+          "name": "Salsas tradicionales",
+          "unit": "ml",
+          "qty": null
+        },
+        {
+          "name": "Huevo",
+          "unit": "und",
+          "qty": null
+        },
+        {
+          "name": "Jamón",
+          "unit": "g",
+          "qty": null
+        },
+        {
+          "name": "Queso amarillo",
+          "unit": "g",
+          "qty": null
+        }
+      ]
+    }
+  },
+  "menu-burger-diver-especial": {
+    "rows": [
+      {
+        "name": "Pan de hamburguesa",
+        "unit": "und",
+        "qty": null
+      },
+      {
+        "name": "Carne de res y cerdo ahumado",
+        "unit": "g",
+        "qty": null
+      },
+      {
+        "name": "Vegetales",
+        "unit": "g",
+        "qty": null
+      },
+      {
+        "name": "Salsas tradicionales",
+        "unit": "ml",
+        "qty": null
+      },
+      {
+        "name": "Huevo",
+        "unit": "und",
+        "qty": null
+      },
+      {
+        "name": "Jamón",
+        "unit": "g",
+        "qty": null
+      },
+      {
+        "name": "Queso amarillo",
+        "unit": "g",
+        "qty": null
+      },
+      {
+        "name": "Tocineta",
+        "unit": "g",
+        "qty": null
+      },
+      {
+        "name": "Calabresa",
+        "unit": "g",
+        "qty": null
+      }
+    ],
+    "note": "Ingredientes transcritos del menú. Completa cantidades y los componentes que use tu preparación."
+  },
+  "menu-burger-mania-mixta": {
+    "rows": [
+      {
+        "name": "Pan de hamburguesa",
+        "unit": "und",
+        "qty": null
+      },
+      {
+        "name": "Carne de res y cerdo ahumado",
+        "unit": "g",
+        "qty": null
+      },
+      {
+        "name": "Pollo crispy",
+        "unit": "g",
+        "qty": null
+      },
+      {
+        "name": "Vegetales",
+        "unit": "g",
+        "qty": null
+      },
+      {
+        "name": "Salsas tradicionales",
+        "unit": "ml",
+        "qty": null
+      },
+      {
+        "name": "Huevo",
+        "unit": "und",
+        "qty": null
+      },
+      {
+        "name": "Jamón",
+        "unit": "g",
+        "qty": null
+      },
+      {
+        "name": "Queso amarillo",
+        "unit": "g",
+        "qty": null
+      },
+      {
+        "name": "Tocineta",
+        "unit": "g",
+        "qty": null
+      },
+      {
+        "name": "Calabresa",
+        "unit": "g",
+        "qty": null
+      }
+    ],
+    "note": "Ingredientes transcritos del menú. Completa cantidades y los componentes que use tu preparación."
+  },
+  "menu-burger-trampolin": {
+    "rows": [
+      {
+        "name": "Pan tipo burra",
+        "unit": "und",
+        "qty": null
+      },
+      {
+        "name": "Carne de res y cerdo ahumado",
+        "unit": "g",
+        "qty": null
+      },
+      {
+        "name": "Vegetales",
+        "unit": "g",
+        "qty": null
+      },
+      {
+        "name": "Salsas tradicionales",
+        "unit": "ml",
+        "qty": null
+      },
+      {
+        "name": "Huevo",
+        "unit": "und",
+        "qty": null
+      },
+      {
+        "name": "Jamón",
+        "unit": "g",
+        "qty": null
+      },
+      {
+        "name": "Queso amarillo",
+        "unit": "g",
+        "qty": null
+      },
+      {
+        "name": "Calabresa",
+        "unit": "g",
+        "qty": null
+      }
+    ],
+    "note": "Ingredientes transcritos del menú. Completa cantidades y los componentes que use tu preparación."
+  },
+  "menu-burger-tobogan": {
+    "rows": [
+      {
+        "name": "Pan tipo portavión",
+        "unit": "und",
+        "qty": null
+      },
+      {
+        "name": "Carne de res y cerdo ahumado",
+        "unit": "g",
+        "qty": null
+      },
+      {
+        "name": "Vegetales",
+        "unit": "g",
+        "qty": null
+      },
+      {
+        "name": "Salsas tradicionales",
+        "unit": "ml",
+        "qty": null
+      },
+      {
+        "name": "Huevo",
+        "unit": "und",
+        "qty": null
+      },
+      {
+        "name": "Jamón",
+        "unit": "g",
+        "qty": null
+      },
+      {
+        "name": "Queso amarillo",
+        "unit": "g",
+        "qty": null
+      },
+      {
+        "name": "Calabresa",
+        "unit": "g",
+        "qty": null
+      }
+    ],
+    "note": "Ingredientes transcritos del menú. Completa cantidades y los componentes que use tu preparación."
+  },
+  "menu-pizza-margarita-p": {
+    "rows": [
+      {
+        "name": "Salsa para pizza",
+        "unit": "ml",
+        "qty": null
+      },
+      {
+        "name": "Queso para pizza",
+        "unit": "g",
+        "qty": null
+      },
+      {
+        "name": "Jamón",
+        "unit": "g",
+        "qty": null
+      }
+    ],
+    "note": "Ingredientes transcritos del menú. Completa cantidades y los componentes que use tu preparación."
+  },
+  "menu-pizza-margarita-m": {
+    "rows": [
+      {
+        "name": "Salsa para pizza",
+        "unit": "ml",
+        "qty": null
+      },
+      {
+        "name": "Queso para pizza",
+        "unit": "g",
+        "qty": null
+      },
+      {
+        "name": "Jamón",
+        "unit": "g",
+        "qty": null
+      }
+    ],
+    "note": "Ingredientes transcritos del menú. Completa cantidades y los componentes que use tu preparación."
+  },
+  "menu-pizza-margarita-g": {
+    "rows": [
+      {
+        "name": "Salsa para pizza",
+        "unit": "ml",
+        "qty": null
+      },
+      {
+        "name": "Queso para pizza",
+        "unit": "g",
+        "qty": null
+      },
+      {
+        "name": "Jamón",
+        "unit": "g",
+        "qty": null
+      }
+    ],
+    "note": "Ingredientes transcritos del menú. Completa cantidades y los componentes que use tu preparación."
+  },
+  "menu-pizza-pepperoni-p": {
+    "rows": [
+      {
+        "name": "Salsa para pizza",
+        "unit": "ml",
+        "qty": null
+      },
+      {
+        "name": "Queso para pizza",
+        "unit": "g",
+        "qty": null
+      },
+      {
+        "name": "Jamón",
+        "unit": "g",
+        "qty": null
+      },
+      {
+        "name": "Pepperoni",
+        "unit": "g",
+        "qty": null
+      }
+    ],
+    "note": "Ingredientes transcritos del menú. Completa cantidades y los componentes que use tu preparación."
+  },
+  "menu-pizza-pepperoni-m": {
+    "rows": [
+      {
+        "name": "Salsa para pizza",
+        "unit": "ml",
+        "qty": null
+      },
+      {
+        "name": "Queso para pizza",
+        "unit": "g",
+        "qty": null
+      },
+      {
+        "name": "Jamón",
+        "unit": "g",
+        "qty": null
+      },
+      {
+        "name": "Pepperoni",
+        "unit": "g",
+        "qty": null
+      }
+    ],
+    "note": "Ingredientes transcritos del menú. Completa cantidades y los componentes que use tu preparación."
+  },
+  "menu-pizza-pepperoni-g": {
+    "rows": [
+      {
+        "name": "Salsa para pizza",
+        "unit": "ml",
+        "qty": null
+      },
+      {
+        "name": "Queso para pizza",
+        "unit": "g",
+        "qty": null
+      },
+      {
+        "name": "Jamón",
+        "unit": "g",
+        "qty": null
+      },
+      {
+        "name": "Pepperoni",
+        "unit": "g",
+        "qty": null
+      }
+    ],
+    "note": "Ingredientes transcritos del menú. Completa cantidades y los componentes que use tu preparación."
+  },
+  "menu-pizza-divermania-p": {
+    "rows": [
+      {
+        "name": "Salsa para pizza",
+        "unit": "ml",
+        "qty": null
+      },
+      {
+        "name": "Queso para pizza",
+        "unit": "g",
+        "qty": null
+      },
+      {
+        "name": "Jamón",
+        "unit": "g",
+        "qty": null
+      },
+      {
+        "name": "Pepperoni",
+        "unit": "g",
+        "qty": null
+      },
+      {
+        "name": "Maíz",
+        "unit": "g",
+        "qty": null
+      },
+      {
+        "name": "Salchichón",
+        "unit": "g",
+        "qty": null
+      },
+      {
+        "name": "Tocineta",
+        "unit": "g",
+        "qty": null
+      }
+    ],
+    "note": "Ingredientes transcritos del menú. Completa cantidades y los componentes que use tu preparación."
+  },
+  "menu-pizza-divermania-m": {
+    "rows": [
+      {
+        "name": "Salsa para pizza",
+        "unit": "ml",
+        "qty": null
+      },
+      {
+        "name": "Queso para pizza",
+        "unit": "g",
+        "qty": null
+      },
+      {
+        "name": "Jamón",
+        "unit": "g",
+        "qty": null
+      },
+      {
+        "name": "Pepperoni",
+        "unit": "g",
+        "qty": null
+      },
+      {
+        "name": "Maíz",
+        "unit": "g",
+        "qty": null
+      },
+      {
+        "name": "Salchichón",
+        "unit": "g",
+        "qty": null
+      },
+      {
+        "name": "Tocineta",
+        "unit": "g",
+        "qty": null
+      }
+    ],
+    "note": "Ingredientes transcritos del menú. Completa cantidades y los componentes que use tu preparación."
+  },
+  "menu-pizza-divermania-g": {
+    "rows": [
+      {
+        "name": "Salsa para pizza",
+        "unit": "ml",
+        "qty": null
+      },
+      {
+        "name": "Queso para pizza",
+        "unit": "g",
+        "qty": null
+      },
+      {
+        "name": "Jamón",
+        "unit": "g",
+        "qty": null
+      },
+      {
+        "name": "Pepperoni",
+        "unit": "g",
+        "qty": null
+      },
+      {
+        "name": "Maíz",
+        "unit": "g",
+        "qty": null
+      },
+      {
+        "name": "Salchichón",
+        "unit": "g",
+        "qty": null
+      },
+      {
+        "name": "Tocineta",
+        "unit": "g",
+        "qty": null
+      }
+    ],
+    "note": "Ingredientes transcritos del menú. Completa cantidades y los componentes que use tu preparación."
+  },
+  "menu-papas": {
+    "rows": [
+      {
+        "name": "Papas fritas",
+        "unit": "g",
+        "qty": null
+      }
+    ],
+    "note": "Ingredientes transcritos del menú. Completa cantidades y los componentes que use tu preparación."
+  },
+  "menu-tequenos": {
+    "rows": [
+      {
+        "name": "Tequeños",
+        "unit": "und",
+        "qty": null
+      }
+    ],
+    "note": "Ingredientes transcritos del menú. Completa cantidades y los componentes que use tu preparación."
+  },
+  "menu-salchipapa": {
+    "rows": [],
+    "note": "El menú no especifica una receta completa. Añade sus ingredientes reales."
+  },
+  "menu-salchipapa-especial": {
+    "rows": [
+      {
+        "name": "Papas fritas",
+        "unit": "g",
+        "qty": 350
+      },
+      {
+        "name": "Salchichas",
+        "unit": "und",
+        "qty": null
+      },
+      {
+        "name": "Pollo crispy",
+        "unit": "g",
+        "qty": null
+      },
+      {
+        "name": "Tocineta",
+        "unit": "g",
+        "qty": null
+      },
+      {
+        "name": "Queso amarillo",
+        "unit": "g",
+        "qty": null
+      },
+      {
+        "name": "Salsas tradicionales",
+        "unit": "ml",
+        "qty": null
+      }
+    ],
+    "note": "Ingredientes transcritos del menú. Completa cantidades y los componentes que use tu preparación."
+  },
+  "menu-sandwich": {
+    "rows": [],
+    "note": "El menú no especifica una receta completa. Añade sus ingredientes reales."
+  },
+  "menu-club-house": {
+    "rows": [],
+    "note": "El menú no especifica una receta completa. Añade sus ingredientes reales."
+  },
+  "menu-panini": {
+    "rows": [
+      {
+        "name": "Jamón",
+        "unit": "g",
+        "qty": null
+      },
+      {
+        "name": "Queso para panini",
+        "unit": "g",
+        "qty": null
+      },
+      {
+        "name": "Pollo crispy",
+        "unit": "g",
+        "qty": null
+      }
+    ],
+    "note": "Ingredientes transcritos del menú. Completa cantidades y los componentes que use tu preparación."
+  },
+  "menu-combo-perros-2": {
+    "rows": [],
+    "note": "El menú no especifica una receta completa. Añade sus ingredientes reales."
+  },
+  "menu-combo-perros-4": {
+    "rows": [],
+    "note": "El menú no especifica una receta completa. Añade sus ingredientes reales."
+  },
+  "menu-combo-perros-6": {
+    "rows": [],
+    "note": "El menú no especifica una receta completa. Añade sus ingredientes reales."
+  },
+  "menu-combo-perros-10": {
+    "rows": [],
+    "note": "El menú no especifica una receta completa. Añade sus ingredientes reales."
+  },
+  "menu-combo-perros-12": {
+    "rows": [],
+    "note": "El menú no especifica una receta completa. Añade sus ingredientes reales."
+  },
+  "menu-combo-polacos": {
+    "rows": [],
+    "note": "El menú no especifica una receta completa. Añade sus ingredientes reales."
+  },
+  "menu-combo-burger-1": {
+    "rows": [],
+    "note": "El menú no especifica una receta completa. Añade sus ingredientes reales."
+  },
+  "menu-combo-burger-2": {
+    "rows": [],
+    "note": "El menú no especifica una receta completa. Añade sus ingredientes reales."
+  },
+  "menu-combo-burger-3": {
+    "rows": [],
+    "note": "El menú no especifica una receta completa. Añade sus ingredientes reales."
+  },
+  "menu-combo-trampolin": {
+    "rows": [],
+    "note": "El menú no especifica una receta completa. Añade sus ingredientes reales."
+  },
+  "menu-combo-kids": {
+    "rows": [],
+    "note": "El menú no especifica una receta completa. Añade sus ingredientes reales."
+  },
+  "menu-combo-mixto-1": {
+    "rows": [],
+    "note": "El menú no especifica una receta completa. Añade sus ingredientes reales."
+  },
+  "menu-combo-mixto-2": {
+    "rows": [],
+    "note": "El menú no especifica una receta completa. Añade sus ingredientes reales."
+  },
+  "menu-combo-pizza-1": {
+    "rows": [],
+    "note": "El menú no especifica una receta completa. Añade sus ingredientes reales."
+  },
+  "menu-combo-pizza-2": {
+    "rows": [],
+    "note": "El menú no especifica una receta completa. Añade sus ingredientes reales."
+  },
+  "menu-combo-pizza-3": {
+    "rows": [],
+    "note": "El menú no especifica una receta completa. Añade sus ingredientes reales."
+  }
+}
