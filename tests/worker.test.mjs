@@ -21,6 +21,19 @@ test('OAuth se firma dentro del servidor y reutiliza su autorización sin expone
   const screen=await auth.createCustomToken('screen-1',{screen:true,board:'orders'}),claims=JSON.parse(Buffer.from(screen.split('.')[1],'base64url'));assert.equal(claims.uid,'screen-1');assert.equal(claims.claims.board,'orders');assert.ok(!screen.includes('PRIVATE KEY'));
   assert.throws(()=>serviceAccountCredentials(JSON.stringify(credentials),'other'),e=>e.code==='unavailable');
 });
+test('La configuración web se obtiene con la cuenta de servicio y solo expone identificadores públicos',async()=>{
+  let configReads=0;const apiKey='AIza'+'A'.repeat(35);
+  const auth=createGoogleAuth({project,credentials,fetcher:async(url,options)=>{
+    if(url==='https://oauth2.googleapis.com/token')return Response.json({access_token:'local-token',expires_in:3600});
+    assert.equal(url,'https://identitytoolkit.googleapis.com/admin/v2/projects/'+project+'/config');assert.equal(options.headers.Authorization,'Bearer local-token');configReads++;
+    return Response.json({client:{apiKey,permissions:{hidden:'SECRET'}},private_key:'SECRET',signIn:{email:{enabled:true}}});
+  }});
+  const [first,second]=await Promise.all([auth.publicClientConfig(),auth.publicClientConfig()]);assert.deepEqual(first,{apiKey,projectId:project,authDomain:project+'.firebaseapp.com'});assert.deepEqual(second,first);assert.equal(configReads,1);assert.ok(!JSON.stringify(first).includes('SECRET'));
+});
+test('El endpoint de configuración nunca devuelve claves privadas ni configuración administrativa',async()=>{
+  const apiKey='AIza'+'A'.repeat(35),worker=createWorker({services:{auth:{publicClientConfig:async()=>({apiKey,private_key:'SECRET',signIn:{hidden:'SECRET'}})}}});
+  const response=await worker.fetch(new Request('https://local.example/api/firebase-config'),{}),config=await response.json();assert.equal(response.status,200);assert.equal(config.apiKey,apiKey);assert.equal(config.projectId,'divermania-3f104');assert.equal(config.private_key,undefined);assert.equal(config.signIn,undefined);
+});
 test('Firestore REST conserva cantidades decimales, unidades, mapas y fechas',()=>{const value={qty:1.25,stock:30,unit:'g',flag:false,nothing:null,recipe:[{id:'queso',qty:20}],date:new Date('2026-01-01T00:00:00Z'),nested:{price:0},skip:undefined};const decoded=decodeFields(encodeFields(value));const expected={...value};delete expected.skip;assert.deepEqual(decoded,expected);assert.throws(()=>encodeFields({qty:NaN}));});
 test('Transporte conserva la clave de reintento y la identidad de errores del checkout',async()=>{
   const key=crypto.randomUUID();let sent;const result=await controlRequest({key,type:'order.create',payload:{items:[]},token:'session',fetcher:async(url,options)=>{assert.equal(url,'/api/control');assert.equal(options.headers.Authorization,'Bearer session');sent=JSON.parse(options.body);return Response.json({result:{number:101}});}});assert.equal(sent.data.key,key);assert.equal(result.number,101);

@@ -6,6 +6,8 @@ Las dos entradas son **`/cliente`** y **`/admin`**. Las URLs con `.html` tambié
 
 Para activar **sin tarjeta ni Blaze**, sigue [ACTIVAR-CLOUDFLARE.md](ACTIVAR-CLOUDFLARE.md). Firebase Spark conserva Firestore y Authentication; Cloudflare Workers ejecuta las operaciones y KV guarda las fotos nuevas. Las credenciales del servidor se configuran únicamente como secretos cifrados.
 
+El acceso de prueba `/admin?demo=1` permite explorar los módulos sin contraseña con datos locales y conserva ese modo al navegar. El acceso normal utiliza la cuenta autorizada del equipo y ofrece recuperación de contraseña. La configuración web de Authentication se obtiene de `/api/firebase-config`: el servidor consulta el identificador público vigente del proyecto y devuelve únicamente la clave web pública, el proyecto y su dominio. Las credenciales privadas y la configuración administrativa no se devuelven al navegador.
+
 ## Un solo administrador
 
 Todos los apartados del panel anterior están integrados: resumen, pedidos/cocina, pedido manual, mesas/QR, catálogo/recetas, inventario y finanzas. No se abren ventanas del panel antiguo ni se incrustan sus menús. `gestion.html?tab=manual`, `mesas`, `catalogo`, `inventario`, `finanzas` y `pedidos` redirigen a su sección equivalente; la fuente original sigue conservada en `originales/`.

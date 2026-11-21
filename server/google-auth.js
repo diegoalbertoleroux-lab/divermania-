@@ -14,7 +14,7 @@ export function serviceAccountCredentials(raw,project){
 
 // Credentials and OAuth access tokens stay inside the Worker, never in frontend files.
 export function createGoogleAuth({credentials,project,fetcher=fetch,now=Date.now,jwksUrl=JWKS_URL}){
-  let signingKey,access,accessUntil=0,pendingAccess,keys=new Map(),keysUntil=0,lastKeyFetch=0;
+  let signingKey,access,accessUntil=0,pendingAccess,keys=new Map(),keysUntil=0,lastKeyFetch=0,clientSettings,clientUntil=0,pendingClient;
   async function sign(claims){
     signingKey||=crypto.subtle.importKey('pkcs8',Buffer.from(credentials.private_key.replace(/-----[^-]+-----|\s/g,''),'base64'),algorithm,false,['sign']);
     const unsigned=encode({alg:'RS256',typ:'JWT',...(credentials.private_key_id?{kid:credentials.private_key_id}:{})})+'.'+encode(claims);
@@ -53,5 +53,14 @@ export function createGoogleAuth({credentials,project,fetcher=fetch,now=Date.now
   }
   async function createCustomToken(uid,claims){const issued=Math.floor(now()/1000);return sign({iss:credentials.client_email,sub:credentials.client_email,aud:'https://identitytoolkit.googleapis.com/google.identity.identitytoolkit.v1.IdentityToolkit',iat:issued,exp:issued+3600,uid,claims});}
   async function revokeRefreshTokens(uid){await request('accounts:update',{localId:uid,validSince:String(Math.floor(now()/1000))});}
-  return {accessToken,verifyIdToken,createCustomToken,revokeRefreshTokens};
+  async function publicClientConfig(){
+    if(clientSettings&&now()<clientUntil)return clientSettings;
+    if(pendingClient)return pendingClient;
+    pendingClient=(async()=>{
+      const response=await fetcher(`https://identitytoolkit.googleapis.com/admin/v2/projects/${project}/config`,{headers:{Authorization:'Bearer '+await accessToken()}}),data=await response.json(),apiKey=data.client?.apiKey;
+      if(!response.ok||typeof apiKey!=='string'||!/^AIza[A-Za-z0-9_-]{35}$/.test(apiKey))throw new OperationError('unavailable','No se pudo obtener la configuración pública de acceso.');
+      clientSettings={apiKey,projectId:project,authDomain:project+'.firebaseapp.com'};clientUntil=now()+300000;return clientSettings;
+    })().finally(()=>{pendingClient=null;});return pendingClient;
+  }
+  return {accessToken,verifyIdToken,createCustomToken,revokeRefreshTokens,publicClientConfig};
 }

@@ -5,4 +5,5 @@ if(!preview){const sdk=await import('./firebase.js');auth=sdk.auth;db=sdk.db;inv
 export async function sessionReady(){await ready;return connection;}
 export async function waitForStaff(){await ready;if(preview)return;await import('https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js');if(!connection.role){location.replace('/admin?return='+encodeURIComponent(location.pathname+location.search));throw new Error('Acceso del equipo requerido.');}}
 export async function signIn(email,password){if(preview)return;const {signInWithEmailAndPassword}=await import('https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js');await signInWithEmailAndPassword(auth,email,password);location.reload();}
+export async function resetPassword(email){if(preview)return;const {sendPasswordResetEmail}=await import('https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js');await sendPasswordResetEmail(auth,email.trim());}
 export async function signOut(){if(preview)return;const sdk=await import('https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js');await sdk.signOut(auth);location.href='/admin';}

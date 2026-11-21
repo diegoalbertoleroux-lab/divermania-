@@ -39,6 +39,10 @@ export function createWorker({services,cache}={}){
     try{
       const origin=request.headers.get('Origin');if(origin&&origin!==url.origin)throw new OperationError('permission-denied','Abre esta operación desde la página de Divermanía.');
       if(path==='/api/health'&&request.method==='GET')return json({ok:true,backend:'cloudflare-workers',project:PROJECT,configured:!!env.FIREBASE_SERVICE_ACCOUNT,images:!!env.MENU_IMAGES});
+      if(path==='/api/firebase-config'&&request.method==='GET'){
+        const config=await connect(env).auth.publicClientConfig();
+        return json({apiKey:config.apiKey,projectId:PROJECT,authDomain:PROJECT+'.firebaseapp.com'});
+      }
       if(/^\/api\/images\/[a-f0-9-]{36}\.(jpg|png|webp)$/.test(path)&&['GET','HEAD'].includes(request.method)){
         if(!env.MENU_IMAGES)throw new OperationError('not-found','Imagen no encontrada.');
         const file=await env.MENU_IMAGES.getWithMetadata('menu/'+path.split('/').at(-1),'arrayBuffer');if(!file.value)throw new OperationError('not-found','Imagen no encontrada.');
