@@ -40,6 +40,8 @@ node scripts/activate-cloudflare.mjs admin
 
 Introduce el correo de esa cuenta existente. El asistente asigna su rol `admin` usando tu autorización de Google; no pide ni cambia la contraseña. Las cuentas de otras áreas mantienen roles separados.
 
+Las llamadas hechas con la sesión de Google incluyen `X-Goog-User-Project: divermania-3f104`. Identity Toolkit necesita ese identificador de proyecto de cuotas para aceptar credenciales de usuario. Indicarlo no cambia Spark ni activa facturación.
+
 ## Publicación coordinada
 
 Revisa `firestore.rules` y el respaldo guardado en `.divermania-backups/`. Las reglas nuevas impiden escrituras directas de pedidos, precios y stock, incluso desde un navegador administrador. Esas operaciones pasan por el servidor. El cliente antiguo escribía directamente, por lo que debe publicarse junto con las reglas nuevas.

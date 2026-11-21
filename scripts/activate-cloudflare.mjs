@@ -6,7 +6,7 @@ import {fileURLToPath} from 'node:url';
 import {join} from 'node:path';
 import {readSecret} from './secret-input.mjs';
 import {normalizeCloudflareToken,cloudflareError} from './cloudflare-auth.mjs';
-import {googleError,withIamRetry,inspectGoogleSetup} from './google-setup.mjs';
+import {googleRequest,withIamRetry,inspectGoogleSetup} from './google-setup.mjs';
 
 const root=fileURLToPath(new URL('../',import.meta.url)),project='divermania-3f104',pages='divermania',branch='codex/divermania-menu-control';
 const stage=process.argv[2]||'check',allowed=['check','prepare','admin','publish','diagnose'];
@@ -22,9 +22,7 @@ function run(command,args,extraEnv={}){const result=spawnSync(command,args,{cwd:
 function capture(command,args){const result=spawnSync(command,args,{cwd:root,encoding:'utf8'});if(result.error||result.status!==0)throw new Error('No se pudo obtener la autorización de Google. Ejecuta gcloud auth login en esta terminal y vuelve a intentarlo.');return result.stdout.trim();}
 async function google(url,{method='GET',body,allow404=false}={}){
   googleToken||=capture('gcloud',['auth','print-access-token']);
-  const response=await fetch(url,{method,headers:{Authorization:'Bearer '+googleToken,'Content-Type':'application/json'},signal:AbortSignal.timeout(30000),...(body!==undefined?{body:JSON.stringify(body)}:{})});
-  const data=await response.json();if(response.status===404&&allow404)return null;
-  if(!response.ok)throw googleError({url,method,status:response.status,data,secrets:[googleToken,cloudflareToken]});return data;
+  return googleRequest({url,project,token:googleToken,method,body,allow404,secrets:[cloudflareToken]});
 }
 async function cf(path,{method='GET',body,allow404=false}={}){
   const response=await fetch('https://api.cloudflare.com/client/v4'+path,{method,headers:{Authorization:'Bearer '+cloudflareToken,'Content-Type':'application/json'},signal:AbortSignal.timeout(30000),...(body!==undefined?{body:JSON.stringify(body)}:{})});

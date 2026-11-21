@@ -1,3 +1,14 @@
+// User OAuth credentials need an explicit quota project for APIs such as Identity Toolkit.
+// This header identifies the existing Firebase project; it does not change its pricing plan.
+export async function googleRequest({url,project,token,method='GET',body,allow404=false,secrets=[],fetcher=fetch}){
+  const target=new URL(url);
+  if(target.protocol!=='https:'||!target.hostname.endsWith('.googleapis.com'))throw new Error('Destino no autorizado para las credenciales de Google.');
+  const response=await fetcher(url,{method,headers:{Authorization:'Bearer '+token,'Content-Type':'application/json','X-Goog-User-Project':project},signal:AbortSignal.timeout(30000),...(body!==undefined?{body:JSON.stringify(body)}:{})});
+  const data=await response.json();if(response.status===404&&allow404)return null;
+  if(!response.ok)throw googleError({url,method,status:response.status,data,secrets:[token,...secrets]});
+  return data;
+}
+
 export function googleError({url,method='GET',status,data,secrets=[]}){
   function safe(value){
     let text=String(value??'');

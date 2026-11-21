@@ -1,6 +1,19 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {googleError,withIamRetry,inspectGoogleSetup} from '../scripts/google-setup.mjs';
+import {googleError,googleRequest,withIamRetry,inspectGoogleSetup} from '../scripts/google-setup.mjs';
+
+test('La consulta de Authentication con OAuth de usuario indica el proyecto de cuotas',async()=>{
+  const project='demo-divermania',secret='test-access-token-not-real',body={email:['admin@example.invalid']};
+  const result=await googleRequest({url:'https://identitytoolkit.googleapis.com/v1/projects/'+project+'/accounts:lookup',project,token:secret,method:'POST',body,fetcher:async(url,options)=>{
+    assert.equal(options.headers['X-Goog-User-Project'],project);assert.equal(options.headers.Authorization,'Bearer '+secret);assert.deepEqual(JSON.parse(options.body),body);
+    if(!options.headers['X-Goog-User-Project'])return Response.json({error:{status:'PERMISSION_DENIED',message:'API requires a quota project'}},{status:403});
+    return Response.json({users:[{localId:'test-admin'}]});
+  }});assert.equal(result.users[0].localId,'test-admin');
+});
+test('Las peticiones de Google conservan el manejo de errores y no envían credenciales fuera de Google',async()=>{
+  await assert.rejects(googleRequest({url:'https://outside.example/api',project:'demo-divermania',token:'private',fetcher:()=>{throw new Error('Must not fetch');}}),/Destino no autorizado/);
+  const missing=await googleRequest({url:'https://iam.googleapis.com/v1/projects/demo-divermania/serviceAccounts/test',project:'demo-divermania',token:'private',allow404:true,fetcher:async()=>Response.json({error:{status:'NOT_FOUND'}},{status:404})});assert.equal(missing,null);
+});
 
 test('El error de Google identifica la petición y el argumento sin mostrar credenciales',()=>{
   const secret='test-secret-not-real',error=googleError({url:'https://iam.googleapis.com/v1/projects/demo/serviceAccounts',method:'POST',status:400,data:{error:{status:'INVALID_ARGUMENT',message:'Argument failed '+secret+' cfut_example-hidden-value'}},secrets:[secret]});
