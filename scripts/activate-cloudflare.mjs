@@ -109,7 +109,7 @@ async function publish(accountId,config,record){
   const deployments=await cf(projectPath+'/deployments?env=production&per_page=20'),previousDeployment=config.canonical_deployment?.id||deployments.find(d=>d.latest_stage?.status==='success')?.id;
   if(!previousDeployment)throw new Error('No se encontró una publicación anterior para poder restaurarla si falla el paso.');
   const releaseUrl=`https://firebaserules.googleapis.com/v1/projects/${project}/releases/cloud.firestore`;
-  const setRules=name=>google(releaseUrl,{method:'PATCH',body:{release:{name:`projects/${project}/releases/cloud.firestore`,rulesetName:name},updateMask:'ruleset_name'}});
+  const setRules=name=>google(releaseUrl,{method:'PATCH',body:{release:{name:`projects/${project}/releases/cloud.firestore`,rulesetName:name}}});
   let deploymentUrl;
   try{
     await cf(projectPath,{method:'PATCH',body:{production_branch:branch,build_config:{...config.build_config,build_command:'npm ci && npm run build',destination_dir:'dist',root_dir:''}}});
