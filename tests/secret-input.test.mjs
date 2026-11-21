@@ -25,3 +25,14 @@ test('Cancelar restaura el terminal y no conserva escuchas ni muestra el token',
   const p=prompt(),rejected=assert.rejects(p.result,/Operación cancelada/);p.input.send(example+'\u0003');await rejected;assert.equal(p.input.isRaw,false);assert.equal(p.input.listenerCount('data'),0);assert.ok(!p.printed().includes(example));
 });
 test('Entrada sin terminal se rechaza antes de leer credenciales',async()=>{await assert.rejects(readSecret('Token',{input:{isTTY:false},output:{write(){throw new Error('Unexpected output');}}}),/terminal interactiva/);});
+test('Pegado con saltos de línea espera al final y no envía solo un fragmento del token',async()=>{
+  const p=prompt();let completed=false;p.result.then(()=>{completed=true;});
+  p.input.send('\u001b[200~'+example.slice(0,24)+'\r\n');await Promise.resolve();assert.equal(completed,false);
+  p.input.send(example.slice(24)+'\u001b[201~');await Promise.resolve();assert.equal(completed,false);
+  p.input.send('\r');assert.equal(await p.result,example);assert.ok(!p.printed().includes(example));
+});
+test('Un validador específico impide enviar un ID y mantiene oculta la entrada hasta recibir el token',async()=>{
+  const input=new Terminal(),example='cfut_'+'A'.repeat(40)+'0'.repeat(8),{normalizeCloudflareToken}=await import('../scripts/cloudflare-auth.mjs');let printed='';
+  const result=readSecret('Token: ',{input,output:{write:text=>{printed+=text;}},normalize:normalizeCloudflareToken});
+  input.send('a'.repeat(32)+'\r');assert.equal(input.isRaw,true);input.send('Bearer '+example+'\r');assert.equal(await result,example);assert.ok(!printed.includes(example));
+});

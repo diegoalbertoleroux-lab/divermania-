@@ -24,6 +24,8 @@ No pegues el token en el chat, en GitHub ni en un archivo del proyecto. La entra
 
 Espera a ver `Token de Cloudflare (oculto):` antes de pegarlo. Si presionas Enter sin pegarlo, el asistente seguirá esperando con la entrada oculta. No pegues el token en una línea de la consola que termina en `$`. Si queda visible en una captura o mensaje, revócalo en Cloudflare y genera otro.
 
+Usa el botón **Copiar** del valor que Cloudflare muestra una sola vez tras crear el token. Conserva el prefijo `cfut_` y todo el final del valor. El nombre del token y su ID no son credenciales válidas. Los errores `6003/6111` indican un formato de autorización no aceptado; no justifican cambiar permisos. El asistente muestra únicamente códigos y orientación fija, nunca el texto recibido ni el token.
+
 `prepare` comprueba el acceso, respalda las reglas actuales, ejecuta las pruebas, configura la conexión privada con permisos de datos/Auth, crea el espacio de fotos y publica una revisión aislada en la rama `firebase-spark-check`. Comprueba el servidor y la lectura del catálogo sin crear pedidos ni alterar existencias. **Todavía no reemplaza la página principal ni publica reglas nuevas.**
 
 La clave del servidor se envía directamente a las variables cifradas de Cloudflare; nunca se imprime, se guarda en el navegador ni se incorpora al repositorio. Si la política de Google impide crear claves de cuentas de servicio, el asistente se detiene: no desactiva esa política.

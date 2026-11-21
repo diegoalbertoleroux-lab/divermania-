@@ -5,6 +5,7 @@ import {mkdir,readFile,writeFile,access} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
 import {join} from 'node:path';
 import {readSecret} from './secret-input.mjs';
+import {normalizeCloudflareToken,cloudflareError} from './cloudflare-auth.mjs';
 
 const root=fileURLToPath(new URL('../',import.meta.url)),project='divermania-3f104',pages='divermania',branch='codex/divermania-menu-control';
 const stage=process.argv[2]||'check',allowed=['check','prepare','admin','publish'];
@@ -14,7 +15,7 @@ let prompt,cloudflareToken,googleToken;
 function question(text){prompt??=createInterface({input:process.stdin,output:process.stdout});return prompt.question(text);}
 async function hiddenQuestion(label){
   prompt?.close();prompt=null;
-  return readSecret(label);
+  return readSecret(label,{normalize:normalizeCloudflareToken,invalidMessage:'Usa el botón Copiar del token personal completo. El nombre, el ID y la clave global no sirven para este paso.'});
 }
 function run(command,args,extraEnv={}){const result=spawnSync(command,args,{cwd:root,stdio:'inherit',env:{...process.env,...extraEnv}});if(result.error||result.status!==0)throw new Error('Falló '+command+'. Detén este paso y comparte únicamente el mensaje del error.');}
 function capture(command,args){const result=spawnSync(command,args,{cwd:root,encoding:'utf8'});if(result.error||result.status!==0)throw new Error('No se pudo obtener la autorización de Google. Ejecuta gcloud auth login en esta terminal y vuelve a intentarlo.');return result.stdout.trim();}
@@ -27,13 +28,14 @@ async function google(url,{method='GET',body,allow404=false}={}){
 async function cf(path,{method='GET',body,allow404=false}={}){
   const response=await fetch('https://api.cloudflare.com/client/v4'+path,{method,headers:{Authorization:'Bearer '+cloudflareToken,'Content-Type':'application/json'},signal:AbortSignal.timeout(30000),...(body!==undefined?{body:JSON.stringify(body)}:{})});
   const data=await response.json();if(response.status===404&&allow404)return null;
-  if(!response.ok||data.success===false)throw new Error(`Cloudflare rechazó el paso (HTTP ${response.status}, código ${data.errors?.[0]?.code||'desconocido'}). Revisa los permisos del token para Pages, KV y lectura de la cuenta.`);return data.result;
+  if(!response.ok||data.success===false)throw cloudflareError(response,data);return data.result;
 }
 async function readRecord(){try{return JSON.parse(await readFile(recordFile,'utf8'));}catch{return {};}}
 async function saveRecord(record){await mkdir(backup,{recursive:true,mode:0o700});await writeFile(recordFile,JSON.stringify(record,null,2),{mode:0o600});}
 async function authorizeCloudflare(){
   console.log('Introduce un token de Cloudflare con: Account Settings Read, Cloudflare Pages Edit y Workers KV Storage Edit.');
   console.log('Se crea en https://dash.cloudflare.com/profile/api-tokens . No lo envíes por chat.');
+  console.log('Copia solo el valor completo que Cloudflare muestra al crear el token, incluido su prefijo cfut_. No copies el ID ni el nombre.');
   cloudflareToken=await hiddenQuestion('Token de Cloudflare (oculto): ');
   await cf('/user/tokens/verify');
   const accounts=await cf('/accounts?per_page=50'),matches=[];
