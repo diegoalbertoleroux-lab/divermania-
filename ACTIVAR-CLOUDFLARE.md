@@ -52,6 +52,8 @@ Vuelve a introducir el token de Cloudflare oculto. El asistente verifica la revi
 
 Si un paso falla, conserva el mensaje final y detente. Los respaldos y el registro de activación quedan en `.divermania-backups/`, excluidos de Git. No compartas su contenido íntegro: el registro puede contener identificadores de administración.
 
+Si falla Google durante la creación de la conexión, ejecuta `node scripts/activate-cloudflare.mjs diagnose`. Este diagnóstico usa tu sesión de Google, no pide token de Cloudflare y solo consulta existencia de la cuenta de servicio, permisos y cantidad de claves. No muestra valores de claves ni cambia la configuración. Los errores incluyen el servicio, la petición y el mensaje de Google con las credenciales ocultas. Al asignar permisos se reintentan únicamente los conflictos y la propagación de una cuenta recién creada; los argumentos inválidos y las denegaciones se detienen con su detalle.
+
 Entradas finales:
 
 - Cliente: https://divermania.pages.dev/cliente

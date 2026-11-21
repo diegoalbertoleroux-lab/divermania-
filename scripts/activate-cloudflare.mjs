@@ -6,10 +6,11 @@ import {fileURLToPath} from 'node:url';
 import {join} from 'node:path';
 import {readSecret} from './secret-input.mjs';
 import {normalizeCloudflareToken,cloudflareError} from './cloudflare-auth.mjs';
+import {googleError,withIamRetry,inspectGoogleSetup} from './google-setup.mjs';
 
 const root=fileURLToPath(new URL('../',import.meta.url)),project='divermania-3f104',pages='divermania',branch='codex/divermania-menu-control';
-const stage=process.argv[2]||'check',allowed=['check','prepare','admin','publish'];
-if(!allowed.includes(stage)){console.log('Uso: node scripts/activate-cloudflare.mjs check|prepare|admin|publish');process.exit(1);}
+const stage=process.argv[2]||'check',allowed=['check','prepare','admin','publish','diagnose'];
+if(!allowed.includes(stage)){console.log('Uso: node scripts/activate-cloudflare.mjs check|prepare|admin|publish|diagnose');process.exit(1);}
 const backup=join(root,'.divermania-backups'),recordFile=join(backup,'activation.json');
 let prompt,cloudflareToken,googleToken;
 function question(text){prompt??=createInterface({input:process.stdin,output:process.stdout});return prompt.question(text);}
@@ -23,7 +24,7 @@ async function google(url,{method='GET',body,allow404=false}={}){
   googleToken||=capture('gcloud',['auth','print-access-token']);
   const response=await fetch(url,{method,headers:{Authorization:'Bearer '+googleToken,'Content-Type':'application/json'},signal:AbortSignal.timeout(30000),...(body!==undefined?{body:JSON.stringify(body)}:{})});
   const data=await response.json();if(response.status===404&&allow404)return null;
-  if(!response.ok)throw new Error(`Google rechazó el paso (HTTP ${response.status}, ${data.error?.status||'error'}). Comprueba que tu cuenta administra ${project}.`);return data;
+  if(!response.ok)throw googleError({url,method,status:response.status,data,secrets:[googleToken,cloudflareToken]});return data;
 }
 async function cf(path,{method='GET',body,allow404=false}={}){
   const response=await fetch('https://api.cloudflare.com/client/v4'+path,{method,headers:{Authorization:'Bearer '+cloudflareToken,'Content-Type':'application/json'},signal:AbortSignal.timeout(30000),...(body!==undefined?{body:JSON.stringify(body)}:{})});
@@ -53,12 +54,17 @@ async function snapshotRules(){
 }
 async function serviceAccount(){
   const accountId='divermania-worker',email=`${accountId}@${project}.iam.gserviceaccount.com`,base=`https://iam.googleapis.com/v1/projects/${project}/serviceAccounts`;
+  console.log('Google: consultando la cuenta de servicio de la conexión…');
   let account=await google(base+'/'+email,{allow404:true});
-  if(!account)account=await google(base,{method:'POST',body:{accountId,serviceAccount:{displayName:'Divermanía · Cloudflare Worker'}}});
+  if(!account){console.log('Google: creando la cuenta de servicio…');account=await google(base,{method:'POST',body:{accountId,serviceAccount:{displayName:'Divermanía · Cloudflare Worker'}}});}
   const policyUrl=`https://cloudresourcemanager.googleapis.com/v1/projects/${project}`;
-  const policy=await google(policyUrl+':getIamPolicy',{method:'POST',body:{options:{requestedPolicyVersion:3}}});policy.bindings??=[];
-  for(const role of ['roles/datastore.user','roles/firebaseauth.admin']){let binding=policy.bindings.find(x=>x.role===role&&!x.condition);if(!binding){binding={role,members:[]};policy.bindings.push(binding);}const member='serviceAccount:'+email;if(!binding.members.includes(member))binding.members.push(member);}
-  await google(policyUrl+':setIamPolicy',{method:'POST',body:{policy}});
+  console.log('Google: verificando y asignando permisos de datos y acceso…');
+  await withIamRetry(async()=>{
+    const policy=await google(policyUrl+':getIamPolicy',{method:'POST',body:{options:{requestedPolicyVersion:3}}});policy.bindings??=[];let changed=false;
+    for(const role of ['roles/datastore.user','roles/firebaseauth.admin']){let binding=policy.bindings.find(x=>x.role===role&&!x.condition);if(!binding){binding={role,members:[]};policy.bindings.push(binding);}const member='serviceAccount:'+email;if(!binding.members.includes(member)){binding.members.push(member);changed=true;}}
+    if(changed)await google(policyUrl+':setIamPolicy',{method:'POST',body:{policy}});
+  });
+  console.log('Google: creando la credencial privada para Cloudflare (su valor no se mostrará)…');
   const key=await google('https://iam.googleapis.com/v1/'+account.name+'/keys',{method:'POST',body:{privateKeyType:'TYPE_GOOGLE_CREDENTIALS_FILE',keyAlgorithm:'KEY_ALG_RSA_2048'}});
   return {value:Buffer.from(key.privateKeyData,'base64').toString(),keyName:key.name};
 }
@@ -127,7 +133,8 @@ try{
   console.log(`Divermanía · Firebase Spark + Cloudflare Workers Free · Etapa: ${stage}`);
   capture('gcloud',['config','get-value','project']);await google(`https://firestore.googleapis.com/v1/projects/${project}/databases/(default)`);
   let record=await readRecord();
-  if(stage==='admin')await adminAccount(record);
+  if(stage==='diagnose')await inspectGoogleSetup({google,project});
+  else if(stage==='admin')await adminAccount(record);
   else{
     const {accountId,config}=await authorizeCloudflare();
     if(stage==='check')console.log('Acceso a Firestore y Cloudflare verificado. No se cambió la configuración.');
