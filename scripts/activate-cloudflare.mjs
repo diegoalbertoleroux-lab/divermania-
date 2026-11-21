@@ -4,6 +4,7 @@ import {createInterface} from 'node:readline/promises';
 import {mkdir,readFile,writeFile,access} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
 import {join} from 'node:path';
+import {readSecret} from './secret-input.mjs';
 
 const root=fileURLToPath(new URL('../',import.meta.url)),project='divermania-3f104',pages='divermania',branch='codex/divermania-menu-control';
 const stage=process.argv[2]||'check',allowed=['check','prepare','admin','publish'];
@@ -13,9 +14,7 @@ let prompt,cloudflareToken,googleToken;
 function question(text){prompt??=createInterface({input:process.stdin,output:process.stdout});return prompt.question(text);}
 async function hiddenQuestion(label){
   prompt?.close();prompt=null;
-  if(!process.stdin.isTTY)throw new Error('Abre una terminal interactiva de Cloud Shell para introducir el token de forma oculta.');
-  process.stdout.write(label);process.stdin.setRawMode(true);process.stdin.resume();
-  return new Promise((resolve,reject)=>{let value='',escape=0;const done=()=>{process.stdin.off('data',receive);process.stdin.setRawMode(false);process.stdin.pause();process.stdout.write('\n');};function receive(chunk){for(const char of chunk.toString()){if(char==='\u001b'){escape=1;continue;}if(escape===1){escape=char==='['?2:0;continue;}if(escape===2){if(/[@-~]/.test(char))escape=0;continue;}if(char==='\r'||char==='\n'){done();resolve(value.trim());return;}if(char==='\u0003'){done();reject(new Error('Operación cancelada.'));return;}if(char==='\u007f'||char==='\b')value=value.slice(0,-1);else if(char>=' ')value+=char;}}process.stdin.on('data',receive);});
+  return readSecret(label);
 }
 function run(command,args,extraEnv={}){const result=spawnSync(command,args,{cwd:root,stdio:'inherit',env:{...process.env,...extraEnv}});if(result.error||result.status!==0)throw new Error('Falló '+command+'. Detén este paso y comparte únicamente el mensaje del error.');}
 function capture(command,args){const result=spawnSync(command,args,{cwd:root,encoding:'utf8'});if(result.error||result.status!==0)throw new Error('No se pudo obtener la autorización de Google. Ejecuta gcloud auth login en esta terminal y vuelve a intentarlo.');return result.stdout.trim();}
@@ -35,7 +34,7 @@ async function saveRecord(record){await mkdir(backup,{recursive:true,mode:0o700}
 async function authorizeCloudflare(){
   console.log('Introduce un token de Cloudflare con: Account Settings Read, Cloudflare Pages Edit y Workers KV Storage Edit.');
   console.log('Se crea en https://dash.cloudflare.com/profile/api-tokens . No lo envíes por chat.');
-  cloudflareToken=await hiddenQuestion('Token de Cloudflare (oculto): ');if(!cloudflareToken)throw new Error('Falta el token.');
+  cloudflareToken=await hiddenQuestion('Token de Cloudflare (oculto): ');
   await cf('/user/tokens/verify');
   const accounts=await cf('/accounts?per_page=50'),matches=[];
   for(const account of accounts){const found=await cf(`/accounts/${account.id}/pages/projects/${pages}`,{allow404:true});if(found)matches.push({account,config:found});}

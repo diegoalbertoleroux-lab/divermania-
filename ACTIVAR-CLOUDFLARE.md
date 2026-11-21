@@ -22,6 +22,8 @@ El asistente pedirá un **token de Cloudflare**, con la entrada oculta. Créalo 
 
 No pegues el token en el chat, en GitHub ni en un archivo del proyecto. La entrada de la terminal no muestra los caracteres. El token solo se utiliza durante ese proceso; no se guarda en los archivos de la aplicación.
 
+Espera a ver `Token de Cloudflare (oculto):` antes de pegarlo. Si presionas Enter sin pegarlo, el asistente seguirá esperando con la entrada oculta. No pegues el token en una línea de la consola que termina en `$`. Si queda visible en una captura o mensaje, revócalo en Cloudflare y genera otro.
+
 `prepare` comprueba el acceso, respalda las reglas actuales, ejecuta las pruebas, configura la conexión privada con permisos de datos/Auth, crea el espacio de fotos y publica una revisión aislada en la rama `firebase-spark-check`. Comprueba el servidor y la lectura del catálogo sin crear pedidos ni alterar existencias. **Todavía no reemplaza la página principal ni publica reglas nuevas.**
 
 La clave del servidor se envía directamente a las variables cifradas de Cloudflare; nunca se imprime, se guarda en el navegador ni se incorpora al repositorio. Si la política de Google impide crear claves de cuentas de servicio, el asistente se detiene: no desactiva esa política.
