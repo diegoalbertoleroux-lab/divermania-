@@ -1,3 +1,5 @@
-import {copyFile} from 'node:fs/promises';
-for(const file of ['domain.js','settings.js','codec.js','catalog.js','presentation.js','finance.js'])await copyFile('shared/'+file,'functions/'+file);
-console.log('Dominio compartido preparado para Firebase Functions.');
+import {copyFile,mkdir} from 'node:fs/promises';
+await mkdir('functions/shared',{recursive:true});await mkdir('functions/server',{recursive:true});
+for(const file of ['domain.js','settings.js','codec.js','catalog.js','presentation.js','finance.js'])await copyFile('shared/'+file,'functions/shared/'+file);
+for(const file of ['control.js','errors.js'])await copyFile('server/'+file,'functions/server/'+file);
+console.log('Adaptador local de Firebase preparado. El despliegue gratuito utiliza Workers.');

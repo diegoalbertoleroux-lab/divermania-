@@ -18,3 +18,7 @@ functions/finance.js
 firestore-debug.log
 auth-debug.log
 ui-debug.log
+functions/server/
+functions/shared/
+.divermania-backups/
+.wrangler/

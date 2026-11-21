@@ -4,7 +4,7 @@ La aplicación conserva el proyecto Firebase **divermania-3f104** y el alojamien
 
 Las dos entradas son **`/cliente`** y **`/admin`**. Las URLs con `.html` también se admiten; el alojamiento puede redirigirlas a URLs sin extensión. Inventario, recetas, clientes, imágenes, ticketeras y TV se abren dentro del administrador.
 
-Para activar el proyecto con tu propia cuenta, sigue [ACTIVAR-FIREBASE.md](ACTIVAR-FIREBASE.md).
+Para activar **sin tarjeta ni Blaze**, sigue [ACTIVAR-CLOUDFLARE.md](ACTIVAR-CLOUDFLARE.md). Firebase Spark conserva Firestore y Authentication; Cloudflare Workers ejecuta las operaciones y KV guarda las fotos nuevas. Las credenciales del servidor se configuran únicamente como secretos cifrados.
 
 ## Un solo administrador
 
@@ -49,7 +49,7 @@ El módulo financiero conserva sus flujos y colecciones originales dentro del ad
 - Canjes únicos de comida incluida: se solicitan a cocina, descuentan únicamente las recetas configuradas y se entregan una sola vez. Administración debe confirmar qué perro incluyen los paquetes y la receta de cotufas.
 - Cocina con turnos, ingredientes quitados y estados. Los clientes sin teléfono pueden seguir su número en la TV; quienes lo tienen abren el seguimiento. La impresión del turno sigue siendo opcional, sin requerir ticketeras físicas.
 - Pantallas de pedidos con fotos y QR; pantallas de gamer/parque con cuentas regresivas y avisos. No se superponen mensajes al juego que llega por HDMI.
-- Vinculación de pantallas con código de un solo uso de 10 caracteres, vencimiento de 10 minutos, sesión de dispositivo, latidos cada minuto y revocación. Su funcionamiento real requiere publicar Firebase Functions y reglas.
+- Vinculación de pantallas con código de un solo uso de 10 caracteres, vencimiento de 10 minutos, sesión de dispositivo, latidos cada minuto y revocación. Su funcionamiento real requiere activar el Worker y publicar las reglas de Firestore.
 - Clientes identificados por teléfono normalizado sin duplicados, autorización para guardar historial y consentimiento separado para promociones. Las fichas no se exponen al público. El checkout permite autorizar su registro con el pedido; el teléfono normalizado reúne las compras posteriores, sin sobrescribir una ficha existente desde el acceso público. También se pueden guardar personas que solo usan parque o Play desde taquilla.
 - Inventario tiene una pantalla propia con mínimos, alta de insumos, compras y autoconsumo. Los nuevos insumos empiezan en cero; la unidad no se cambia para mantener coherencia con las recetas. Se conservan catálogo, recetas, transacciones, CxC y CxP en los módulos del administrador, con acceso del equipo. Compras y movimientos de stock pasan por transacciones de servidor; las compras suman stock y gasto juntos. Los pases generan un ingreso una sola vez, sin contar dos veces los canjes de comida.
 - Las recetas de variantes Carne/Pollo se configuran por separado. Un producto sin receta o gramajes completos se identifica como pendiente; no se inventan consumos exactos.
@@ -64,7 +64,7 @@ El módulo financiero conserva sus flujos y colecciones originales dentro del ad
 - `/inventario.html`: insumos, mínimos, compras y autoconsumo.
 - `/ticketeras.html`: ticketeras virtuales de pases, turnos y canjes.
 - `/pase.html?token=...`: consulta pública de un pase por enlace aleatorio; no expone nombre, teléfono ni referencia de pago. El reloj empieza al activarlo el encargado.
-- `/imagenes.html`: elegir imágenes incluidas, pegar una URL o subir JPG/PNG/WebP hasta 5 MB a Firebase Storage. En preview se conservan solo en el navegador, hasta 2 MB por archivo.
+- `/imagenes.html`: elegir imágenes incluidas, pegar una URL o subir JPG/PNG/WebP hasta 5 MB al almacenamiento gratuito de Cloudflare. En preview se conservan solo en el navegador, hasta 2 MB por archivo.
 - `/televisores.html`: vinculación de dispositivos, con rol de administración.
 - `/?view=board&kind=orders`: pedidos; `kind=gamer` y `kind=park`: tiempos.
 - `/gestion.html?tab=...`: enlaces anteriores, redirigidos a los módulos integrados.
@@ -75,23 +75,17 @@ La aplicación puede servirse estáticamente desde la raíz del repositorio con 
 
 `npm run build -- --preview` genera una revisión aislada. Los subdominios de preview de Cloudflare (`*.divermania.pages.dev`) también se aíslan automáticamente; el dominio de producción `divermania.pages.dev` conserva el modo Firebase. Todos sus HTML activan almacenamiento de prueba y no importan ni escriben datos del negocio. Abrir la vista de revisión en otro dispositivo no enlaza datos locales; la versión real utiliza Firebase.
 
-## Puesta en marcha necesaria antes de reemplazar main
+## Puesta en marcha sin facturación
 
-Subir esta rama a GitHub **no publica por sí solo** Functions, reglas de Firestore, cuentas de Authentication ni roles. El Firebase web config identifica el proyecto pero no proporciona permisos administrativos.
+La ruta de activación vigente es [ACTIVAR-CLOUDFLARE.md](ACTIVAR-CLOUDFLARE.md). Subir archivos a GitHub no asigna permisos en Google ni configura secretos en Cloudflare. El asistente prepara y verifica una revisión, autoriza la cuenta existente de administración y publica aplicación/reglas de forma coordinada. Mantiene `main` y configura Pages para publicar `codex/divermania-menu-control` después de ejecutar la etapa `publish`.
 
-1. Con acceso autorizado al proyecto, revisar el plan y la configuración actuales. Cloud Functions necesita un plan compatible (normalmente Blaze). Esta rama no cambia facturación ni habilita servicios por sí sola.
-2. Habilitar el proveedor Email/Password en Firebase Authentication y crear las cuentas del equipo. Añadir `divermania.pages.dev` a los dominios autorizados cuando corresponda.
-3. Asignar un rol verificado a cada cuenta (`admin`, `cash`, `entrance`, `gamer`, `kitchen`). El script `scripts/set-staff-role.mjs UID ROL` usa credenciales administrativas del entorno autorizado; no se deben compartir claves privadas por chat ni guardarlas en Git.
-4. Instalar las dependencias del backend con `npm ci --prefix functions`. Publicar el servicio y triggers con `firebase deploy --only functions --project divermania-3f104`. El predeploy copia el dominio compartido al paquete de Functions.
-5. Comprobar funciones y reglas en un entorno de pruebas/emuladores y revisar cualquier diferencia con las reglas existentes antes de aplicarlas. `firestore.rules` protege los datos internos y reserva las operaciones de precios/stock a los servicios de servidor. Puede requerirse permiso de firma de tokens en la cuenta de servicio para la vinculación de pantallas.
-6. Coordinar la publicación del frontend y `firebase deploy --only firestore:rules,firestore:indexes --project divermania-3f104`. La aplicación antigua escribe pedidos directamente; aplicar las reglas nuevas antes de actualizar el cliente bloquearía ese flujo antiguo. No se deben dar por protegidas las colecciones hasta aplicar y comprobar las reglas.
-7. Iniciar sesión como administrador y usar **Catálogo → Cargar menú del PDF**. La carga actualiza nombres coincidentes, conserva sus recetas y no elimina otros productos. No se ejecuta al abrir la página ni al publicar el código.
-8. Completar los precios faltantes y las recetas con cantidades reales. En “Parque y Play” registrar las estaciones físicas y definir aforo, perro del paquete y receta de cotufas.
-9. Emitir un pase, activarlo, probar alertas y el canje. Tomar un pedido y verificar descuento de ingredientes, cocina, seguimiento y registro de referencia del facturador.
-10. Para subir imágenes habilitar Firebase Storage en el bucket configurado, revisar `storage.rules` contra las reglas existentes y publicar `firebase deploy --only storage --project divermania-3f104`. La regla incluida permite imágenes públicas en `menu/` y carga solo por administradores autenticados. Revisar reglas de otras carpetas antes de reemplazarlas. La galería incluida y las URLs externas no requieren subir archivos a Storage.
-11. Vincular cada pantalla desde su navegador con el código del administrador, activar pantalla completa y sonido, y comprobar su revocación. Si el televisor no tiene navegador compatible, usar TV Box o una computadora por HDMI.
+El Worker se genera en `dist/_worker.js`; `_routes.json` lo limita a `/api/*`. Los recursos estáticos no pasan por el Worker. El backend conserva las transacciones nativas de Firestore, sus reintentos y las proyecciones públicas en la misma operación. Las estaciones públicas se actualizan sin triggers. El cliente usa `/api/control` con su token de Firebase, y las pantallas usan su propia sesión para el latido. Las fotos se guardan por administración en el binding KV `MENU_IMAGES`.
 
-No se ha modificado la base real ni publicado servicios en Firebase durante la preparación de esta rama. El diseño puede revisarse por separado antes de activar esas operaciones.
+Después de la activación, cargar el PDF sigue siendo una acción explícita en Catálogo y conserva recetas existentes. Configurar cantidades reales, estaciones, aforo y productos de los paquetes. Verificar cobros, stock, pases, cocina, seguimiento y las alarmas en dos dispositivos. La facturación fiscal permanece en el sistema existente.
+
+Los archivos de Functions se conservan como adaptador para pruebas locales/compatibilidad, sin desplegarlos. `activate-firebase.mjs backend` y `storage` ya no publican servicios de pago. Las reglas no utilizan TTL. El cliente no importa Functions ni Firebase Storage.
+
+No se han activado estas operaciones sobre el negocio desde el entorno de desarrollo: falta la autorización de Cloudflare y la ejecución del asistente en la terminal del propietario.
 
 ## Validación y límites
 
@@ -110,3 +104,7 @@ Con Java 21 y las dependencias de Functions instaladas, `npm run test:firebase` 
 Se comprueban permisos por roles con tokens de Authentication, seguimiento público sin listados, revocación de una TV, bloqueo de escrituras directas de stock, dos pedidos simultáneos de la última unidad, devolución al cancelar, reintentos de compra y exclusividad de una Play. Las llamadas al controlador del backend se ejecutan con `.run` contra Firestore emulado; esta prueba no sustituye el recorrido HTTP de Functions desplegadas ni las pruebas entre dispositivos reales.
 
 Las reglas preparadas reservan las escrituras de catálogo, inventario, transacciones y cuentas a los servicios del servidor. Las lecturas siguen los permisos de cada área. Su publicación debe coordinarse con el frontend nuevo: el código antiguo realiza escrituras directas.
+
+## Worker gratuito: pruebas de conexión y ejecución
+
+`npm run test:worker` recorre la interfaz HTTP del Worker y la API REST transaccional de Firestore con Authentication/Firestore locales en `demo-divermania`. Prueba permisos, stock, concurrencia, devolución, idempotencia y exclusividad de estaciones. `npm run build` genera el bundle; `node tests/worker-runtime.mjs` lo ejecuta en workerd/Miniflare con los servicios externos sustituidos por respuestas de prueba y comprueba criptografía, OAuth, catálogo y archivos estáticos. Ninguna de estas pruebas usa los datos reales ni verifica audio en dispositivos físicos.

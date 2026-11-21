@@ -7,6 +7,7 @@ service cloud.firestore {
   function staff(){return admin() || role() in ['cash','entrance','gamer','kitchen'];}
   function cashier(){return admin() || role() == 'cash';}
   function display(kind){return signed() && 'screen' in request.auth.token && request.auth.token.screen == true && request.auth.token.board == kind && get(/databases/$(database)/documents/dispositivos/$(request.auth.token.deviceId)).data.revoked == false;}
+  match /menu_publico/{id} {allow read: if true; allow write: if false;}
   match /catalogo/{id} {allow read: if true; allow write: if false;}
   match /inventario/{id} {allow read: if staff(); allow write: if false;}
   match /pedidos/{id} {allow read: if staff(); allow write: if false;}

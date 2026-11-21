@@ -1,1 +1,1 @@
-{"indexes":[],"fieldOverrides":[{"collectionGroup":"limites","fieldPath":"expiresAt","ttl":true,"indexes":[]},{"collectionGroup":"codigos_dispositivos","fieldPath":"expiresOn","ttl":true,"indexes":[]}]}
+{"indexes":[],"fieldOverrides":[]}

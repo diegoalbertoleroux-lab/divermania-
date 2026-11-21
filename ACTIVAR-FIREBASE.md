@@ -1,3 +1,5 @@
+> **Ruta vigente sin tarjeta:** utiliza [ACTIVAR-CLOUDFLARE.md](ACTIVAR-CLOUDFLARE.md). La instalación usa Firebase Spark + Cloudflare Workers y KV. No ejecutes los pasos de Functions/Storage de esta guía anterior: las etapas correspondientes se han bloqueado en el script para evitar activar servicios que requieren facturación.
+
 # Activar Divermanía con tu cuenta de Google
 
 Los archivos del cliente y el administrador ya están en esta rama de GitHub. Cloudflare publica sus cambios. Firebase Functions, reglas y cuentas se configuran por separado: no se actualizan solo al subir HTML.
