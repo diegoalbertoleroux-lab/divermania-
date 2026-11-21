@@ -87,7 +87,7 @@ Después de la activación, cargar el PDF sigue siendo una acción explícita en
 
 Los archivos de Functions se conservan como adaptador para pruebas locales/compatibilidad, sin desplegarlos. `activate-firebase.mjs backend` y `storage` ya no publican servicios de pago. Las reglas no utilizan TTL. El cliente no importa Functions ni Firebase Storage.
 
-No se han activado estas operaciones sobre el negocio desde el entorno de desarrollo: falta la autorización de Cloudflare y la ejecución del asistente en la terminal del propietario.
+El entorno de desarrollo no recibe las credenciales del propietario. La activación se ejecuta con su cuenta mediante el asistente; el menú y las recetas se cargan explícitamente desde el administrador.
 
 ## Validación y límites
 
