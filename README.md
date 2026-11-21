@@ -102,3 +102,11 @@ Se comprobó el renderizado de las vistas y formularios con un DOM de prueba. La
 El sistema solo muestra avisos del pedido con la página abierta. No incluye Web Push con el navegador cerrado ni envío automático de WhatsApp. El botón de WhatsApp prepara el mensaje; la persona confirma su envío. El sistema actual de facturación sigue emitiendo la factura; esta versión guarda su referencia. Para integración automática se necesita conocer su API o formato de importación.
 
 Horarios en Venezuela: lunes a jueves 11:00–19:30; viernes y sábado 11:00–20:30; domingo 09:00–16:00. Las fotografías tienen carácter ilustrativo y provienen del material proporcionado; ver `assets/menu/CREDITOS.txt`.
+
+## Comprobación con los emuladores de Firebase
+
+Con Java 21 y las dependencias de Functions instaladas, `npm run test:firebase` ejecuta Authentication y Firestore sobre el proyecto ficticio `demo-divermania`. La prueba aborta antes de importar el backend si faltan los hosts locales o el proyecto no coincide. No requiere iniciar sesión ni utiliza el proyecto del negocio.
+
+Se comprueban permisos por roles con tokens de Authentication, seguimiento público sin listados, revocación de una TV, bloqueo de escrituras directas de stock, dos pedidos simultáneos de la última unidad, devolución al cancelar, reintentos de compra y exclusividad de una Play. Las llamadas al controlador del backend se ejecutan con `.run` contra Firestore emulado; esta prueba no sustituye el recorrido HTTP de Functions desplegadas ni las pruebas entre dispositivos reales.
+
+Las reglas preparadas reservan las escrituras de catálogo, inventario, transacciones y cuentas a los servicios del servidor. Las lecturas siguen los permisos de cada área. Su publicación debe coordinarse con el frontend nuevo: el código antiguo realiza escrituras directas.

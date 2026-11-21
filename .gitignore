@@ -14,3 +14,7 @@ functions/catalog.js
 functions/presentation.js
 
 functions/finance.js
+
+firestore-debug.log
+auth-debug.log
+ui-debug.log

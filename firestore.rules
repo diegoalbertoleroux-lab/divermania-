@@ -7,8 +7,8 @@ service cloud.firestore {
   function staff(){return admin() || role() in ['cash','entrance','gamer','kitchen'];}
   function cashier(){return admin() || role() == 'cash';}
   function display(kind){return signed() && 'screen' in request.auth.token && request.auth.token.screen == true && request.auth.token.board == kind && get(/databases/$(database)/documents/dispositivos/$(request.auth.token.deviceId)).data.revoked == false;}
-  match /catalogo/{id} {allow read: if true; allow write: if admin();}
-  match /inventario/{id} {allow read: if staff(); allow write: if cashier();}
+  match /catalogo/{id} {allow read: if true; allow write: if false;}
+  match /inventario/{id} {allow read: if staff(); allow write: if false;}
   match /pedidos/{id} {allow read: if staff(); allow write: if false;}
   match /pases/{id} {allow read: if staff(); allow write: if false;}
   match /canjes/{id} {allow read: if staff(); allow write: if false;}
@@ -19,9 +19,9 @@ service cloud.firestore {
   match /pases_publicos/{token} {allow get: if token.size() >= 48; allow list,write: if false;}
   match /seguimiento/{token} {allow get: if token.size() >= 48; allow list,write: if false;}
   match /clientes/{id} {allow read: if cashier() || role() == 'entrance'; allow write: if false; match /visitas/{day}{allow read: if cashier() || role() == 'entrance'; allow write: if false;}}
-  match /transacciones/{id} {allow read,write: if cashier();}
-  match /cxc/{id} {allow read,write: if cashier();}
-  match /cxp/{id} {allow read,write: if cashier();}
+  match /transacciones/{id} {allow read: if cashier(); allow write: if false;}
+  match /cxc/{id} {allow read: if cashier(); allow write: if false;}
+  match /cxp/{id} {allow read: if cashier(); allow write: if false;}
   match /configuracion/{id} {allow read: if staff(); allow write: if false;}
   match /dispositivos/{id} {allow read: if admin() || (signed() && 'deviceId' in request.auth.token && request.auth.token.deviceId == id); allow write: if false;}
   match /movimientos_inventario/{id} {allow read: if cashier(); allow write: if false;}

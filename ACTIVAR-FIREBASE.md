@@ -16,7 +16,7 @@ node scripts/activate-firebase.mjs check
 
 Si GitHub pide autenticación, usa tu cuenta autorizada desde Cloud Shell; también puedes descargar el ZIP de esta rama en GitHub. El repositorio debe ser accesible para poder clonarlo.
 
-Si Firebase pide iniciar sesión, ejecuta el comando que imprime la terminal y sigue su enlace en el navegador. Mantén los códigos dentro de esa sesión de Cloud Shell. El primer paso solo verifica acceso; no cambia la base de datos.
+Si Firebase pide iniciar sesión, ejecuta el comando que imprime la terminal y sigue su enlace en el navegador. Mantén los códigos dentro de esa sesión de Cloud Shell. El primer paso solo verifica acceso; no cambia la base de datos. Si el directorio ya existe por un intento anterior, entra en él y ejecuta `git pull --ff-only` antes del comando `check`.
 
 ## Publicar el servicio
 
@@ -63,3 +63,7 @@ Este último paso es opcional si eliges fotos incluidas o URLs externas.
 En el administrador real: carga el menú del PDF, completa las recetas con cantidades reales, registra existencias y prueba un pedido. Comprueba que quitar un ingrediente evita su descuento, y cancelar antes de cocinar devuelve stock. Registra una ficha autorizada, compra de nuevo con el mismo teléfono y revisa que aparece una sola ficha con historial. Prueba un pase pagado, su activación en la entrada, reloj, canje y una TV vinculada.
 
 Las rutas finales son `/cliente` y `/admin`. Los enlaces de revisión de Cloudflare y el Site de demostración mantienen datos locales de prueba; no equivalen al negocio activo.
+
+## Prueba previa completada en entorno local
+
+La prueba `npm run test:firebase` usa Authentication y Firestore emulados, sin credenciales ni datos reales. Se comprobó que los movimientos pasan por el servicio protegido, que dos pedidos no consumen dos veces la última unidad y que los reintentos no duplican compras. La prueba usa un proyecto ficticio y bloquea su ejecución contra el proyecto real. Aún se debe validar el servicio HTTP desplegado, las cuentas reales y los equipos del local antes de cambiar a producción.
