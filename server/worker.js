@@ -4,7 +4,7 @@ import {createGoogleAuth,serviceAccountCredentials} from './google-auth.js';
 import {OperationError} from './errors.js';
 
 const PROJECT='divermania-3f104';
-const codes={'invalid-argument':400,unauthenticated:401,'permission-denied':403,'not-found':404,'failed-precondition':409,'resource-exhausted':429,unavailable:503};
+const codes={'invalid-argument':400,unauthenticated:401,'permission-denied':403,'already-exists':409,'not-found':404,'failed-precondition':409,'resource-exhausted':429,unavailable:503};
 const json=(body,status=200)=>Response.json(body,{status,headers:{'Cache-Control':'no-store','X-Content-Type-Options':'nosniff'}});
 export async function readLimited(request,limit){
   if(Number(request.headers.get('Content-Length'))>limit)throw new OperationError('invalid-argument','El archivo o solicitud supera el tamaño permitido.');

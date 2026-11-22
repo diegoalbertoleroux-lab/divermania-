@@ -110,3 +110,17 @@ El chat se consulta solo mientras está abierto, con un máximo de 40 mensajes p
 Se pueden crear cuentas del equipo desde Usuarios y permisos, con perfil inicial y contraseña. La aplicación no conserva esa contraseña en documentos de operaciones ni en el estado de demostración. Los datos locales de demostración usan claves separadas para carrito, borradores, apariencia y menú guardado.
 
 Validación de esta actualización: pruebas de dominio y servidor (`npm test`), Worker empaquetado con workerd (`node tests/worker-runtime.mjs`), Auth/Firestore emulados con transacciones reales y reglas, y recorridos de navegador Chromium en escritorio, móvil y TV de 1366×768. La impresión se revisa como formato de 58 mm/PDF; la conexión física de la ticketera se comprueba en el local.
+
+## Preferencias personales, lectores y preparación de entrega
+
+La apariencia se guarda en `preferencias/{uid}` mediante el Worker con la identidad de la sesión. Cada cuenta controla sus colores de panel, menú lateral, tarjetas, fuentes y tamaño; no se lee esa configuración en el menú del cliente ni en los televisores. La apariencia pública antigua se ignora. El propietario puede editar el permiso de personalización de cada perfil.
+
+El menú público carga su catálogo por HTTP sin inicializar Authentication ni Firestore en el navegador. El panel carga los SDK desde archivos locales empaquetados, agrupa snapshots cercanos y muestra un arranque con recuperación. Las plantillas de recetas se guardan para consulta y un fallo al descargarlas no bloquea abrir una receta ya registrada. La caché de la PWA recibe una versión calculada con el contenido de los archivos en cada build, evitando conservar módulos viejos indefinidamente.
+
+El botón Escanear del panel acepta lector compatible con teclado USB/Bluetooth, entrada manual o cámara con permiso del navegador. El detector de cámara se empaqueta localmente. Un código numérico se vincula atómicamente a un producto por unidad; un mismo código no puede identificar dos productos. El escaneo permite después añadir al pedido, abrir una compra o hacer un conteo. Escanear no descuenta stock. Los nuevos productos requieren nombre, presentación y precio reales; la sección Bebidas está preparada sin crear precios ficticios.
+
+Al vencer una sesión, un oscilador de audio produce una sirena continua hasta validar los avisos. La validación se sincroniza entre equipos sin finalizar la sesión ni liberar su estación. Una ampliación cambia la hora de fin y reactiva los avisos. La aplicación debe permanecer abierta, el audio debe estar habilitado y el dispositivo debe estar despierto y con volumen audible.
+
+Inicio → Preparar entrega permite al propietario revisar y seleccionar pedidos ficticios, escribir PRUEBAS y archivarlos. Se conservan los registros para auditoría y el menú; se quitan del tablero y de los pedidos activos. La devolución de insumos es opcional y requiere confirmar que no se consumieron realmente; se registra una sola vez. Cierra el turno de pruebas antes del primer turno real. No se borran operaciones automáticamente al publicar.
+
+Los nuevos turnos acumulan movimientos dentro de las mismas transacciones de pago, compra, abono y devolución; el cierre compara efectivo esperado y contado separadamente en USD y Bs. Los pagos electrónicos se separan del efectivo. Los turnos abiertos con la versión anterior se marcan para conciliación manual, sin inventar diferencias. Reposición sugerida propone alcanzar el doble del mínimo configurado y no registra compras por sí sola.

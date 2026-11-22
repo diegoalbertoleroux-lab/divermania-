@@ -27,7 +27,7 @@ export class SessionAlarms{
  poll(tickets,now,{audible=false}={}){
   const events=[],expired=[],live=new Set();let sound=null;
   for(const t of tickets){if(t.status!=='active'||!Number.isFinite(t.endAt))continue;live.add(t.id);let e=this.entries.get(t.id);if(!e||e.endAt!==t.endAt){e={endAt:t.endAt,level:'',soundLevel:'',lastEndSound:null,acknowledged:false};this.entries.set(t.id,e);}
-   const ms=t.endAt-now,level=ms<=0?'end':ms<=60000?'one':ms<=300000?'five':'';
+   if(t.alarmAcknowledgedEndAt===t.endAt)e.acknowledged=true;const ms=t.endAt-now,level=ms<=0?'end':ms<=60000?'one':ms<=300000?'five':'';
    if(level!==e.level){if(level&&!e.acknowledged)events.push({ticket:t,level});e.level=level;}
    if(e.acknowledged)continue;
    if(level==='end'){expired.push(t);if(audible&&(e.lastEndSound===null||now-e.lastEndSound>=12000)){sound='end';e.lastEndSound=now;}}
