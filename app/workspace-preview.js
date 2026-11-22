@@ -1,0 +1,27 @@
+import {appearanceFields,validateAccess,profiles,paymentFields,valeryRecipe,validatedValery} from '../shared/workspace.js';
+const assert=(condition,message)=>{if(!condition)throw new Error(message);};
+export function workspacePreview(s,type,p,key,now){
+ s.workspace??={appearance:{},reception:{lastSeen:now,paused:false},shift:null};s.chat??=[];s.staff??=[{id:'demo-owner',email:'propietario@ejemplo.local',owner:true},{id:'demo-kitchen',email:'cocina@ejemplo.local',profile:'kitchen',caps:profiles.kitchen.caps}];
+ if(type==='workspace.meta')return s.workspace;
+ if(type==='appearance.public')return {appearance:s.workspace.appearance};
+ if(type==='appearance.save'){s.workspace.appearance=appearanceFields(p);return {ok:true};}
+ if(type==='orders.status')return {available:!s.workspace.reception.paused,paused:s.workspace.reception.paused};
+ if(type==='orders.heartbeat'){s.workspace.reception.lastSeen=now;return {ok:true,paused:s.workspace.reception.paused};}
+ if(type==='orders.availability'){s.workspace.reception.paused=p.paused===true;return {ok:true};}
+ if(type==='access.list')return {users:s.staff};
+ if(type==='access.create'){assert(p.email?.includes('@')&&p.password?.length>=10,'Correo o contraseña inválidos.');assert(!s.staff.some(u=>u.email===p.email),'El correo ya existe.');const user={id:key,email:p.email,...validateAccess(p)};s.staff.push(user);return {id:key,email:p.email};}
+ if(type==='access.save'){const user=s.staff.find(u=>u.id===p.id);assert(user&&!user.owner,'La cuenta propietaria se conserva.');Object.assign(user,validateAccess(p));return {ok:true};}
+ if(type==='chat.list')return {messages:s.chat.filter(m=>m.channel===p.channel&&m.at>(p.after||0)).slice(-40)};
+ if(type==='chat.send'){assert(p.text?.trim(),'Escribe un mensaje.');s.chat.push({id:key,channel:p.channel,text:p.text.trim(),reference:p.reference||'',actor:'demo-owner',name:'Equipo de prueba',at:now});return {id:key};}
+ if(type==='inventory.adjust'){const item=s.inventory[p.id],qty=Number(p.qty);assert(item&&Number.isFinite(qty)&&qty>=0&&p.reason?.trim(),'Revisa artículo, cantidad y motivo.');assert(['waste','self','count'].includes(p.kind),'Tipo inválido.');assert(item.unit!=='und'||Number.isInteger(qty),'Registra unidades completas.');const before=item.stock,after=p.kind==='count'?qty:before-qty;assert(after>=0,'No hay existencias suficientes.');item.stock=after;s.activity??=[];s.activity.push({id:key,type,actor:'Demo',at:now,reason:p.reason,before,after});return {id:p.id,stock:after};}
+ if(type==='finance.payment'){const d=s.legacy?.[p.kind]?.[p.id],cents=Math.round(Number(p.amount)*100);assert(d&&['cxc','cxp'].includes(p.kind)&&cents>0,'Abono inválido.');const total=d.amountCents??Math.round(d.monto*100),paid=d.paidCents||0;assert(d.estado!=='Pagado'&&paid+cents<=total,'El abono supera el saldo pendiente.');d.paidCents=paid+cents;d.estado=d.paidCents===total?'Pagado':'Parcial';s.legacy.transacciones??={};s.legacy.transacciones[key]={tipo:p.kind==='cxc'?'Ingreso (Abono CxC)':'Gasto (Abono CxP)',amountCents:cents,montoUsd:cents/100,desc:'Abono '+(d.cliente||d.proveedor),fecha:new Date(now).toISOString(),...paymentFields(p,cents)};return {id:p.id,balanceCents:total-d.paidCents};}
+ if(type==='finance.shift.open'){assert(s.workspace.shift?.status!=='open','Ya hay un turno abierto.');const amount=Math.round(Number(p.amount)*100);assert(Number.isSafeInteger(amount)&&amount>=0,'Monto inválido.');s.workspace.shift={id:key,status:'open',openedAt:now,openingCents:amount,notes:p.notes||''};return {id:key};}
+ if(type==='finance.shift.close'){assert(s.workspace.shift?.status==='open','No hay un turno abierto.');const amount=Math.round(Number(p.amount)*100);assert(Number.isSafeInteger(amount)&&amount>=0,'Monto inválido.');Object.assign(s.workspace.shift,{status:'closed',closedAt:now,countedCents:amount,notes:p.notes||''});return {id:s.workspace.shift.id};}
+ if(type==='finance.refund'){const o=s.orders.find(o=>o.id===p.id),cents=Math.round(Number(p.amount)*100);assert(o?.paymentConfirmed&&cents>0&&cents+(o.refundedCents||0)<=o.total&&p.reason?.trim(),'Revisa el pago, monto y motivo.');o.receiptRecorded=true;o.refundedCents=(o.refundedCents||0)+cents;s.legacy??={};s.legacy.transacciones??={};s.legacy.transacciones[key]={tipo:'Gasto (Devolución)',amountCents:cents,montoUsd:cents/100,desc:p.reason,fecha:new Date(now).toISOString(),...paymentFields(p,cents)};return {id:key};}
+ if(type==='valery.stage'){s.workspace.valery={...valeryRecipe,stagedAt:now};return {id:'valery-332'};}
+ if(type==='valery.apply'){const recipe=validatedValery(p,s.inventory),product=s.catalog.find(x=>x.id===p.productId);assert(product&&/trampol/i.test(product.name),'Selecciona el producto Trampolín.');if(product.options?.length){assert(product.options.includes(p.option)&&/pollo/i.test(p.option),'Selecciona la variante de pollo.');product.recipesByOption={...product.recipesByOption,[p.option]:recipe};}else{assert(/pollo/i.test(product.name),'Esta receta corresponde a pollo.');product.receta=recipe;product.recipeStatus='configured';}s.workspace.valery={...valeryRecipe,status:'reviewed'};return {id:p.productId};}
+ if(type==='workspace.costs')return {costs:Object.values(s.costs||{})};
+ if(type==='workspace.audit')return {events:(s.activity||[]).slice(-50).reverse()};
+ if(type==='workspace.export')return {format:'divermania-demo-backup-v1',createdAt:new Date(now).toISOString(),data:structuredClone(s)};
+ return undefined;
+}

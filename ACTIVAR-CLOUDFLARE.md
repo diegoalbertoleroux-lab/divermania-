@@ -84,3 +84,29 @@ node tests/worker-runtime.mjs
 ```
 
 Para comprobar transacciones y permisos con Authentication y Firestore locales, instala Java 21 y las dependencias del adaptador (`npm ci --prefix functions`), y ejecuta `npm run test:worker`. La prueba aborta si no está en el proyecto ficticio `demo-divermania` con los emuladores locales. Recorre las solicitudes HTTP del Worker y la API REST de Firestore: última unidad en paralelo, cancelación, compras repetidas, permisos, privacidad y estación exclusiva. El verificador de tokens de esa prueba usa el Auth emulado; las firmas de producción se comprueban separadamente con claves de prueba. No ejecuta operaciones sobre el negocio.
+
+## Actualización del espacio de trabajo
+
+La rama `codex/divermania-menu-control` publica automáticamente la interfaz y el Worker mediante Pages. La actualización añade inicio operativo, navegación agrupada, fotografías contenidas, colores y fuentes, sonidos por dispositivo, inventario por secciones, chat privado, guías, referencias de Valery, abonos, moneda/tasa histórica, apertura y conteo de caja, devoluciones, actividad, exportación e instalación PWA.
+
+Para activar los permisos editables, actualiza las reglas desde la misma Cloud Shell que ya tiene tu autorización de Google:
+
+```bash
+cd ~/divermania-control
+git pull --ff-only origin codex/divermania-menu-control
+node scripts/activate-cloudflare.mjs rules
+```
+
+Este paso respalda las reglas anteriores, valida y publica las nuevas, y activa un indicador privado de versión. No solicita token de Cloudflare, no cambia existencias y no activa facturación. El Worker impide cambiar perfiles hasta completar este paso: las restricciones de lectura deben acompañar a las de operaciones. Las cuentas del equipo deben volver a entrar después de cambiar sus permisos. La cuenta propietaria se conserva.
+
+Los pedidos web requieren un receptor autorizado con Inicio, Cocina, Taquilla o Nuevo pedido visible. El receptor informa su conexión cada 30 segundos; el servidor deja de aceptar envíos públicos después de 90 segundos sin señal, o inmediatamente al pausar. El carrito se conserva. Un pedido registrado sigue pendiente hasta que el local comienza la preparación. Los reintentos recuperan la misma operación incluso si se pausó la recepción después del primer envío.
+
+Sin conexión se conserva la interfaz visitada, el último menú y borradores; los cambios reales de stock, pagos y pedidos requieren confirmación del servidor. Los tiempos usan su hora de finalización. Compartir los datos de un teléfono es el respaldo previsto; no hay servidor local ni sincronización de ventas entre varios equipos completamente desconectados.
+
+La receta Valery 332 se incorpora como referencia revisable. Las unidades desconocidas deben confirmarse y vincularse a insumos existentes antes de aplicarla a la variante de pollo. Los conteos de las capturas no reemplazan las existencias actuales. La ayuda integrada usa procedimientos definidos; no se presenta como una IA generativa conectada. La impresión opcional usa el diálogo del sistema y requiere la ticketera instalada.
+
+El chat se consulta solo mientras está abierto, con un máximo de 40 mensajes por consulta y cursor incremental. Colores y configuración nuevos se consultan mediante el Worker para funcionar antes de actualizar las reglas. El respaldo exportado respeta los permisos de lectura; una restauración se revisa y concilia antes de reemplazar registros. El balance financiero es operativo, no utilidad contable ni factura fiscal.
+
+Se pueden crear cuentas del equipo desde Usuarios y permisos, con perfil inicial y contraseña. La aplicación no conserva esa contraseña en documentos de operaciones ni en el estado de demostración. Los datos locales de demostración usan claves separadas para carrito, borradores, apariencia y menú guardado.
+
+Validación de esta actualización: pruebas de dominio y servidor (`npm test`), Worker empaquetado con workerd (`node tests/worker-runtime.mjs`), Auth/Firestore emulados con transacciones reales y reglas, y recorridos de navegador Chromium en escritorio, móvil y TV de 1366×768. La impresión se revisa como formato de 58 mm/PDF; la conexión física de la ticketera se comprueba en el local.

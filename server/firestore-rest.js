@@ -66,5 +66,6 @@ export function createFirestore({project,accessToken,fetcher=fetch,baseUrl='http
     }
   }
   function collection(path){return {doc:(key=crypto.randomUUID().replaceAll('-',''))=>doc(path+'/'+key),get:async()=>{const docs=[];let pageToken;do{const result=await api('/'+path.split('/').map(encodeURIComponent).join('/')+'?pageSize=300'+(pageToken?'&pageToken='+encodeURIComponent(pageToken):''),{method:'GET'});for(const item of result.documents||[])docs.push(snapshot(pathOf(item.name),item));pageToken=result.nextPageToken;if(docs.length>10000)throw new OperationError('resource-exhausted','Hay demasiados registros para esta consulta.');}while(pageToken);return {docs};}};}
-  return {doc,collection,batch,getAll:(...refs)=>getAll(refs),runTransaction};
+  async function query(path,{orderBy='at',direction='DESCENDING',limit=40,after=0}={}){const parts=path.split('/'),collectionId=parts.pop(),parent=parts.length?'/'+parts.map(encodeURIComponent).join('/'):'';const result=await api(parent+':runQuery',{body:{structuredQuery:{from:[{collectionId}],orderBy:[{field:{fieldPath:orderBy},direction}],limit:Math.min(limit,100),...(after?{where:{fieldFilter:{field:{fieldPath:orderBy},op:'GREATER_THAN',value:encodeValue(after)}}}:{})}}});return {docs:result.filter(r=>r.document).map(r=>snapshot(pathOf(r.document.name),r.document))};}
+  return {doc,collection,batch,query,getAll:(...refs)=>getAll(refs),runTransaction};
 }

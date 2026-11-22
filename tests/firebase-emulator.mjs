@@ -17,6 +17,7 @@ for(const [role,claims] of [['admin',{role:'admin'}],['cash',{role:'cash'}],['ga
  const response=await fetch(authApi+'/accounts:signInWithPassword?key=emulator',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:user.email,password,returnSecureToken:true})});assert.ok(response.ok);const {idToken}=await response.json();actors[role]={uid:user.uid,token:claims,idToken};
 }
 async function allowed(path,role,method='GET',body){const response=await fetch(api+'/'+path,{method,headers:{...(role?{Authorization:'Bearer '+actors[role].idToken}:{}),'Content-Type':'application/json'},...(body?{body:JSON.stringify(body)}:{})});return response.status;}
+await db.doc('control_meta/reception').set({lastSeen:Date.now(),paused:false});
 await db.doc('catalogo/water').set({name:'Agua 500 ml',price:1,priceCents:100,cat:'bebidas',enabled:true,inventoryMode:'unit',stockItemId:'water',receta:[]});
 await db.doc('inventario/water').set({name:'Agua 500 ml',unit:'und',kind:'retail',stock:1,minStock:1});
 await db.doc('clientes/private').set({name:'Cliente privado',phone:'0000000000'});

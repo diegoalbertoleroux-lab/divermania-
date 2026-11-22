@@ -19,6 +19,7 @@ for(const [role,claims] of [['admin',{role:'admin'}],['cash',{role:'cash'}],['ga
  const response=await fetch(authApi+'/accounts:signInWithPassword?key=emulator',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:user.email,password,returnSecureToken:true})});assert.ok(response.ok);const {idToken}=await response.json();actors[role]={uid:user.uid,token:claims,idToken};
 }
 async function allowed(path,role,method='GET',body){const response=await fetch(api+'/'+path,{method,headers:{...(role?{Authorization:'Bearer '+actors[role].idToken}:{}),'Content-Type':'application/json'},...(body?{body:JSON.stringify(body)}:{})});return response.status;}
+await db.doc('control_meta/reception').set({lastSeen:Date.now(),paused:false});
 await db.doc('catalogo/water').set({name:'Agua 500 ml',price:1,priceCents:100,cat:'bebidas',enabled:true,inventoryMode:'unit',stockItemId:'water',receta:[]});
 await db.doc('inventario/water').set({name:'Agua 500 ml',unit:'und',kind:'retail',stock:1,minStock:1});
 await db.doc('clientes/private').set({name:'Cliente privado',phone:'0000000000'});
@@ -65,5 +66,29 @@ assert.equal((await call('device.heartbeat',{},'paired')).name,'TV de prueba');
 assert.equal(await allowed('tablero_pedidos','paired'),200);
 await call('device.revoke',{id:paired.id});
 await assert.rejects(call('device.heartbeat',{},'paired'));assert.equal(await allowed('tablero_pedidos','paired'),403);
-console.log('WORKER HTTP + FIRESTORE REST OK: roles, public tracking, protected stock, last-unit concurrency, cancellation, purchase retry, exclusive Play and paired/revoked TV using Worker-signed tokens.');
+// Exercise editable read policies with an already-issued legacy token.
+await db.doc('accesos/'+actors.cash.uid).set({profile:'inventory',caps:['inventory.view','inventory.move'],disabled:false});
+assert.equal(await allowed('inventario/water','cash'),200);
+assert.equal(await allowed('pedidos','cash'),403);
+await assert.rejects(call('ticket.create',{area:'play',minutes:15,childName:'No permitido',paymentConfirmed:true},'cash'));
+await call('inventory.adjust',{id:'water',kind:'count',qty:4,reason:'Conteo verificado'},'cash');
+assert.equal((await db.doc('inventario/water').get()).data().stock,4);
+await db.doc('accesos/'+actors.cash.uid).update({disabled:true});
+assert.equal(await allowed('inventario/water','cash'),403);
+await assert.rejects(call('inventory.adjust',{id:'water',kind:'count',qty:8,reason:'No permitido'},'cash'));
+await db.doc('accesos/'+actors.cash.uid).delete();
+const chatKey=crypto.randomUUID();await call('chat.send',{channel:'equipo',text:'Prueba privada',reference:'Pedido #101'},'cash',chatKey);
+await call('chat.send',{channel:'equipo',text:'Prueba privada',reference:'Pedido #101'},'cash',chatKey);
+const messages=await call('chat.list',{channel:'equipo'},'cash');assert.equal(messages.messages.length,1);
+assert.equal((await call('chat.list',{channel:'equipo',after:messages.messages[0].at},'cash')).messages.length,0);
+assert.equal(await allowed('chats/equipo/mensajes','cash'),403);
+await assert.rejects(call('chat.list',{channel:'equipo'},null));
+const debt=await call('finance.debt',{kind:'cxc',name:'Cliente de prueba',amount:5},'cash'),abonoKey=crypto.randomUUID(),abono={kind:'cxc',id:debt.id,amount:2,currency:'VES',rate:200,method:'pago_movil'};
+await call('finance.payment',abono,'cash',abonoKey);await call('finance.payment',abono,'cash',abonoKey);
+assert.equal((await db.doc('cxc/'+debt.id).get()).data().paidCents,200);
+assert.equal((await db.doc('transacciones/'+abonoKey).get()).data().originalAmount,400);
+await call('orders.heartbeat',{},'cash');await call('orders.availability',{paused:true},'cash');
+await assert.rejects(call('order.create',{name:'No recibir',items:[{productId:'water',qty:1}]},null));
+assert.equal((await db.doc('inventario/water').get()).data().stock,4);
+console.log('WORKER HTTP + FIRESTORE REST OK: roles, public tracking, protected stock, last-unit concurrency, cancellation, purchase retry, exclusive Play, paired/revoked TV, editable read policies, private incremental chat, partial payments and paused reception.');
 await db.terminate();

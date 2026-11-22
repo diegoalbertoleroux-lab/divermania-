@@ -65,7 +65,7 @@ export function applyCommand(original,command,now=Date.now()) {
  } else if(command.type==='order.customer') {
   const o=s.orders.find(o=>o.id===p.id);assert(o,'Pedido no encontrado.');o.customerId=customerId;
  } else if(command.type==='order.payment') {
-  const o=s.orders.find(o=>o.id===p.id);assert(o&&o.status!=='cancelled','Pedido no disponible.');assert(clean(p.invoiceRef),'Indica la referencia del sistema de facturación.');o.paymentConfirmed=true;o.invoiceRef=clean(p.invoiceRef);o.paidAt=now;
+  const o=s.orders.find(o=>o.id===p.id);assert(o&&o.status!=='cancelled','Pedido no disponible.');assert(!o.paymentConfirmed,'El pedido ya tiene un pago confirmado.');assert(clean(p.invoiceRef),'Indica la referencia del sistema de facturación.');o.paymentConfirmed=true;o.invoiceRef=clean(p.invoiceRef);o.paidAt=now;
  } else if(command.type==='customer.save') {
   const name=clean(p.name);const phone=normalizePhone(p.phone);assert(name.length>=2,'Escribe el nombre del cliente.');assert(phone.length>=10&&phone.length<=15,'Introduce un teléfono válido.');assert(p.consent===true,'El cliente debe aceptar guardar su ficha.');
   const found=s.customers.find(c=>c.phone===phone);if(found){assert(!p.id||found.id===p.id,'Ese teléfono pertenece a otra ficha.');Object.assign(found,{name,promotions:p.promotions===true,updatedAt:now});result={id:found.id,existing:true};}else {const c={id:uid(),name,phone,consent:true,promotions:p.promotions===true,createdAt:now};s.customers.push(c);result={id:c.id};}
@@ -75,6 +75,6 @@ export function applyCommand(original,command,now=Date.now()) {
 let clockOffset=0;export const setClockOffset=n=>{clockOffset=Number(n)||0;};export const serverTime=()=>Date.now()+clockOffset;
 export const remaining=(t,now=serverTime())=>t.endAt?Math.max(0,t.endAt-now):0;
 export function clock(ms){const sec=Math.max(0,Math.ceil(ms/1000));return `${String(Math.floor(sec/60)).padStart(2,'0')}:${String(sec%60).padStart(2,'0')}`;}
-export const orderLabels={pending:'Recibido',preparing:'En preparación',ready:'Listo para retirar',delivered:'Entregado',cancelled:'Cancelado'};
+export const orderLabels={pending:'Por confirmar',preparing:'En preparación',ready:'Listo para retirar',delivered:'Entregado',cancelled:'Cancelado'};
 export function publicOrder(o) {return o?{displayName:orderDisplayName(o),number:o.number,status:o.status,createdAt:o.createdAt,updatedAt:o.updatedAt,items:o.items,total:o.total,table:o.table}:null;}
 export function publicBoard(s,type){return type==='orders'?{orders:s.orders.filter(o=>['preparing','ready'].includes(o.status)).map(boardOrder)}:{stations:s.stations,tickets:s.tickets.filter(t=>t.status==='active'&&t.area===(type==='park'?'park':'play')).map(t=>({number:t.number,stationId:t.stationId,area:t.area,endAt:t.endAt,minutes:t.minutes})),capacity:s.capacity};}

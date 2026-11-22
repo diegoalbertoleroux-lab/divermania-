@@ -52,7 +52,7 @@ export function createWorker({services,cache}={}){
       if(request.method!=='POST')return json({error:{status:'INVALID_ARGUMENT',message:'Utiliza POST para esta operación.'}},405);
       const runtime=connect(env),actor=await authenticate(request,runtime.auth);
       if(path==='/api/images'){
-        if(!actor||!(actor.token.role==='admin'||actor.token.admin===true))throw new OperationError('permission-denied','Solo administración puede subir imágenes.');
+        if(runtime.controller?.authorizeUpload){await runtime.controller.authorizeUpload(actor);}else if(!actor||!(actor.token.role==='admin'||actor.token.admin===true))throw new OperationError('permission-denied','Solo administración puede subir imágenes.');
         if(!env.MENU_IMAGES)throw new OperationError('failed-precondition','Falta habilitar el almacenamiento gratuito de imágenes en Cloudflare.');
         const bytes=await readLimited(request,5*1024*1024),type=imageType(bytes);if(!type||type!==request.headers.get('Content-Type'))throw new OperationError('invalid-argument','El archivo debe ser una imagen JPG, PNG o WebP válida.');
         const name=crypto.randomUUID()+'.'+contentTypes[type];await env.MENU_IMAGES.put('menu/'+name,bytes,{metadata:{contentType:type}});return json({result:{image:'/api/images/'+name}});

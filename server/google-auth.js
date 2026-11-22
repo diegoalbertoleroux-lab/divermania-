@@ -62,5 +62,15 @@ export function createGoogleAuth({credentials,project,fetcher=fetch,now=Date.now
       clientSettings={apiKey,projectId:project,authDomain:project+'.firebaseapp.com'};clientUntil=now()+300000;return clientSettings;
     })().finally(()=>{pendingClient=null;});return pendingClient;
   }
-  return {accessToken,verifyIdToken,createCustomToken,revokeRefreshTokens,publicClientConfig};
+  async function listUsers(){const response=await fetcher(`https://identitytoolkit.googleapis.com/v1/projects/${project}/accounts:batchGet?maxResults=200`,{headers:{Authorization:'Bearer '+await accessToken()}});if(!response.ok)throw new OperationError('unavailable','No se pudo consultar al equipo.');return response.json();}
+  async function getUser(uid){const result=await request('accounts:lookup',{localId:[uid]});const u=result.users?.[0];if(!u)return null;return {...u,customClaims:JSON.parse(u.customAttributes||'{}')};}
+  async function setCustomUserClaims(uid,claims){await request('accounts:update',{localId:uid,customAttributes:JSON.stringify(claims)});}
+  async function createUser({uid,email,password,displayName}){
+    const {apiKey}=await publicClientConfig();
+    const response=await fetcher('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key='+encodeURIComponent(apiKey),{method:'POST',headers:{Authorization:'Bearer '+await accessToken(),'Content-Type':'application/json'},body:JSON.stringify({targetProjectId:project,localId:uid,email,password,displayName,returnSecureToken:false})});
+    const data=await response.json();
+    if(!response.ok){if(data.error?.message?.includes('EMAIL_EXISTS'))throw new OperationError('failed-precondition','Ese correo ya tiene una cuenta. Selecciónala en el equipo para asignar sus permisos.');throw new OperationError('unavailable','No se pudo crear la cuenta. Revisa correo, contraseña y conexión.');}
+    return {uid:data.localId,email};
+  }
+  return {accessToken,verifyIdToken,createCustomToken,revokeRefreshTokens,publicClientConfig,listUsers,getUser,setCustomUserClaims,createUser};
 }

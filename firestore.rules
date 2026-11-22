@@ -3,29 +3,33 @@ service cloud.firestore {
  match /databases/{database}/documents {
   function signed(){return request.auth != null;}
   function role(){return signed() && 'role' in request.auth.token ? request.auth.token.role : null;}
-  function admin(){return role() == 'admin' || (signed() && 'admin' in request.auth.token && request.auth.token.admin == true);}
-  function staff(){return admin() || role() in ['cash','entrance','gamer','kitchen'];}
-  function cashier(){return admin() || role() == 'cash';}
+  function owner(){return role() == 'admin' || (signed() && 'admin' in request.auth.token && request.auth.token.admin == true);}
+  function managed(){return signed() && exists(/databases/$(database)/documents/accesos/$(request.auth.uid));}
+  function policy(){return get(/databases/$(database)/documents/accesos/$(request.auth.uid)).data;}
+  function permitted(cap,legacy){return owner() || (managed() ? policy().disabled != true && cap in policy().caps : role() in legacy);}
+  function staff(){return owner() || (managed() ? policy().disabled != true : role() in ['cash','entrance','gamer','kitchen','supervisor','inventory']);}
   function display(kind){return signed() && 'screen' in request.auth.token && request.auth.token.screen == true && request.auth.token.board == kind && get(/databases/$(database)/documents/dispositivos/$(request.auth.token.deviceId)).data.revoked == false;}
   match /menu_publico/{id} {allow read: if true; allow write: if false;}
   match /catalogo/{id} {allow read: if true; allow write: if false;}
-  match /inventario/{id} {allow read: if staff(); allow write: if false;}
-  match /pedidos/{id} {allow read: if staff(); allow write: if false;}
-  match /pases/{id} {allow read: if staff(); allow write: if false;}
-  match /canjes/{id} {allow read: if staff(); allow write: if false;}
-  match /estaciones/{id} {allow read: if staff(); allow write: if false;}
+  match /inventario/{id} {allow read: if permitted('inventory.view',['cash','inventory','supervisor']); allow write: if false;}
+  match /pedidos/{id} {allow read: if permitted('orders.view',['cash','kitchen','supervisor']); allow write: if false;}
+  match /pases/{id} {allow read: if permitted('passes.view',['cash','entrance','gamer','supervisor']); allow write: if false;}
+  match /canjes/{id} {allow read: if permitted('passes.view',['cash','entrance','gamer','supervisor']) || permitted('vouchers',['kitchen']); allow write: if false;}
+  match /estaciones/{id} {allow read: if permitted('passes.view',['cash','entrance','gamer','supervisor']); allow write: if false;}
   match /estaciones_publicas/{id} {allow read: if staff() || display('gamer') || display('park'); allow write: if false;}
-  match /tablero_pedidos/{id} {allow read: if staff() || display('orders'); allow write: if false;}
-  match /tablero_sesiones/{id} {allow read: if staff() || display('gamer') || display('park'); allow write: if false;}
+  match /tablero_pedidos/{id} {allow read: if permitted('orders.view',['cash','kitchen','supervisor']) || display('orders'); allow write: if false;}
+  match /tablero_sesiones/{id} {allow read: if permitted('passes.view',['cash','entrance','gamer','supervisor']) || display('gamer') || display('park'); allow write: if false;}
   match /pases_publicos/{token} {allow get: if token.size() >= 48; allow list,write: if false;}
   match /seguimiento/{token} {allow get: if token.size() >= 48; allow list,write: if false;}
-  match /clientes/{id} {allow read: if cashier() || role() == 'entrance'; allow write: if false; match /visitas/{day}{allow read: if cashier() || role() == 'entrance'; allow write: if false;}}
-  match /transacciones/{id} {allow read: if cashier(); allow write: if false;}
-  match /cxc/{id} {allow read: if cashier(); allow write: if false;}
-  match /cxp/{id} {allow read: if cashier(); allow write: if false;}
+  match /clientes/{id} {allow read: if permitted('customers',['cash','entrance','supervisor']); allow write: if false; match /visitas/{day}{allow read: if permitted('customers',['cash','entrance','supervisor']); allow write: if false;}}
+  match /transacciones/{id} {allow read: if permitted('finance',['cash','supervisor']); allow write: if false;}
+  match /cxc/{id} {allow read: if permitted('finance',['cash','supervisor']); allow write: if false;}
+  match /cxp/{id} {allow read: if permitted('finance',['cash','supervisor']); allow write: if false;}
   match /configuracion/{id} {allow read: if staff(); allow write: if false;}
-  match /dispositivos/{id} {allow read: if admin() || (signed() && 'deviceId' in request.auth.token && request.auth.token.deviceId == id); allow write: if false;}
-  match /movimientos_inventario/{id} {allow read: if cashier(); allow write: if false;}
+  match /accesos/{id} {allow get: if owner() || signed() && request.auth.uid == id; allow list: if owner(); allow write: if false;}
+  match /dispositivos/{id} {allow read: if permitted('screens',['supervisor']) || (signed() && 'deviceId' in request.auth.token && request.auth.token.deviceId == id); allow write: if false;}
+  match /movimientos_inventario/{id} {allow read: if permitted('inventory.view',['cash','inventory','supervisor']); allow write: if false;}
+  // Private chat and policy changes use only the authenticated Worker.
   match /{document=**} {allow read,write: if false;}
  }
 }

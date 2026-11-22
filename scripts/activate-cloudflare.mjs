@@ -9,8 +9,8 @@ import {normalizeCloudflareToken,cloudflareError} from './cloudflare-auth.mjs';
 import {googleRequest,withIamRetry,inspectGoogleSetup} from './google-setup.mjs';
 
 const root=fileURLToPath(new URL('../',import.meta.url)),project='divermania-3f104',pages='divermania',branch='codex/divermania-menu-control';
-const stage=process.argv[2]||'check',allowed=['check','prepare','admin','publish','diagnose'];
-if(!allowed.includes(stage)){console.log('Uso: node scripts/activate-cloudflare.mjs check|prepare|admin|publish|diagnose');process.exit(1);}
+const stage=process.argv[2]||'check',allowed=['check','prepare','admin','publish','diagnose','rules'];
+if(!allowed.includes(stage)){console.log('Uso: node scripts/activate-cloudflare.mjs check|prepare|admin|publish|diagnose|rules');process.exit(1);}
 const backup=join(root,'.divermania-backups'),recordFile=join(backup,'activation.json');
 let prompt,cloudflareToken,googleToken;
 function question(text){prompt??=createInterface({input:process.stdin,output:process.stdout});return prompt.question(text);}
@@ -127,11 +127,20 @@ async function publish(accountId,config,record){
   console.log('Cliente: https://divermania.pages.dev/cliente\nAdministrador: https://divermania.pages.dev/admin\nTV pedidos: https://divermania.pages.dev/?view=board&kind=orders');
   console.log('Ahora inicia sesión y comprueba un pedido, el stock, un pase y las pantallas en dos dispositivos.');
 }
+async function updateWorkspaceRules(){
+ const previous=await snapshotRules(),content=await readFile(join(root,'firestore.rules'),'utf8');
+ const ruleset=await google(`https://firebaserules.googleapis.com/v1/projects/${project}/rulesets`,{method:'POST',body:{source:{files:[{name:'firestore.rules',content}]}}});
+ const releaseUrl=`https://firebaserules.googleapis.com/v1/projects/${project}/releases/cloud.firestore`;
+ await google(releaseUrl,{method:'PATCH',body:{release:{name:`projects/${project}/releases/cloud.firestore`,rulesetName:ruleset.name}}});
+ await google(`https://firestore.googleapis.com/v1/projects/${project}/databases/(default)/documents/control_meta/workspaceRules`,{method:'PATCH',body:{fields:{version:{integerValue:'1'},updatedAt:{integerValue:String(Date.now())},previousRules:{stringValue:previous.rulesetName}}}});
+ console.log('Reglas de permisos actualizadas. Ya puedes personalizar los accesos desde Usuarios y permisos. No se cambiaron pedidos ni existencias.');
+}
 try{
   console.log(`Divermanía · Firebase Spark + Cloudflare Workers Free · Etapa: ${stage}`);
   capture('gcloud',['config','get-value','project']);await google(`https://firestore.googleapis.com/v1/projects/${project}/databases/(default)`);
   let record=await readRecord();
-  if(stage==='diagnose')await inspectGoogleSetup({google,project});
+  if(stage==='rules')await updateWorkspaceRules();
+  else if(stage==='diagnose')await inspectGoogleSetup({google,project});
   else if(stage==='admin')await adminAccount(record);
   else{
     const {accountId,config}=await authorizeCloudflare();
