@@ -22,3 +22,5 @@ test('Reposición usa consumo registrado y conserva mínimos cuando no hay histo
  assert.equal(rows.find(r=>r.id==='a').suggested,7);assert.equal(rows.find(r=>r.id==='b').suggested,17);
 });
 test('Una receta incompleta o sin costos nunca inventa margen',()=>{assert.equal(recipeCost({recipeStatus:'pending',receta:[{id:'a',qty:1}]},{a:{unitCostUsd:2}}),null);assert.equal(recipeCost({receta:[{id:'a',qty:2}]},{}),null);assert.equal(recipeCost({receta:[{id:'a',qty:2}]},{a:{unitCostUsd:1.5}}),300);assert.equal(identity('v-12.345.678'),'V12345678');});
+
+test('Reposición no cuenta un pedido devuelto aunque los movimientos lleguen fuera de orden',()=>{const now=Date.now(),inventory={a:{name:'A',unit:'und',stock:2,minStock:0}},movements=[{type:'devolucion',at:now,moves:{a:3}},{type:'pedido',at:now,moves:{a:3}}];assert.deepEqual(shoppingAdvice(inventory,movements,{now}),[]);});
