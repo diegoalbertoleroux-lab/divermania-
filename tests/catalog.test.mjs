@@ -1,0 +1,4 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {mergeMenuProduct} from '../shared/catalog.js';
+test('Importar el menú conserva receta original, variantes y vínculos de stock',()=>{const old={id:'existente',name:'Perro especial',receta:[{id:'pan',qty:1},{id:'queso',qty:20}],recipeDraft:[{id:'pan',qty:1},{id:'queso',qty:null}],recipeStatus:'pending',recipesByOption:{Pollo:[{id:'pollo',qty:100}]},inventoryMode:'recipe'},next=mergeMenuProduct({id:'nuevo',name:'Perro Especial',priceCents:300,receta:[],recipeStatus:'pending'},old);assert.equal(next.id,'existente');assert.deepEqual(next.receta,old.receta);assert.deepEqual(next.recipeDraft,old.recipeDraft);assert.deepEqual(next.recipesByOption,old.recipesByOption);assert.equal(next.price,3);assert.equal(next.recipeStatus,'pending');});

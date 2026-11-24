@@ -1,0 +1,25 @@
+/* Staff brand text follows each user’s palette. Public views retain their identity. */
+html[data-app-view=staff] .experience-access .menu-kicker{color:var(--work-accent,var(--brand))!important}
+html[data-app-view=staff] .food-product-tag{color:var(--work-accent,var(--brand))!important}
+html[data-app-view=staff] .playful-symbol{color:var(--work-accent,var(--brand))!important}
+html[data-app-view=staff] .screen-connection-status>.icon{color:var(--work-accent,var(--brand))!important}
+html[data-app-view=staff] .screen-connection-status strong{color:var(--work-accent,var(--brand))!important}
+html[data-app-view=staff] .screen-connection-status .btn{color:var(--work-accent,var(--brand))!important}
+html[data-app-view=staff] .tracker-ready{color:var(--work-accent,var(--brand))!important}
+html[data-app-view=staff] [data-theme=dark] .food-product-tag,html[data-app-view=staff] [data-theme=dark] .food-photo-arrow{color:var(--work-accent,var(--brand))!important}
+html[data-app-view=staff] .back-control{color:var(--work-accent,var(--brand))!important}
+html[data-app-view=staff] .area-hub-open{color:var(--work-accent,var(--brand))!important}
+html[data-app-view=staff] .inventory-summary strong{color:var(--work-accent,var(--brand))!important}
+html[data-app-view=staff] .virtual-ticket-top>span:first-child{color:var(--work-accent,var(--brand))!important}
+html[data-app-view=staff] .virtual-ticket-number{color:var(--work-accent,var(--brand))!important}
+html[data-app-view=staff] .pass-time-block [data-countdown]{color:var(--work-accent,var(--brand))!important}
+html[data-app-view=staff] .manual-product small{color:var(--work-accent,var(--brand))!important}
+html[data-app-view=staff] .manual-product>b{color:var(--work-accent,var(--brand))!important}
+html[data-app-view=staff] .table-qr-card h2{color:var(--work-accent,var(--brand))!important}
+html[data-app-view=staff] .table-qr-card>strong{color:var(--work-accent,var(--brand))!important}
+html[data-app-view=staff] .turn-customer{color:var(--work-accent,var(--brand))!important}
+html[data-app-view=staff] .ready .turn-customer{color:var(--work-accent,var(--brand))!important}
+html[data-app-view=staff] .notification-options strong{color:var(--work-accent,var(--brand))!important}
+html[data-app-view=staff] .order-person-name{color:var(--work-accent,var(--brand))!important}
+html[data-app-view=staff] .work-number{color:var(--work-accent,var(--brand))!important}
+html[data-app-view=staff] .tracker-pending{color:var(--work-accent,var(--brand))!important}

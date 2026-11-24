@@ -1,0 +1,11 @@
+FUENTE DE LOS RECURSOS DEL MENÚ
+
+burger.png / burger-mask.png: imagen y máscara alfa extraídas sin alteraciones del PDF Menú Divermanía.pdf suministrado por el usuario (página 1, imagen 11 y máscara 12).
+hotdog.png / hotdog-mask.png: imagen y máscara alfa extraídas sin alteraciones del mismo PDF (página 1, imagen 15 y máscara 16).
+pizza.jpg: flujo JPEG original extraído sin recodificar del mismo PDF (página 1, imagen 10).
+
+Las máscaras se pueden aplicar con mask-image y mask-mode:luminance. No se ha fundido el fondo negro del RGB con la imagen ni modificado las fotografías. La fotografía de pizza y las imágenes aisladas provienen del material gráfico suministrado; no se verifica que representen los platos servidos actualmente.
+
+/perrosencillo.jpeg y /perroespecial.jpeg son las fotografías que ya estaban presentes en el repositorio del negocio. /logodivermania.png es el logo ya presente. No se añadieron imágenes generadas ni fotografías externas.
+
+El usuario debe conservar los derechos o licencias correspondientes al material gráfico original.

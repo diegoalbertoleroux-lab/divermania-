@@ -1,0 +1,6 @@
+import {barcodeValue} from '../shared/barcodes.js';
+import {OperationError} from './errors.js';
+export function createBarcodes({db}){return async(type,p,actor,key)=>{let code;try{code=barcodeValue(p.code);}catch(e){throw new OperationError('invalid-argument',e.message);}const binding=db.doc('codigos_barras/'+code);
+ if(type==='barcode.resolve'){const snap=await binding.get();if(!snap.exists)return {found:false,code};const product=await db.doc('catalogo/'+snap.data().productId).get();if(!product.exists||product.data().enabled===false)return {found:false,code};return {found:true,code,productId:product.id};}
+ if(!/^[a-zA-Z0-9_-]{1,150}$/.test(p.productId||''))throw new OperationError('invalid-argument','Selecciona un producto empacado.');
+ return db.runTransaction(async tx=>{const saved=await tx.get(binding),product=await tx.get(db.doc('catalogo/'+p.productId));if(!product.exists||product.data().inventoryMode!=='unit')throw new OperationError('failed-precondition','Elige un snack o bebida que se venda por unidad.');if(saved.exists&&saved.data().productId!==product.id)throw new OperationError('already-exists','Este código ya está vinculado a otro producto.');tx.set(binding,{productId:product.id,actor,at:Date.now()});tx.set(db.doc('actividad/'+key),{type,actor,reference:product.id,at:Date.now()});return {productId:product.id,code};});};}

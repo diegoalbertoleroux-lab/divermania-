@@ -1,0 +1,12 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
+import {packages,normalizePhone,businessDay} from '../shared/settings.js';
+import {productFromCloud} from '../shared/codec.js';
+import {applyCommand,emptyState} from '../shared/domain.js';
+const menu=JSON.parse(await readFile(new URL('../data/menu.json',import.meta.url)));
+test('El menú conserva los 41 productos, sus tamaños y precios faltantes',()=>{assert.equal(menu.length,41);assert.equal(new Set(menu.map(p=>p.id)).size,41);const pending=menu.filter(p=>p.priceCents===null);assert.equal(pending.length,2);assert.ok(pending.every(p=>p.enabled===false));assert.equal(menu.find(p=>p.id==='menu-perro-tradicional').priceCents,230);assert.equal(menu.filter(p=>p.cat==='pizzas').length,9);assert.ok(menu.every(p=>Array.isArray(p.receta)&&p.receta.length===0));});
+test('Tarifas coinciden con la información del negocio y no hay un bloque de 90 minutos',()=>{assert.deepEqual(packages.park.map(p=>[p.minutes,p.price]),[[15,200],[30,400],[60,600]]);assert.deepEqual(packages.play.map(p=>[p.minutes,p.price]),[[15,200],[30,400],[60,500],[120,600]]);});
+test('Las opciones de carne y pollo se normalizan para poder elegirlas',()=>{const p=productFromCloud('p',menu.find(p=>p.id==='menu-burger-tradicional'));assert.ok(p.options.includes('Pollo crispy'));assert.ok(p.ingredients.includes('Huevo'));});
+test('Una variante no usa por error la receta de otra proteína',()=>{const s=emptyState();s.catalog=[{id:'p',name:'Burger',price:650,enabled:true,options:['Carne','Pollo'],ingredients:[],receta:[{id:'carne',qty:100}],recipesByOption:{Pollo:[{id:'pollo',qty:90}]}}];s.inventory={carne:{name:'Carne',stock:200},pollo:{name:'Pollo',stock:200}};const r=applyCommand(s,{key:crypto.randomUUID(),type:'order.create',payload:{items:[{productId:'p',qty:1,option:'Pollo'}]}});assert.equal(r.state.inventory.carne.stock,200);assert.equal(r.state.inventory.pollo.stock,110);assert.equal(r.state.orders[0].items[0].option,'Pollo');});
+test('Día de visita y teléfono usan la configuración de Venezuela',()=>{assert.equal(normalizePhone('0412 1234567'),'584121234567');assert.equal(businessDay(Date.UTC(2026,10,17,1,0)),'2026-11-16');});
