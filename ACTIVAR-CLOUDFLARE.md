@@ -1,3 +1,5 @@
+> **Funciones y validación actuales:** [MEJORAS-OPERACION.md](MEJORAS-OPERACION.md). Los nuevos módulos se publican con la rama y no necesitan exponer la base de datos ni un servidor local.
+
 # Activación sin tarjeta: Firebase Spark + Cloudflare Workers Free
 
 Se conserva `divermania-3f104`: catálogo, recetas, ingredientes, snacks, pedidos, pases y clientes. Firestore y Authentication continúan en Firebase; las operaciones de servidor se ejecutan en el Worker de Cloudflare Pages. Las fotos nuevas se guardan en un espacio KV gratuito de Cloudflare. No se despliegan Functions, no se usa Firebase Storage para fotos nuevas y no se activa Blaze.
@@ -105,7 +107,7 @@ Sin conexión se conserva la interfaz visitada, el último menú y borradores; l
 
 La receta Valery 332 se incorpora como referencia revisable. Las unidades desconocidas deben confirmarse y vincularse a insumos existentes antes de aplicarla a la variante de pollo. Los conteos de las capturas no reemplazan las existencias actuales. La ayuda integrada usa procedimientos definidos; no se presenta como una IA generativa conectada. La impresión opcional usa el diálogo del sistema y requiere la ticketera instalada.
 
-El chat se consulta solo mientras está abierto, con un máximo de 40 mensajes por consulta y cursor incremental. Colores y configuración nuevos se consultan mediante el Worker para funcionar antes de actualizar las reglas. El respaldo exportado respeta los permisos de lectura; una restauración se revisa y concilia antes de reemplazar registros. El balance financiero es operativo, no utilidad contable ni factura fiscal.
+El chat tiene un panel rápido e inbox mientras se usa la app. Puede activar notificaciones push mediante el permiso del navegador; las suscripciones y claves privadas permanecen en colecciones reservadas al servidor. Colores y configuración nuevos se consultan mediante el Worker para funcionar antes de actualizar las reglas. El respaldo exportado respeta los permisos de lectura; una restauración se revisa y concilia antes de reemplazar registros. El balance financiero es operativo, no utilidad contable ni factura fiscal.
 
 Se pueden crear cuentas del equipo desde Usuarios y permisos, con perfil inicial y contraseña. La aplicación no conserva esa contraseña en documentos de operaciones ni en el estado de demostración. Los datos locales de demostración usan claves separadas para carrito, borradores, apariencia y menú guardado.
 

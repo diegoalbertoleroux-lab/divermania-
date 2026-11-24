@@ -1,3 +1,5 @@
+> **Actualización operativa:** consulta [MEJORAS-OPERACION.md](MEJORAS-OPERACION.md) para pagos divididos, turnos por cajero, familias, compras, lotes, notificaciones y pantallas de menú.
+
 # Divermanía · Menú, parque y zona gamer
 
 La aplicación conserva el proyecto Firebase **divermania-3f104** y el alojamiento en Cloudflare Pages. La nueva versión añade menú basado en el PDF, taquilla, sesiones por tiempo, clientes frecuentes, cocina y pantallas vinculadas. Los dos HTML originales se conservan byte por byte en `originales/`.
@@ -30,7 +32,7 @@ La pantalla de pedidos conserva cada tarjeta al recibir cambios, anima la entrad
 
 Taquilla pide el nombre del niño o jugador y permite un adulto responsable separado. Cada pase tiene un código `TAQ-000001` generado con el contador del servidor. El comprobante externo es opcional y solo relaciona el pase con otro sistema de caja. Las ampliaciones generan sufijos `-A01`, `-A02` si no se aporta comprobante. La confirmación de pago sigue siendo obligatoria. Los nombres se muestran al equipo; las pantallas públicas mantienen números de pase.
 
-Con la página abierta y el sonido activado en ese dispositivo, los avisos suenan a cinco y un minuto; al llegar a cero aparece una alerta visual y una alarma que se repite cada doce segundos hasta reconocerla. Reconocer una alarma silencia este dispositivo y no libera la estación. La ampliación reactiva los avisos con la nueva hora final. El navegador requiere una interacción para habilitar audio; revisar volumen, pantalla activa y comportamiento real en cada TV/PC. La alarma se produce en el navegador del encargado o de la pantalla compartida, sin superponerse al HDMI del juego.
+Con la página abierta y el sonido activado en ese dispositivo, los avisos suenan a cinco y un minuto; al llegar a cero aparece una alerta visual y una sirena continua hasta reconocerla. Reconocer una alarma silencia este dispositivo y no libera la estación. La ampliación reactiva los avisos con la nueva hora final. El navegador requiere una interacción para habilitar audio; revisar volumen, pantalla activa y comportamiento real en cada TV/PC. La alarma se produce en el navegador del encargado o de la pantalla compartida, sin superponerse al HDMI del juego.
 
 Las cotufas incluidas en paquetes se vinculan a un producto del catálogo: receta para preparación en el local, o unidad para bolsa empacada. Ventas y canjes utilizan la misma existencia. Se conserva la compatibilidad con recetas de cotufas guardadas previamente. La revisión local también crea canjes e ingresos de pases, respeta configuración de paquetes y protege reintentos de compras, productos y canjes.
 
@@ -93,7 +95,7 @@ El entorno de desarrollo no recibe las credenciales del propietario. La activaci
 
 `npm test` comprueba reglas de negocio y el backend con un almacén transaccional simulado: precios de servidor, stock, reintentos, exclusividad de estación, roles, canjes, códigos de TV, clientes, tarifas, variantes, privacidad y estados de pases públicos, cambios de imagen sin alterar receta, altas de insumos y compatibilidad con pedidos anteriores. Se verifican lecturas antes de escrituras en las transacciones. Estas pruebas no sustituyen probar las reglas con el emulador y las cuentas reales.
 
-Se comprobó el renderizado de las vistas y formularios con un DOM de prueba. La herramienta de navegador real no está disponible en este entorno; la revisión visual, audio en TVs y permisos reales deben verificarse en la puesta en marcha.
+Se comprobó el renderizado de las vistas y formularios con un DOM de prueba. Se verificaron recorridos con Chromium. El audio, las cámaras, los permisos y las ticketeras físicas deben comprobarse en los dispositivos del local.
 
 El sistema solo muestra avisos del pedido con la página abierta. No incluye Web Push con el navegador cerrado ni envío automático de WhatsApp. El botón de WhatsApp prepara el mensaje; la persona confirma su envío. El sistema actual de facturación sigue emitiendo la factura; esta versión guarda su referencia. Para integración automática se necesita conocer su API o formato de importación.
 

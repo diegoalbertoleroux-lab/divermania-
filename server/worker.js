@@ -61,7 +61,7 @@ export function createWorker({services,cache}={}){
       let data;try{data=JSON.parse(new TextDecoder().decode(await readLimited(request,256*1024)));}catch(e){if(e instanceof OperationError)throw e;throw new OperationError('invalid-argument','Solicitud inválida.');}
       if(!data||typeof data!=='object'||Array.isArray(data)||!data.data||typeof data.data!=='object'||Array.isArray(data.data)||data.data.payload&&(typeof data.data.payload!=='object'||Array.isArray(data.data.payload)))throw new OperationError('invalid-argument','Solicitud inválida.');
       if(data.data.type==='catalog.public')return await catalog(request,runtime,context);
-      const result=await runtime.controller.handle({data:data.data,auth:actor,rawRequest:{ip:request.headers.get('CF-Connecting-IP')||'unknown'}});
+      const result=await runtime.controller.handle({data:data.data,auth:actor,rawRequest:{ip:request.headers.get('CF-Connecting-IP')||'unknown'},defer:context?.waitUntil?promise=>context.waitUntil(promise):null});
       return json({result});
     }catch(error){const known=error instanceof OperationError;return json({error:{status:(known?error.code:'internal').replaceAll('-','_').toUpperCase(),message:known?error.message:'No se pudo completar la operación. Conserva el pedido y vuelve a intentarlo.'}},codes[error.code]||500);}
   }};

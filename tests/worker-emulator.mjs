@@ -109,5 +109,22 @@ const closed=(await db.doc('turnos/current').get()).data();assert.equal(closed.e
 await call('delivery.archive',{id:cashOrder.id,confirm:'PRUEBAS',restock:true});
 assert.equal((await db.doc('pedidos/'+cashOrder.id).get()).data().archived,true);
 assert.equal((await db.doc('inventario/water').get()).data().stock,5);
+// New payment and family flows exercise the real REST transaction adapter.
+await call('finance.shift.open',{amount:0,amountVES:0},'cash');
+const split=await call('order.create',{name:'Pago mixto ficticio',items:[{productId:'water',qty:2}]},'cash');
+const splitKey=crypto.randomUUID(),splitPayload={id:split.id,payments:[{currency:'USD',method:'zelle',amount:.5}]};
+await call('order.payment',splitPayload,'cash',splitKey);await call('order.payment',splitPayload,'cash',splitKey);
+const balance=await call('order.payment',{id:split.id,payments:[{currency:'VES',method:'efectivo',amount:400,rate:200}]},'cash');
+assert.equal(balance.remainingCents,0);assert.equal((await db.doc('pedidos/'+split.id).get()).data().paidCents,200);
+assert.equal((await db.doc('turnos/current').get()).data().totals.ves,30000);
+const family=await call('customer.family.save',{document:'V12345678',name:'Representante ficticio',phone:'04121234567',children:['Niño ficticio'],consent:true},'cash');
+await call('ticket.create',{area:'park',minutes:15,childName:'Segundo niño ficticio',customerId:family.id,paymentConfirmed:true},'cash');
+assert.equal((await db.doc('clientes/'+family.id).get()).data().children.length,2);
+const supplier=await call('supplier.save',{name:'Proveedor ficticio'},'cash');
+await call('inventory.receive',{id:'water',supplierId:supplier.id,packs:1,packSize:12,costUsd:6,credit:true,lot:'L-EMULATOR',expires:'2030-01-01'},'cash');
+const tracked=await call('order.create',{name:'Venta lote ficticia',items:[{productId:'water',qty:1}]},'cash');
+assert.equal((await db.doc('lotes_inventario/water').get()).data().lots[0].remaining,11);
+await call('order.status',{id:tracked.id,status:'cancelled'},'cash');
+assert.equal((await db.doc('lotes_inventario/water').get()).data().lots[0].remaining,12);
 console.log('WORKER HTTP + FIRESTORE REST OK: roles, public tracking, protected stock, last-unit concurrency, cancellation, purchase retry, exclusive Play, paired/revoked TV, editable read policies, private incremental chat, partial payments, paused reception, personal preferences, barcodes, alarm acknowledgment, cash reconciliation and reviewed test archival.');
 await db.terminate();
