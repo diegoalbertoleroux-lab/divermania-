@@ -1,3 +1,20 @@
+# Actualización de pantallas, personalización y operación
+
+- **Televisores:** cuatro tarjetas visibles: Pedidos, Menú digital, Gamer y Parque. Cada una permite abrir, copiar, mostrar QR y preparar vinculación. Pedidos conserva logo y reloj, usa dos columnas grandes y pagina tarjetas completas cuando no caben. Los controles se ocultan al dejar de interactuar. En el televisor físico desactiva overscan si sus bordes quedan fuera de pantalla.
+- **Ticket del cliente:** número de turno destacado, QR de seguimiento y detalle. La comanda separa piezas, variantes, SIN, EXTRA y observaciones; omite importes. Las reimpresiones desde el mismo equipo se identifican como COPIA. La impresión térmica mantiene 58/80 mm configurables.
+- **Apariencia:** Claro, Oscuro o Seguir al dispositivo. Color principal editable y paletas independientes para menú lateral, tarjetas, fondo y texto. Se guardan por usuario; el cliente y las pantallas públicas mantienen su identidad. En oscuro los acentos de texto se aclaran para conservar lectura; los botones mantienen el principal seleccionado.
+- **Combos por piezas:** en Catálogo → Componentes y extras, añade grupos con cantidad y productos permitidos. Cada pieza admite variante, ingredientes quitados y extras. El combo cobra su precio base más los extras seleccionados y descuenta las recetas de las piezas una sola vez. No suma además la receta plana del combo. No se admiten combos anidados. Los combos anteriores conservan su receta hasta que se configure su composición real.
+- **Extras:** registra nombre, precio real e insumos en el producto individual. Los gramajes desconocidos quedan pendientes. No se crean cantidades ni cargos inventados. Un combo compuesto no muestra un margen calculado a partir de su antigua receta plana.
+- **Órdenes de compra:** Inventario → Proveedores y compras → número OC. Permite consultar documento, imprimir/guardar PDF, descargar HTML y abrir WhatsApp con el mensaje preparado si hay teléfono. El empleado confirma el envío. Crear la orden no mueve dinero ni stock. Recibir esta orden precarga proveedor, artículo pendiente y cantidad; registra costo y pago/crédito al confirmar. Se conserva estado pendiente, parcial o recibido.
+- **Conteo por sección:** deja vacío lo no contado; cero significa agotado. Introduce el total físico todavía presente, incluidas reservas pendientes. La aprobación reconcilia disponibles y reservas y conserva responsables; no equivale a una compra.
+- **Chat:** acceso rápido en cabecera, canales y conversaciones privadas por destinatario. La consulta, el buzón y las notificaciones privadas se restringen a participantes en el servidor. Se conservan lecturas por cuenta. Los contadores corresponden al historial reciente consultado. Las notificaciones requieren permiso y compatibilidad del dispositivo.
+- **Ayuda:** asistente guiado con búsqueda, preguntas relacionadas y enlaces a secciones. Cubre pedidos, retrasos, comandas, compras, inventario, pagos, tiempos, pantallas, permisos, temas, conexión y respaldo. Sus respuestas son procedimientos definidos; no hay proveedor de IA conectado.
+- **Perfiles iniciales:** Parque y gamer, Taquilla, Cocina y Administrador. Permisos editables individualmente, incluido un administrador gestionado. La cuenta propietaria inicial continúa protegida. Los perfiles antiguos se conservan para no interrumpir accesos existentes.
+
+El flujo de Guardar pedido / Guardar y cobrar se conserva. Registrar un pago no emite factura fiscal ni ejecuta movimientos bancarios. Las pruebas utilizan datos aislados; esta actualización no borra pedidos, clientes ni operaciones del negocio. Una entrega vacía exige revisar y archivar únicamente las operaciones ficticias, conservando menú y recetas.
+
+---
+
 # Actualización operativa de Divermanía
 
 Se mantiene la aplicación web en Cloudflare Pages y Workers con Firestore y Authentication. Publicar esta actualización no vacía la base de datos, no inventa bebidas o gramajes y no cambia el menú público por las preferencias de un empleado.
@@ -67,3 +84,9 @@ El selector incluye más de cien familias web abiertas y fuentes de Office ya in
 - Aplicación instalada con red deshabilitada para abrir la interfaz y el menú guardados. No se habilitan escrituras operativas sin conexión.
 
 La validación física de impresora, cámara, altavoces, TV y notificaciones del sistema debe realizarse en los equipos del local. El acceso real sigue dependiendo de conexión, permisos y cuotas de los proveedores; esta actualización no ofrece una garantía de cero interrupciones.
+
+## Verificación de esta actualización
+
+`npm test` ejecuta las pruebas de negocio y servidor. `npm run test:worker` verifica las operaciones HTTP con Firestore y Authentication emulados en `demo-divermania`, incluidos componentes, extras, compras parciales y conversaciones privadas. `node tests/worker-runtime.mjs` comprueba el Worker empaquetado.
+
+Con `dist` servido localmente en el puerto 4173 y Playwright/Chromium disponibles, `node tests/improvements-browser.mjs` recorre temas, perfiles, ayuda, chat privado, configuración de combo, pedido, comanda PDF de 58 mm, compra y pantallas. Solo usa `?demo=1`; los artefactos van a `/tmp/divermania-qa` o a `DIVERMANIA_QA_SHOTS`. La prueba verifica los límites de los números dentro de cada tarjeta de TV en siete tamaños, hasta 4K. Audio real, permisos push, overscan y alimentación de papel se verifican en los equipos del local.

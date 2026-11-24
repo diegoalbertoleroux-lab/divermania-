@@ -1,0 +1,3 @@
+export const darkDefaults={darkSidebar:'#111827',darkSurface:'#202938',darkBackground:'#111827',darkInk:'#f3f4f6'};
+export function themePalette(a,systemDark=false){const dark=a.mode==='dark'||a.mode==='system'&&systemDark;return {dark,primary:a.primary,sidebar:dark?a.darkSidebar||darkDefaults.darkSidebar:a.sidebar,surface:dark?a.darkSurface||darkDefaults.darkSurface:a.surface,background:dark?a.darkBackground||darkDefaults.darkBackground:a.background,ink:dark?a.darkInk||darkDefaults.darkInk:a.ink};}
+export function contrastInk(hex){const n=hex.slice(1),values=[0,2,4].map(i=>parseInt(n.slice(i,i+2),16)/255).map(v=>v<=.04045?v/12.92:((v+.055)/1.055)**2.4);return .2126*values[0]+.7152*values[1]+.0722*values[2]>.179?'#211d19':'#ffffff';}

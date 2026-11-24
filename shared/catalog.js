@@ -3,6 +3,7 @@ export const categoryLabels={perros:'Perros',hamburguesas:'Hamburguesas',pizzas:
 export function catalogFields(p,old={},inventory={}){
  const name=String(p.name||'').trim(),price=Number(p.price),mode=p.inventoryMode||old.inventoryMode||'recipe';
  if(!name||p.price===null||p.price===''||!Number.isFinite(price)||price<0)throw new Error('Indica nombre y precio válidos.');
+ if(mode==='unit'&&(old.comboSlots?.length||old.extras?.length))throw new Error('Quita primero los componentes y extras para cambiar a venta por unidad.');
  if(!['recipe','unit'].includes(mode))throw new Error('Tipo de inventario inválido.');
  const options=p.options??old.options??[],values=options.flatMap(o=>o.values||[o.value||o.label||o]);
  const cleanRows=rows=>{if(!Array.isArray(rows)||rows.length>60)throw new Error('Receta inválida.');const seen=new Set();return rows.map(row=>{const ing=inventory[row.id];if(!ing)throw new Error('Registra el ingrediente antes de guardar la receta.');if(seen.has(row.id))throw new Error('Un ingrediente aparece dos veces en la misma receta.');seen.add(row.id);const qty=row.qty===null||row.qty===''||row.qty===undefined?null:Number(row.qty);if(qty!==null&&(!Number.isFinite(qty)||qty<=0))throw new Error('Las cantidades deben ser positivas o quedar pendientes.');return {id:row.id,qty};});};
@@ -20,7 +21,7 @@ export function catalogFields(p,old={},inventory={}){
 }
 export function mergeMenuProduct(raw,old={}){
  const next={...raw,id:old.id||raw.id,price:raw.priceCents===null?null:raw.priceCents/100};
- for(const key of ['receta','recipeDraft','recipesByOption','recipeDraftsByOption','inventoryMode','stockItemId','ingredientOptions','modifiersByOption'])if(Object.hasOwn(old,key))next[key]=old[key];
+ for(const key of ['receta','recipeDraft','recipesByOption','recipeDraftsByOption','inventoryMode','stockItemId','ingredientOptions','modifiersByOption','comboSlots','extras'])if(Object.hasOwn(old,key))next[key]=old[key];
  if(old.options?.length)next.options=old.options;
  if(old.recipeStatus)next.recipeStatus=old.recipeStatus;
  else next.recipeStatus=old.receta?.length?'configured':'pending';

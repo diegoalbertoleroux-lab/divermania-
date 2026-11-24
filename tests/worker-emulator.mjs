@@ -36,7 +36,7 @@ await db.doc('dispositivos/screen-test').update({revoked:true});assert.equal(awa
 assert.equal(await allowed('inventario/water','admin'),200);
 for(const role of ['admin','cash','gamer'])assert.equal(await allowed('inventario/water',role,'PATCH',{fields:{stock:{integerValue:'999'}}}),403,role+' must not bypass the inventory service');
 const rest=createFirestore({project,accessToken:async()=>'owner',baseUrl:'http://'+process.env.FIRESTORE_EMULATOR_HOST});
-const services={db:rest,auth:{verifyIdToken:async token=>{const claims=await auth.verifyIdToken(token);return {uid:claims.uid,token:claims};},createCustomToken:(...args)=>auth.createCustomToken(...args),revokeRefreshTokens:uid=>auth.revokeRefreshTokens(uid)}};
+const services={db:rest,auth:{getUser:uid=>auth.getUser(uid),listUsers:()=>auth.listUsers(),setCustomUserClaims:(...args)=>auth.setCustomUserClaims(...args),verifyIdToken:async token=>{const claims=await auth.verifyIdToken(token);return {uid:claims.uid,token:claims};},createCustomToken:(...args)=>auth.createCustomToken(...args),revokeRefreshTokens:uid=>auth.revokeRefreshTokens(uid)}};
 services.controller=createController(services);
 const worker=createWorker({services});
 const call=async(type,payload={},role='admin',key=crypto.randomUUID())=>{const request=new Request('https://local.example/api/control',{method:'POST',headers:{'Content-Type':'application/json','CF-Connecting-IP':'127.0.0.1',...(role?{Authorization:'Bearer '+actors[role].idToken}:{})},body:JSON.stringify({data:{type,payload,key}})});const response=await worker.fetch(request,{}),data=await response.json();if(data.error){const error=new Error(data.error.message);error.code=data.error.status;throw error;}assert.equal(response.status,200);return data.result;};
@@ -126,5 +126,29 @@ const tracked=await call('order.create',{name:'Venta lote ficticia',items:[{prod
 assert.equal((await db.doc('lotes_inventario/water').get()).data().lots[0].remaining,11);
 await call('order.status',{id:tracked.id,status:'cancelled'},'cash');
 assert.equal((await db.doc('lotes_inventario/water').get()).data().lots[0].remaining,12);
+// New composition and direct-message flows run through the Worker against native emulators.
+await db.doc('inventario/bread').set({name:'Pan real de prueba',stock:20,unit:'und'});
+await db.doc('inventario/sauce').set({name:'Salsa real de prueba',stock:1000,unit:'ml'});
+await db.doc('catalogo/dog-composed').set({name:'Perro de prueba',price:3,cat:'perros',receta:[{id:'bread',qty:1},{id:'sauce',qty:20}]});
+await call('catalog.composition',{id:'dog-composed',extras:[{id:'sauce-extra',name:'Salsa adicional',priceCents:50,recipeDraft:[{id:'sauce',qty:10}]}]});
+await db.doc('catalogo/box-composed').set({name:'Combo de prueba',price:5,cat:'combos',receta:[]});
+await call('catalog.composition',{id:'box-composed',comboSlots:[{id:'dogs',label:'Perros',qty:2,choices:['dog-composed']}]});
+const comboPayload={name:'Pedido compuesto ficticio',items:[{productId:'box-composed',qty:1,components:[{slotId:'dogs',productId:'dog-composed',removed:['Salsa real de prueba']},{slotId:'dogs',productId:'dog-composed',extras:['sauce-extra']}]}]},comboKey=crypto.randomUUID(),comboOrder=await call('order.create',comboPayload,'cash',comboKey);
+await call('order.create',comboPayload,'cash',comboKey);
+assert.equal((await db.doc('pedidos/'+comboOrder.id).get()).data().totalCents,550);
+assert.equal((await db.doc('inventario/sauce').get()).data().stock,970);
+assert.equal((await db.doc('inventario/bread').get()).data().stock,18);
+const poKey=crypto.randomUUID(),poPayload={supplierId:supplier.id,items:[{id:'bread',qty:5}]},po=await call('purchase.order',poPayload,'cash',poKey);await call('purchase.order',poPayload,'cash',poKey);
+assert.equal((await db.doc('ordenes_compra/'+po.id).get()).data().number,1);
+await call('inventory.receive',{id:'bread',supplierId:supplier.id,purchaseOrderId:po.id,packs:2,packSize:1,costUsd:1,credit:true},'cash');
+assert.equal((await db.doc('ordenes_compra/'+po.id).get()).data().status,'partial');
+await call('chat.send',{recipient:actors.cash.uid,text:'Mensaje privado de emulador'},'admin');
+assert.equal((await call('chat.list',{recipient:actors.admin.uid},'cash')).messages.length,1);
+assert.equal((await call('chat.list',{recipient:actors.admin.uid},'gamer')).messages.length,0);
+const inbox=await call('chat.inbox',{},'cash');assert.equal(inbox.unread['dm_'+actors.admin.uid],1);
+await call('chat.read',{recipient:actors.admin.uid,at:inbox.messages.find(m=>m.recipient).at},'cash');
+assert.equal((await call('chat.inbox',{},'cash')).unread['dm_'+actors.admin.uid],undefined);
+await call('appearance.save',{mode:'dark',primary:'#123456',darkSidebar:'#334455'},'cash');assert.equal((await call('workspace.meta',{},'cash')).appearance.mode,'dark');
+console.log('NEW FLOWS OK: independent combo pieces, extras, stock once, PO numbering and partial receipt, private participant authorization, per-account reads and editable dark palette.');
 console.log('WORKER HTTP + FIRESTORE REST OK: roles, public tracking, protected stock, last-unit concurrency, cancellation, purchase retry, exclusive Play, paired/revoked TV, editable read policies, private incremental chat, partial payments, paused reception, personal preferences, barcodes, alarm acknowledgment, cash reconciliation and reviewed test archival.');
 await db.terminate();

@@ -18,7 +18,7 @@ Todos los apartados del panel anterior están integrados: resumen, pedidos/cocin
 - `/admin?page=tables`: 10 mesas inicialmente, cantidad configurable por administración (1–100), QR por mesa para abrir, copiar, descargar PNG con margen blanco o imprimir/guardar PDF. Los enlaces conservan `?mesa=N`. En revisión los QR abren datos de prueba y no sincronizan dispositivos reales.
 - `/admin?page=finances`: resumen y gráfico, compras con entrada de stock, movimientos, CxC y CxP. Lee las colecciones existentes `transacciones`, `cxc`, `cxp`; conserva sus nombres de campos. Marcar una cuenta saldada actualiza su estado sin generar otro cobro/gasto automáticamente. Los cambios nuevos pasan por operaciones protegidas e idempotentes.
 
-La TV muestra número y nombre de pila junto al tipo de entrega; no muestra teléfono, dirección ni apellido. Mantiene las transiciones y el pulso de recién listos. Los canjes incluidos se identifican como canjes de pase.
+La TV muestra número y nombre de pila junto al tipo de entrega; no muestra teléfono, dirección ni apellido. Muestra logo, reloj y dos columnas grandes; pagina los turnos completos cuando no caben. Los canjes incluidos se identifican como canjes de pase.
 
 ### Formas de avisar
 
@@ -28,7 +28,7 @@ La TV muestra número y nombre de pila junto al tipo de entrega; no muestra tel�
 
 ## Pantallas, tiempos y taquilla
 
-La pantalla de pedidos conserva cada tarjeta al recibir cambios, anima la entrada, el traslado a listos y la salida, y resalta los recién listos durante ocho segundos. El primer conjunto de pedidos recibido al abrir la pantalla se toma como estado inicial y no vuelve a llamar todos los turnos. El carrusel rota cada nueve segundos con productos disponibles en el catálogo, tarifas informadas de parque/gamer, horario de Caracas y una invitación general a celebrar cumpleaños, sin fechas de eventos inventadas. El QR visible abre un menú donde se puede elegir mesa, retiro o delivery.
+La pantalla de pedidos utiliza todo el espacio para logo, reloj y dos columnas de turnos. Ajusta columnas, filas y tamaño de número, y rota páginas cada ocho segundos sin cortar tarjetas. Los controles de sonido y pantalla completa aparecen al interactuar y se ocultan después. Menú digital tiene su propia tarjeta en Televisores, con productos, fotos y precios rotativos. Las vistas de tiempos conservan su contenido de parque y gamer.
 
 Taquilla pide el nombre del niño o jugador y permite un adulto responsable separado. Cada pase tiene un código `TAQ-000001` generado con el contador del servidor. El comprobante externo es opcional y solo relaciona el pase con otro sistema de caja. Las ampliaciones generan sufijos `-A01`, `-A02` si no se aporta comprobante. La confirmación de pago sigue siendo obligatoria. Los nombres se muestran al equipo; las pantallas públicas mantienen números de pase.
 
@@ -52,7 +52,7 @@ El módulo financiero conserva sus flujos y colecciones originales dentro del ad
 - Tarifas: parque 15 min $2; 30 min con cotufas $4; 60 min con perro y cotufas $6. Gamer 15 min $2; 30 min $4; 60 min con perro y cotufas $5; 120 min con perro y cotufas $6. Control adicional $1,30 documentado, deshabilitado hasta definir si se cobra por sesión o por bloque.
 - Canjes únicos de comida incluida: se solicitan a cocina, descuentan únicamente las recetas configuradas y se entregan una sola vez. Administración debe confirmar qué perro incluyen los paquetes y la receta de cotufas.
 - Cocina con turnos, ingredientes quitados y estados. Los clientes sin teléfono pueden seguir su número en la TV; quienes lo tienen abren el seguimiento. La impresión del turno sigue siendo opcional, sin requerir ticketeras físicas.
-- Pantallas de pedidos con fotos y QR; pantallas de gamer/parque con cuentas regresivas y avisos. No se superponen mensajes al juego que llega por HDMI.
+- Pantallas de pedidos con logo, reloj y turnos grandes; menú digital en una vista separada; pantallas de gamer/parque con cuentas regresivas y avisos. No se superponen mensajes al juego que llega por HDMI.
 - Vinculación de pantallas con código de un solo uso de 10 caracteres, vencimiento de 10 minutos, sesión de dispositivo, latidos cada minuto y revocación. Su funcionamiento real requiere activar el Worker y publicar las reglas de Firestore.
 - Clientes identificados por teléfono normalizado sin duplicados, autorización para guardar historial y consentimiento separado para promociones. Las fichas no se exponen al público. El checkout permite autorizar su registro con el pedido; el teléfono normalizado reúne las compras posteriores, sin sobrescribir una ficha existente desde el acceso público. También se pueden guardar personas que solo usan parque o Play desde taquilla.
 - Inventario tiene una pantalla propia con mínimos, alta de insumos, compras y autoconsumo. Los nuevos insumos empiezan en cero; la unidad no se cambia para mantener coherencia con las recetas. Se conservan catálogo, recetas, transacciones, CxC y CxP en los módulos del administrador, con acceso del equipo. Compras y movimientos de stock pasan por transacciones de servidor; las compras suman stock y gasto juntos. Los pases generan un ingreso una sola vez, sin contar dos veces los canjes de comida.
@@ -70,7 +70,7 @@ El módulo financiero conserva sus flujos y colecciones originales dentro del ad
 - `/pase.html?token=...`: consulta pública de un pase por enlace aleatorio; no expone nombre, teléfono ni referencia de pago. El reloj empieza al activarlo el encargado.
 - `/imagenes.html`: elegir imágenes incluidas, pegar una URL o subir JPG/PNG/WebP hasta 5 MB al almacenamiento gratuito de Cloudflare. En preview se conservan solo en el navegador, hasta 2 MB por archivo.
 - `/televisores.html`: vinculación de dispositivos, con rol de administración.
-- `/?view=board&kind=orders`: pedidos; `kind=gamer` y `kind=park`: tiempos.
+- `/?view=board&kind=orders`: pedidos; `kind=menu`: menú digital; `kind=gamer` y `kind=park`: tiempos.
 - `/gestion.html?tab=...`: enlaces anteriores, redirigidos a los módulos integrados.
 
 ## Publicar frontend en Cloudflare Pages
